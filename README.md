@@ -19,7 +19,7 @@ Mở file `appsettings.json` và sửa phần `ConnectionStrings`:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=PizzaDb;Trusted_Connection=True;TrustServerCertificate=True;"
+  "DefaultConnection": "Server=localhost;Database=PizzaOrdering;Trusted_Connection=True;TrustServerCertificate=True;"
 }
 ```
 
@@ -27,7 +27,7 @@ Mở file `appsettings.json` và sửa phần `ConnectionStrings`:
 - Nếu dùng SQL Server Authentication:
 
   ```json
-  "DefaultConnection": "Server=localhost;Database=PizzaDb;User Id=sa;Password=yourpassword;TrustServerCertificate=True;"
+  "DefaultConnection": "Server=localhost;Database=PizzaOrdering;User Id=sa;Password=yourpassword;TrustServerCertificate=True;"
   ```
 
 - Đảm bảo SQL Server đang chạy và có quyền tạo database.
