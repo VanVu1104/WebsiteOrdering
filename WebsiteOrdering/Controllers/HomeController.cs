@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebsiteOrdering.Models;
 
@@ -17,7 +17,7 @@ namespace WebsiteOrdering.Controllers
         {
             return View();
         }
-
+        
         public IActionResult Privacy()
         {
             return View();
