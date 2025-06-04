@@ -1,7 +1,13 @@
 ﻿@model WebsiteOrdering.ViewModels.RegisterViewModel
 
 <h2>Register</h2>
-
+@if (ViewBag.EmailConfirmationMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.EmailConfirmationMessage
+    </div>
+}
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 <form asp-action="Register" method="post">
     <div>
         <label asp-for="Email"></label>
@@ -22,5 +28,8 @@
 </form>
 <p>
     Đã có tài khoản? <a asp-action="Login">Đăng nhập</a>
+</p>
+<p>
+    Đăng nhập với số điện thoại? <a asp-action="RegisterPhoneNumber">Đăng ký</a>
 </p>
 <partial name="_ValidationScriptsPartial" />

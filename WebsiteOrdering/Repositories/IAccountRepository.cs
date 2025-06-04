@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using WebsiteOrdering.Models;
 using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Repositories
 {
     public interface IAccountRepository
     {
-        Task<IdentityResult> RegisterAsync(RegisterViewModel model);
+        Task<IdentityResult> RegisterAsync(RegisterViewModel model, string confirmEmailUrl);
         Task<SignInResult> LoginAsync(LoginViewModel model);
         Task LogoutAsync();
+        Task<bool> ConfirmEmailAsync(string userId, string token);
+        Task<ApplicationUser?> GetUserByPhoneNumberAsync(string phoneNumber);
+        Task<(bool Success, ApplicationUser? User, IEnumerable<string>? Errors)> CreateUserWithPhone(string phoneNumber);
+        Task SignInUserAsync(ApplicationUser user, bool isPersistent = false);
+        Task UpdateUserAsync(ApplicationUser user);
+        Task<IdentityResult> GoogleLoginCallbackAsync();
+        Task<IdentityResult> LinkGoogleLoginToExistingUser(ApplicationUser user, ExternalLoginInfo info);
+        Task<IdentityResult> CreateAndSignInGoogleUser(ExternalLoginInfo info, string email);
+        AuthenticationProperties GooglelLoginAsync(string provider, string redirectUrl);
     }
 }
