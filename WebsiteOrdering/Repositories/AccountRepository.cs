@@ -61,11 +61,14 @@ namespace WebsiteOrdering.Repositories
             {
                 UserName = normalizedEmail,
                 Email = normalizedEmail,
-                EmailConfirmed = false
+                EmailConfirmed = false,
             };
-
             var result = await _userManager.CreateAsync(user, model.Password);
-
+            var addRoleResult = await _userManager.AddToRoleAsync(user, "Customer");
+            if (!addRoleResult.Succeeded)
+            {
+                return addRoleResult;
+            }
             if (result.Succeeded)
             {
                 try
@@ -135,11 +138,14 @@ namespace WebsiteOrdering.Repositories
                 PhoneNumber = phoneNumber,
                 PhoneNumberConfirmed = false
             };
-
             var result = await _userManager.CreateAsync(user);
             if (!result.Succeeded)
                 return (false, null, result.Errors.Select(e => e.Description));
-
+            var addRoleResult = await _userManager.AddToRoleAsync(user, "Customer");
+            if (!addRoleResult.Succeeded)
+            {
+                return (false, null, addRoleResult.Errors.Select(e => e.Description));
+            }
             return (true, user, null);
         }
 
@@ -216,16 +222,21 @@ namespace WebsiteOrdering.Repositories
             var fullName = (firstName + " " + lastName).Trim();
             var newUser = new ApplicationUser
             {
-                UserName = string.IsNullOrWhiteSpace(fullName) ? email : fullName,
+                UserName = email,
                 Email = email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                FullName = fullName
             };
             var createResult = await _userManager.CreateAsync(newUser);
             if (!createResult.Succeeded)
             {
                 return createResult;
             }
-
+            var addRoleResult = await _userManager.AddToRoleAsync(newUser, "Customer");
+            if (!addRoleResult.Succeeded)
+            {
+                return addRoleResult;
+            }
             var addLoginResult = await _userManager.AddLoginAsync(newUser, info);
             if (!addLoginResult.Succeeded)
             {
