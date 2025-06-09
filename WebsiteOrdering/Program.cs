@@ -1,9 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Thêm dịch vụ Session
+builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -34,6 +45,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+//builder.Services.AddTransient<IMyService, MyService>();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -45,9 +60,29 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+//Kiểm tra có kết nối database chưa
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    bool canConnect = dbContext.Database.CanConnect();
+
+    if (canConnect)
+    {
+        Console.WriteLine("✅ Kết nối cơ sở dữ liệu thành công!");
+    }
+    else
+    {
+        Console.WriteLine("❌ Không thể kết nối đến cơ sở dữ liệu.");
+    }
+}
+
+
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();

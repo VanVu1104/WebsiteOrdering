@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<WebsiteOrdering.ViewModels.CategoryViewModel>
+@{
+    var allCategories = (List<WebsiteOrdering.ViewModels.CategoryViewModel>)ViewBag.Categories;
+    string selectedId = ViewBag.SelectedCategory as string;
+}
+
+<ul>
+    @foreach (var sub in Model)
+    {
+        var childSub = allCategories.Where(c => c.IDLOAIMONANCHA == sub.IDLOAIMONAN).ToList();
+        if (childSub.Any())
+        {
+            <li class="dropdown-submenu position-relative">
+                <a href="#" class="dropdown-item dropdown-toggle @(selectedId == sub.IDLOAIMONAN ? "active" : "")">@sub.TENLOAIMONAN</a>
+                @await Html.PartialAsync("_SubCategoryPartial", childSub)
+            </li>
+        }
+        else
+        {
+            <li>
+                <button type="submit"
+                        name="categoryId"
+                        value="@sub.IDLOAIMONAN"
+                        class="dropdown-item @(selectedId == sub.IDLOAIMONAN ? "active" : "")">
+                    @sub.TENLOAIMONAN
+                </button>
+            </li>
+        }
+    }
+</ul>
