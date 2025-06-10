@@ -12,79 +12,7 @@
 }
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 @* Đoạn Script để xử lý đổi ảnh khi chọn pizza ghép *@
-@*
-@section Scripts {
-   <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const btnNguyen = document.getElementById("btnPizzaNguyen"); //Khai báo nút pizza nguyên
-            const btnGhep = document.getElementById("btnPizzaGhep"); // Khai báo nút pizza ghép
-            const imgNguyen = document.getElementById("imgPizzaNguyen"); // Khai báo ảnh pizza nguyên
-            const ghepWrapper = document.getElementById("pizzaGhepImages"); //Khai báo ảnh pizza ghép
-            const ghepOptions = document.getElementById("pizzaGhepOptions"); // Khai báo ảnh pizza cần ghép 
-            const imgRight = document.getElementById("imgPizzaGhepRight"); // Khai báo ảnh bên phải
-            const giaTienEl = document.getElementById("giaHienTai"); //Thay đổi giá 
-            // Giá mặc định là pizza nguyên
-            const giaPizzaNguyen = parseFloat('@Model.GIACOBAN');
-            // Mặc định hiển thị pizza nguyên
-            imgNguyen.style.display = "block";   //Hiển thị ảnh pizza nguyên
-            ghepWrapper.style.display = "none";  //Ẩn ảnh pizza ghép
-            ghepOptions.style.display = "none";  // Ẩn tùy chọn pizza ghép nếu có
 
-            btnNguyen?.classList.add("active");  // Bật hoạt động cho nút pizza nguyên
-            btnGhep?.classList.remove("active");  // Tắt hoạt động cho nút pizza ghép
-
-
-            //Khi bấm nút pizza nguyên 
-            btnNguyen?.addEventListener("click", () => {
-                btnNguyen.classList.add("active");
-                btnGhep.classList.remove("active");
-
-                imgNguyen.style.display = "block";
-                ghepWrapper.style.display = "none";
-                if (ghepOptions) ghepOptions.style.display = "none";
-                giaTienEl.textContent = formatCurrency(giaPizzaNguyen) + " VNĐ";
-            });
-
-            //Khi bấm nút pizza ghép
-            btnGhep?.addEventListener("click", () => {
-                btnNguyen.classList.remove("active");
-                btnGhep.classList.add("active");
-
-                imgNguyen.style.display = "none";
-                ghepWrapper.style.display = "flex";
-                if (ghepOptions) ghepOptions.style.display = "block";
-                
-            });
-
-            //Xử lý đổi ảnh bên phải và giá khi chọn pizza ghép 
-            document.querySelectorAll("input[name='SelectedPizzaGhepId']").forEach(radio => {
-                radio.addEventListener("change", (e) => {
-                    const img = e.target.getAttribute("data-anh");
-                    const gia = parseFloat(e.target.getAttribute("data-gia"));
-                    imgRight.src = "/css/img/" + img;
-                    // Cập nhật giá
-                    if (!isNaN(gia)) {
-                        giaTienEl.textContent = formatCurrency(gia) + " VNĐ";
-                    }
-                });
-            });
-            function formatCurrency(value) {
-                return new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND',
-                    minimumFractionDigits: 0
-                }).format(value).replace("₫", "").trim();
-            }           
-
-        });
-
-    </script> 
-
-
-
-
-
-}*@
 
 @section Scripts {
     <script>
@@ -302,7 +230,7 @@
     </script>
 }
 <div class="container mt-4">
- 
+    <form  method="post" asp-action="AddToCart" asp-controller="Cart">
     <div class="row">
             <input type="hidden" name="IDMONAN" value="@Model.IDMONAN" />
             <input type="hidden" name="IDMONAN2" value="@Model.IDMONAN2" />
@@ -500,17 +428,17 @@
                     </div>
                 </div>
 
-            <form id="btnAddToCart" method="post" asp-action="AddToCart">
+           @*  <form id="btnAddToCart" method="post" asp-action="AddToCart" asp-controller="Cart"> *@
                 <!-- các trường: size, topping, số lượng, đế bánh,... -->
-
-                <button type="submit" class="btn btn-primary mt-2">Thêm vào giỏ hàng</button>
-            </form>
+               
+                <button type="submit" class="btn btn-primary mt-2" id="btnAddToCart">Thêm vào giỏ hàng</button>
+            @* </form> *@
 
         </div>
     
     </div>
     
-
+    </form>
 </div>
 
 

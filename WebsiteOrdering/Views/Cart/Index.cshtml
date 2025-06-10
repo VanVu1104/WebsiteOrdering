@@ -1,0 +1,99 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<WebsiteOrdering.ViewModels.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+}
+
+<h2>Giỏ hàng của bạn</h2>
+
+@if (!Model.Any())
+{
+    <p>Giỏ hàng trống.</p>
+}
+else
+{
+    <form asp-action="CartEmpty" method="post">
+        <button type="submit" class="btn btn-danger mb-3">Xoá toàn bộ giỏ hàng</button>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Size</th>
+                <th>Đế bánh</th>
+                <th>Topping</th>
+                <th>Số lượng</th>
+                <th>Ghi chú</th>
+                <th>Tổng tiền</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.ANHSANPHAM" alt="Ảnh" width="100" /></td>
+                    <td>@item.TENSANPHAM</td>
+                    <td>@item.Size</td>
+                    <td>@item.DeBanh</td>
+                    <td>
+                        @if (item.Topping.Any())
+                        {
+                            <ul>
+                                @foreach (var top in item.Topping)
+                                {
+                                    <li>@top.TENTOPPING (@top.GIATOPPING₫)</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>Không có</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="UpdateCart" method="post" class="d-flex">
+                            <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                            <input type="hidden" name="idmonan2" value="@item.IDMONAN2" />
+                            <input type="hidden" name="size" value="@item.Size" />
+                            <input type="hidden" name="debanh" value="@item.DeBanh" />
+                            @for (int i = 0; i < item.Topping.Count; i++)
+                            {
+                                <input type="hidden" name="toppings" value="@item.Topping[i].IDTOPPING" />
+                            }
+
+                            <input type="number" name="soluong" value="@item.SoLuong" min="1" class="form-control w-50" />
+                            <button type="submit" class="btn btn-primary btn-sm ms-2">Cập nhật</button>
+                        </form>
+                    </td>
+                    <td>@item.GhiChu</td>
+                    <td>@item.TongTien.ToString("N0")₫</td>
+                    <td>
+                        <form asp-action="DeleteItem" method="post">
+                            <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                            <input type="hidden" name="size" value="@item.Size" />
+                            <input type="hidden" name="debanh" value="@item.DeBanh" />
+                            @for (int i = 0; i < item.Topping.Count; i++)
+                            {
+                                <input type="hidden" name="toppings" value="@item.Topping[i].IDTOPPING" />
+                            }
+                            <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4 class="text-end">
+        Tổng đơn:
+        @Model.Sum(i => i.TongTien).ToString("N0")₫
+    </h4>
+}

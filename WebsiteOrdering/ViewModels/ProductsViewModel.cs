@@ -37,8 +37,9 @@ namespace WebsiteOrdering.ViewModels
         [NotMapped]
         public List<DeBanhViewModel> DeBanh { get; set; } = new();
         public List<ToppingViewModel> Toppings { get; set; }
-
+        [NotMapped]
         public int TongTien { get; set; } =0;
+        [NotMapped]
         public int SoLuong { get; set; } = 1;
 
     }
