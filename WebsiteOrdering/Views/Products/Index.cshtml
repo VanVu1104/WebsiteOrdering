@@ -1,0 +1,283 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<WebsiteOrdering.ViewModels.ProductsViewModel>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    Layout = "_Layout";
+}
+
+<style>
+  /* Dropdown cha */
+.category-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Menu dropdown */
+.category-dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1050;
+    min-width: 200px;
+    padding: 0.5rem 0;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+}
+
+/* Hiện menu khi hover */
+.category-dropdown:hover > .dropdown-menu {
+    display: block;
+}
+
+/* Menu con */
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    min-width: 180px;
+    z-index: 1060;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.175);
+}
+
+/* Hiện submenu khi hover */
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+/* Item style */
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #212529;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    background-color: transparent;
+    border: 0;
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: #f8f9fa;
+    color: #1e2125;
+}
+
+.dropdown-item.active {
+    color: #fff;
+    background-color: #0d6efd;
+}
+
+/* Ẩn mũi tên Bootstrap */
+.no-arrow::after {
+    display: none;
+}
+
+/* Responsive mobile */
+@@media (max-width: 768px) {
+    .category-dropdown .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+    }
+}
+
+/* Ngăn overflow */
+.d-flex.flex-wrap {
+    overflow: visible;
+}
+
+</style>
+
+<div class="text-center mb-4">
+    <form method="get" asp-action="Index" class="d-flex flex-wrap gap-2 justify-content-center mb-4">
+        <!-- Nút "Tất cả các loại" -->
+        <button type="submit" name="categoryId" value="" 
+                class="btn @(ViewBag.SelectedCategory == null ? "btn-primary" : "btn-outline-primary")">
+            Tất cả các loại
+        </button>
+
+        @{
+            // Lấy tất cả categories
+            var allCategories = (List<WebsiteOrdering.ViewModels.CategoryViewModel>)ViewBag.Categories;
+            
+            // Chỉ lấy các category cha (không có IDLOAIMONANCHA hoặc IDLOAIMONANCHA = null)
+            var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IDLOAIMONANCHA)).ToList();
+        }
+
+        @foreach (var parentCategory in parentCategories)
+        {
+            // Kiểm tra xem category cha này có được chọn không
+            var isParentSelected = ViewBag.SelectedCategory?.ToString() == parentCategory.IDLOAIMONAN;
+            
+            // Tìm các category con trực tiếp của category cha này
+            var directChildren = allCategories.Where(c => c.IDLOAIMONANCHA == parentCategory.IDLOAIMONAN).ToList();
+
+            if (directChildren.Any())
+            {
+                <!-- Category cha có con - tạo dropdown -->
+                <div class="category-dropdown">
+                    <button type="submit" name="categoryId" value="@parentCategory.IDLOAIMONAN"
+                            class="btn @(isParentSelected ? "btn-primary" : "btn-outline-primary") no-arrow">
+                        @parentCategory.TENLOAIMONAN
+                    </button>
+                    
+                    <div class="dropdown-menu">
+                        @foreach (var childCategory in directChildren)
+                        {
+                            var isChildSelected = ViewBag.SelectedCategory?.ToString() == childCategory.IDLOAIMONAN;
+                            
+                            // Tìm các category con của category con này (cháu)
+                            var grandChildren = allCategories.Where(c => c.IDLOAIMONANCHA == childCategory.IDLOAIMONAN).ToList();
+                            
+                            if (grandChildren.Any())
+                            {
+                                <!-- Category con có con - tạo submenu -->
+                                <div class="dropdown-submenu">
+                                    <button type="submit" name="categoryId" value="@childCategory.IDLOAIMONAN"
+                                            class="dropdown-item @(isChildSelected ? "active" : "")">
+                                        @childCategory.TENLOAIMONAN
+                                    </button>
+                                    
+                                    <div class="dropdown-menu">
+                                        @foreach (var grandChild in grandChildren)
+                                        {
+                                            var isGrandChildSelected = ViewBag.SelectedCategory?.ToString() == grandChild.IDLOAIMONAN;
+                                            
+                                            <button type="submit" name="categoryId" value="@grandChild.IDLOAIMONAN"
+                                                    class="dropdown-item @(isGrandChildSelected ? "active" : "")">
+                                                @grandChild.TENLOAIMONAN
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Category con không có con -->
+                                <button type="submit" name="categoryId" value="@childCategory.IDLOAIMONAN"
+                                        class="dropdown-item @(isChildSelected ? "active" : "")">
+                                    @childCategory.TENLOAIMONAN
+                                </button>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Category cha không có con - nút bình thường -->
+                <button type="submit" name="categoryId" value="@parentCategory.IDLOAIMONAN"
+                        class="btn @(isParentSelected ? "btn-primary" : "btn-outline-primary")">
+                    @parentCategory.TENLOAIMONAN
+                </button>
+            }
+        }
+    </form>
+</div>
+
+@* Phần hiển thị tên category được chọn *@
+@{
+    string categoryName = "Danh sách sản phẩm";
+    var selectedCategoryId = ViewBag.SelectedCategory as string;
+    var categories = (List<WebsiteOrdering.ViewModels.CategoryViewModel>)ViewBag.Categories;
+
+    if (!string.IsNullOrEmpty(selectedCategoryId))
+    {
+        var selectedCategory = categories.FirstOrDefault(c => c.IDLOAIMONAN == selectedCategoryId);
+        if (selectedCategory != null)
+        {
+            categoryName = selectedCategory.TENLOAIMONAN;
+        }
+    }
+}
+
+<h2 class="text-center mt-4">@categoryName</h2>
+
+<!-- Phần hiển thị sản phẩm -->
+<div class="container mt-4">
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.IDMONAN" name="idmonan" class="text-decoration-none text-dark">
+                        <div class="card shadow-sm h-100">
+                            <img src="~/css/img/@product.ANHMONAN" class="card-img-top" alt="@product.TENMONAN"
+                                 style="height: 200px; object-fit: cover;" />
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">@product.TENMONAN</h5>
+                                <p class="card-text">@product.MOTAMONAN</p>
+                               @*  <p class="card-text fw-bold text-danger">@string.Format("{0:N0} VND", product.GIACOBAN)</p> *@
+                                @{
+                                    var culture = new System.Globalization.CultureInfo("vi-VN");
+                                    culture.NumberFormat.CurrencySymbol = ""; // bỏ ký hiệu ₫
+                                    var giaTien = string.Format(culture, "{0:C0}", product.GIACOBAN).Trim(); // bỏ khoảng trắng đầu
+                                }
+                                <p class="card-text fw-bold text-danger">@giaTien VNĐ</p>
+
+
+                                <div class="mt-3 text-center">
+                                    <span class="btn btn-outline-primary">Thêm vào giỏ hàng</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted">Không có sản phẩm nào để hiển thị.</p>
+                @if (TempData["Message"] != null)
+                {
+                    <p class="text-warning">@TempData["Message"]</p>
+                }
+            </div>
+        }
+    </div>
+
+    
+    <!-- Phần phân trang -->
+    @if (ViewBag.TotalPages != null && (int)ViewBag.TotalPages > 1)
+    {
+        <div class="mt-4 text-center">
+            <nav aria-label="Phân trang sản phẩm">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-categoryId="@ViewBag.SelectedCategory">
+                                @i
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
