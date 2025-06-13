@@ -598,5 +598,95 @@
             }
         }
         window.clearRoute = clearRoute;
+        //Search vị trí
+        let debounceTimer;
+        let suggestions = [];
+        const input = document.getElementById('searchInput');
+        const suggestionList = document.getElementById('suggestions');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        // Hàm gọi API Nominatim với error handling
+        async function searchAddress(query) {
+            try {
+                loadingSpinner.style.display = 'block';
+
+                // Ưu tiên tìm kiếm ở Việt Nam
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=8&countrycodes=vn&accept-language=vi`;
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const results = await response.json();
+                return results;
+            } catch (error) {
+                console.error('Error searching address:', error);
+                return [];
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+        // Hàm hiển thị suggestions
+        function displaySuggestions(results) {
+            suggestions = results;
+            selectedIndex = -1;
+
+            if (results.length === 0) {
+                suggestionList.innerHTML = '<div class="no-results">Không tìm thấy kết quả phù hợp</div>';
+                suggestionList.classList.add('show');
+                return;
+            }
+
+            const html = results.map((place, index) => {
+                const addressParts = place.display_name.split(',');
+                const title = addressParts[0] || 'Không rõ';
+                const address = addressParts.slice(1).join(',').trim() || 'Không rõ địa chỉ';
+
+                return `
+                    <div class="suggestion-item" data-index="${index}">
+                        <div class="suggestion-icon">📍</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">${title}</div>
+                            <div class="suggestion-address">${address}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            suggestionList.innerHTML = html;
+            suggestionList.classList.add('show');
+
+            // Thêm event listeners cho các suggestion items
+            suggestionList.querySelectorAll('.suggestion-item').forEach((item, index) => {
+                item.addEventListener('click', () => selectPlace(index));
+                item.addEventListener('mouseenter', () => highlightSuggestion(index));
+            });
+        }
+        // Ẩn suggestions khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
+                suggestionList.classList.remove('show');
+                selectedIndex = -1;
+            }
+        });
+        input.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            const query = e.target.value.trim();
+
+            if (query.length < 2) {
+                suggestionList.classList.remove('show');
+                selectedLocation.classList.remove('show');
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                const results = await searchAddress(query);
+                displaySuggestions(results);
+            }, 300);
+        });
+        // Focus vào input khi trang load
+        window.addEventListener('load', () => {
+            input.focus();
+        });
     })();
 });

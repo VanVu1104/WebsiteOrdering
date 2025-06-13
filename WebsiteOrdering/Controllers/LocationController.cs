@@ -257,43 +257,43 @@ namespace WebsiteOrdering.Controllers
             });
         }
         // Enhanced Location Controller with routing support
-        [HttpGet]
-        public async Task<IActionResult> GetNearestStore()
-        {
-            var allLocations = await _locationService.GetAllLocationsAsync();
-            if (!HttpContext.Session.TryGetValue("UserLat", out var latBytes) ||
-                !HttpContext.Session.TryGetValue("UserLng", out var lngBytes))
+            [HttpGet]
+            public async Task<IActionResult> GetNearestStore()
             {
-                return BadRequest(new { success = false, message = "Vị trí người dùng chưa được lưu." });
-            }
-
-            double userLat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes));
-            double userLng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes));
-
-            Location? nearest = null;
-            double minDist = double.MaxValue;
-
-            foreach (var store in allLocations)
-            {
-                var dist = _locationService.GetDistance(userLat, userLng, (double)store.Latitude, (double)store.Longitude);
-                if (dist < minDist)
+                var allLocations = await _locationService.GetAllLocationsAsync();
+                if (!HttpContext.Session.TryGetValue("UserLat", out var latBytes) ||
+                    !HttpContext.Session.TryGetValue("UserLng", out var lngBytes))
                 {
-                    minDist = dist;
-                    nearest = store;
+                    return BadRequest(new { success = false, message = "Vị trí người dùng chưa được lưu." });
                 }
+
+                double userLat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes));
+                double userLng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes));
+
+                Location? nearest = null;
+                double minDist = double.MaxValue;
+
+                foreach (var store in allLocations)
+                {
+                    var dist = _locationService.GetDistance(userLat, userLng, (double)store.Latitude, (double)store.Longitude);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        nearest = store;
+                    }
+                }
+
+                if (nearest == null)
+                    return NotFound(new { success = false, message = "Không tìm thấy cửa hàng nào." });
+
+                return Ok(new
+                {
+                    success = true,
+                    store = nearest,
+                    distance = minDist,
+                    userLocation = new { latitude = userLat, longitude = userLng }
+                });
             }
-
-            if (nearest == null)
-                return NotFound(new { success = false, message = "Không tìm thấy cửa hàng nào." });
-
-            return Ok(new
-            {
-                success = true,
-                store = nearest,
-                distance = minDist,
-                userLocation = new { latitude = userLat, longitude = userLng }
-            });
-        }
         // Get route between two points using external routing service
         [HttpPost]
         public async Task<IActionResult> GetRoute([FromBody] RouteRequest request)

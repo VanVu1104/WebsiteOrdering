@@ -174,7 +174,46 @@
 .leaflet-popup-tip {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+/* Search Address styles*/
+.search-container {
+    position: relative;
+    padding: 30px;
+    background: #f8f9fa;
+}
 
+.search-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    font-size: 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 50px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+    #searchInput:focus {
+        outline: none;
+        border-color: #4facfe;
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        transform: translateY(-2px);
+    }
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 18px;
+}
 /* Route info control styles */
 .route-info-control {
     z-index: 1000;

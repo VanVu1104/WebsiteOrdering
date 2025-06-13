@@ -16,6 +16,16 @@
     </div>
     <div class="map-wrapper">
         <div class="map-controls">
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Nhập địa chỉ, tên đường, quận/huyện..." autocomplete="off">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <div id="suggestions">
+                        <!-- Suggestions sẽ được hiển thị ở đây -->
+                    </div>
+                </div>
+            </div>
+
             <button id="resetView" class="control-btn">
                 <span class="icon">🏠</span>
                 <span id="resetText">Về vị trí ban đầu</span>
@@ -65,5 +75,8 @@
         const locations = @Html.Raw(Json.Serialize(Model));
         const OPENROUTE_API_KEY = '@ViewBag.OpenRouteApiKey';
     </script>
-    <script src="~/js/map-handler.js"></script>
+	@* <script src="~/js/map-handler.js"></script> *@
+    <script src="~/js/maphandler.js"></script>
+    <script src="~/js/locationservice.js"></script>
+    <script src="~/js/searchservice.js"></script>
 }
