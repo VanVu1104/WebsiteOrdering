@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteOrdering.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialIdentity : Migration
+    public partial class FixUserIdForeignKey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,56 +30,12 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENCHINHANH = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DIACHICN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    TENCNHANH = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DIACHICN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__CHINHANH__5F20FC4041DF698B", x => x.IDCHINHANH);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ChitietdonhangonlTopping",
-                columns: table => new
-                {
-                    Idtopping = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Iddonhangonl = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Idmonan = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Idmonan2 = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChitietdonhangonlTopping", x => new { x.Idtopping, x.Iddonhangonl, x.Idmonan, x.Idmonan2 });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ChitietdonhangTopping",
-                columns: table => new
-                {
-                    Idtopping = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Iddonhang = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Idmonan = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Idmonan2 = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChitietdonhangTopping", x => new { x.Idtopping, x.Iddonhang, x.Idmonan, x.Idmonan2 });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DANHMUCKHUYENMAI",
-                columns: table => new
-                {
-                    IDKHUYENMAI = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENKHUYENMAI = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    NGAYAPDUNG = table.Column<DateOnly>(type: "date", nullable: false),
-                    NGAYHETHAN = table.Column<DateOnly>(type: "date", nullable: false),
-                    GIATRI = table.Column<int>(type: "int", nullable: false),
-                    MOTAKM = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__DANHMUCK__9E055897C118320B", x => x.IDKHUYENMAI);
+                    table.PrimaryKey("PK__CHINHANH__5F20FC40654C6C03", x => x.IDCHINHANH);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,12 +43,12 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDDEBANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENDEBANH = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TENDEBANH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     GIADEBANH = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__DEBANH__555F23FFB140968E", x => x.IDDEBANH);
+                    table.PrimaryKey("PK__DEBANH__555F23FF6173600D", x => x.IDDEBANH);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,18 +56,19 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDLOAIMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENLOAIMONAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    TENLOAIMONAN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    IDLOAIMAN_CHA = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__LOAIMONA__6B7E94ED8043D23A", x => x.IDLOAIMONAN);
+                    table.PrimaryKey("PK__LOAIMONA__6B7E94ED6B8131AD", x => x.IDLOAIMONAN);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Locations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", fixedLength: true, nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -120,7 +77,7 @@ namespace WebsiteOrdering.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__ID__6B7E94ED8043D11B", x => x.Id);
+                    table.PrimaryKey("PK_Locations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -128,11 +85,11 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDSIZE = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENSIZE = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    TENSIZE = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__SIZE__8DA14C4E58CC03AA", x => x.IDSIZE);
+                    table.PrimaryKey("PK__SIZE__8DA14C4EE47FAF46", x => x.IDSIZE);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,9 +118,10 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    HOTEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     NGAYSINH = table.Column<DateOnly>(type: "date", nullable: true),
                     GIOITINH = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, maxLength: 5, nullable: true),
+                    IdchinhanhNavigationIdchinhanh = table.Column<string>(type: "char(5)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -183,8 +141,8 @@ namespace WebsiteOrdering.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_CHINHANH_IDCHINHANH",
-                        column: x => x.IDCHINHANH,
+                        name: "FK_AspNetUsers_CHINHANH_IdchinhanhNavigationIdchinhanh",
+                        column: x => x.IdchinhanhNavigationIdchinhanh,
                         principalTable: "CHINHANH",
                         principalColumn: "IDCHINHANH");
                 });
@@ -194,16 +152,17 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENBAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TENBAN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     SONGUOI = table.Column<int>(type: "int", nullable: false),
-                    KHUVUC = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TRANGTHAIBAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    KHUVUC = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__BAN__9367225EC3E6D028", x => x.IDBAN);
+                    table.PrimaryKey("PK__BAN__9367225E468C45A0", x => x.IDBAN);
                     table.ForeignKey(
-                        name: "FK__BAN__IDCHINHANH__6477ECF3",
+                        name: "FK__BAN__IDCHINHANH__267ABA7A",
                         column: x => x.IDCHINHANH,
                         principalTable: "CHINHANH",
                         principalColumn: "IDCHINHANH");
@@ -214,19 +173,18 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     TENMONAN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    MOTAMONAN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    GIACOBAN = table.Column<int>(type: "int", nullable: false),
+                    GIAMONAN = table.Column<int>(type: "int", nullable: false),
                     ANHMONAN = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
-                    TRANGTHAI = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    MOTA = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    TRANGTHAIMAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IDLOAIMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__MONAN__B62500C613AC53C3", x => new { x.IDMONAN, x.IDMONAN2 });
+                    table.PrimaryKey("PK__MONAN__091AA88F8490BF0E", x => x.IDMONAN);
                     table.ForeignKey(
-                        name: "FK__MONAN__IDLOAIMON__06CD04F7",
+                        name: "FK__MONAN__IDLOAIMON__38996AB5",
                         column: x => x.IDLOAIMONAN,
                         principalTable: "LOAIMONAN",
                         principalColumn: "IDLOAIMONAN");
@@ -237,15 +195,15 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDTOPPING = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    TENTOPPING = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TENTOPPING = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     GIATOPPING = table.Column<int>(type: "int", nullable: false),
                     IDLOAIMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__TOPPING__B17F5B459FE8393F", x => x.IDTOPPING);
+                    table.PrimaryKey("PK__TOPPING__B17F5B453E08CBB9", x => x.IDTOPPING);
                     table.ForeignKey(
-                        name: "FK__TOPPING__IDLOAIM__6B24EA82",
+                        name: "FK__TOPPING__IDLOAIM__2B3F6F97",
                         column: x => x.IDLOAIMONAN,
                         principalTable: "LOAIMONAN",
                         principalColumn: "IDLOAIMONAN");
@@ -257,18 +215,18 @@ namespace WebsiteOrdering.Migrations
                 {
                     IDLOAIMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     IDSIZE = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    GIA = table.Column<int>(type: "int", nullable: false)
+                    GIASIZE = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__LISTGIAS__93A480291F324B05", x => new { x.IDLOAIMONAN, x.IDSIZE });
+                    table.PrimaryKey("PK__LISTGIAS__93A480290675CE8A", x => new { x.IDLOAIMONAN, x.IDSIZE });
                     table.ForeignKey(
-                        name: "FK__LISTGIASI__IDLOA__71D1E811",
+                        name: "FK__LISTGIASI__IDLOA__31EC6D26",
                         column: x => x.IDLOAIMONAN,
                         principalTable: "LOAIMONAN",
                         principalColumn: "IDLOAIMONAN");
                     table.ForeignKey(
-                        name: "FK__LISTGIASI__IDSIZ__72C60C4A",
+                        name: "FK__LISTGIASI__IDSIZ__32E0915F",
                         column: x => x.IDSIZE,
                         principalTable: "SIZE",
                         principalColumn: "IDSIZE");
@@ -369,80 +327,44 @@ namespace WebsiteOrdering.Migrations
                     GIOKETTHUC = table.Column<TimeOnly>(type: "time", nullable: false),
                     SONGUOIDAT = table.Column<int>(type: "int", nullable: false),
                     GHICHU = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    TRANGTHAIDATBAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    USERID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false)
+                    TRANGTHAIDATBAN = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    IDNGDUNG = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__DATBAN__DEC46009C032B7D1", x => x.IDDATBAN);
+                    table.PrimaryKey("PK__DATBAN__DEC460099CB35DD0", x => x.IDDATBAN);
                     table.ForeignKey(
-                        name: "FK__DATBAN__IDCHINHA__60A75C0F",
+                        name: "FK__DATBAN__IDCHINHA__3C69FB99",
                         column: x => x.IDCHINHANH,
                         principalTable: "CHINHANH",
                         principalColumn: "IDCHINHANH");
                     table.ForeignKey(
-                        name: "FK__DATBAN__USERID__619B8048",
-                        column: x => x.USERID,
+                        name: "FK__DATBAN__IDNGDUNG__3B75D760",
+                        column: x => x.IDNGDUNG,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "DONHANGONL",
-                columns: table => new
-                {
-                    IDDONHANGONL = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    DIACHI = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TRANGTHAI = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TONGTIEN = table.Column<int>(type: "int", nullable: false),
-                    NGAYDATDON = table.Column<DateOnly>(type: "date", nullable: false),
-                    PTTTONL = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TIENSHIP = table.Column<int>(type: "int", nullable: false),
-                    USERID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDKHUYENMAI = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__DONHANGO__AC2A315C15B12C03", x => x.IDDONHANGONL);
-                    table.ForeignKey(
-                        name: "FK__DONHANGONL__USERID__02084FDA",
-                        column: x => x.USERID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK__DONHANGON__IDCHI__02FC7413",
-                        column: x => x.IDCHINHANH,
-                        principalTable: "CHINHANH",
-                        principalColumn: "IDCHINHANH");
-                    table.ForeignKey(
-                        name: "FK__DONHANGON__IDKHU__03F0984C",
-                        column: x => x.IDKHUYENMAI,
-                        principalTable: "DANHMUCKHUYENMAI",
-                        principalColumn: "IDKHUYENMAI");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CHITIETBAN",
+                name: "CHITIETDATBAN",
                 columns: table => new
                 {
                     IDDATBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     IDBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     GIOVAO = table.Column<TimeOnly>(type: "time", nullable: false),
-                    GIORA = table.Column<TimeOnly>(type: "time", nullable: false),
-                    TRANGTHAIBAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    GIORA = table.Column<TimeOnly>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__CHITIETB__27F2122C9119BD2E", x => new { x.IDDATBAN, x.IDBAN });
+                    table.PrimaryKey("PK__CHITIETD__27F2122C38F80AE0", x => new { x.IDDATBAN, x.IDBAN });
                     table.ForeignKey(
-                        name: "FK__CHITIETBA__IDBAN__76969D2E",
+                        name: "FK__CHITIETDA__IDBAN__403A8C7D",
                         column: x => x.IDBAN,
                         principalTable: "BAN",
                         principalColumn: "IDBAN");
                     table.ForeignKey(
-                        name: "FK__CHITIETBA__IDDAT__75A278F5",
+                        name: "FK__CHITIETDA__IDDAT__3F466844",
                         column: x => x.IDDATBAN,
                         principalTable: "DATBAN",
                         principalColumn: "IDDATBAN");
@@ -453,79 +375,36 @@ namespace WebsiteOrdering.Migrations
                 columns: table => new
                 {
                     IDDONHANG = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
+                    DIACHIDH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     NGAYDAT = table.Column<DateOnly>(type: "date", nullable: false),
-                    SONGUOI = table.Column<int>(type: "int", nullable: false),
-                    TONGDH = table.Column<int>(type: "int", nullable: false),
-                    TENKH = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PHUONGTHUCTHANHTOAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    USERID = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    IDDATBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDKHUYENMAI = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true)
+                    TRANGTHAI = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TONGTIEN = table.Column<int>(type: "int", nullable: false),
+                    PTTTOAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SONGUOI = table.Column<int>(type: "int", nullable: true),
+                    TENKH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TIENSHIP = table.Column<int>(type: "int", nullable: true),
+                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
+                    IDDATBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
+                    IDNGDUNG = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__DONHANG__F59FA8B118A5D193", x => x.IDDONHANG);
+                    table.PrimaryKey("PK__DONHANG__F59FA8B171F225E2", x => x.IDDONHANG);
                     table.ForeignKey(
-                        name: "FK__DONHANG__IDCHINH__7C4F7684",
+                        name: "FK__DONHANG__IDCHINH__4316F928",
                         column: x => x.IDCHINHANH,
                         principalTable: "CHINHANH",
                         principalColumn: "IDCHINHANH");
                     table.ForeignKey(
-                        name: "FK__DONHANG__IDDATBA__7E37BEF6",
+                        name: "FK__DONHANG__IDDATBA__440B1D61",
                         column: x => x.IDDATBAN,
                         principalTable: "DATBAN",
                         principalColumn: "IDDATBAN");
                     table.ForeignKey(
-                        name: "FK__DONHANG__IDKHUYE__7F2BE32F",
-                        column: x => x.IDKHUYENMAI,
-                        principalTable: "DANHMUCKHUYENMAI",
-                        principalColumn: "IDKHUYENMAI");
-                    table.ForeignKey(
-                        name: "FK__DONHANG__USERID__7D439ABD",
-                        column: x => x.USERID,
+                        name: "FK__DONHANG__IDNGDUN__44FF419A",
+                        column: x => x.IDNGDUNG,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CHITIETDONHANGONL",
-                columns: table => new
-                {
-                    IDDONHANGONL = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    SOLUONGDH = table.Column<int>(type: "int", nullable: false),
-                    GIADH = table.Column<int>(type: "int", nullable: false),
-                    TONGTIENDH = table.Column<int>(type: "int", nullable: false),
-                    GHICHU = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    KIEUPIZZAONL = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    IDDEBANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
-                    IDSIZE = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__CHITIETD__D7486150E300646B", x => new { x.IDDONHANGONL, x.IDMONAN, x.IDMONAN2 });
-                    table.ForeignKey(
-                        name: "FK__CHITIETDONHANGON__123EB7A3",
-                        columns: x => new { x.IDMONAN, x.IDMONAN2 },
-                        principalTable: "MONAN",
-                        principalColumns: new[] { "IDMONAN", "IDMONAN2" });
-                    table.ForeignKey(
-                        name: "FK__CHITIETDO__IDDEB__10566F31",
-                        column: x => x.IDDEBANH,
-                        principalTable: "DEBANH",
-                        principalColumn: "IDDEBANH");
-                    table.ForeignKey(
-                        name: "FK__CHITIETDO__IDDON__0F624AF8",
-                        column: x => x.IDDONHANGONL,
-                        principalTable: "DONHANGONL",
-                        principalColumn: "IDDONHANGONL");
-                    table.ForeignKey(
-                        name: "FK__CHITIETDO__IDSIZ__114A936A",
-                        column: x => x.IDSIZE,
-                        principalTable: "SIZE",
-                        principalColumn: "IDSIZE");
                 });
 
             migrationBuilder.CreateTable(
@@ -534,62 +413,38 @@ namespace WebsiteOrdering.Migrations
                 {
                     IDDONHANG = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
+                    GHICHU = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     SOLUONG = table.Column<int>(type: "int", nullable: false),
-                    GIA = table.Column<int>(type: "int", nullable: false),
-                    TONGTIEN = table.Column<int>(type: "int", nullable: false),
-                    GHICHU = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    DONGIA = table.Column<int>(type: "int", nullable: false),
+                    TONGTIENDH = table.Column<int>(type: "int", nullable: false),
                     KIEUPIZZA = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
                     IDDEBANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
-                    IDSIZE = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
+                    IDSIZE = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__CHITIETD__8EFDF8BDABAA408C", x => new { x.IDDONHANG, x.IDMONAN, x.IDMONAN2 });
+                    table.PrimaryKey("PK__CHITIETD__150E02391C3C3DE5", x => new { x.IDDONHANG, x.IDMONAN });
                     table.ForeignKey(
-                        name: "FK__CHITIETDONHANG__0B91BA14",
-                        columns: x => new { x.IDMONAN, x.IDMONAN2 },
-                        principalTable: "MONAN",
-                        principalColumns: new[] { "IDMONAN", "IDMONAN2" });
-                    table.ForeignKey(
-                        name: "FK__CHITIETDO__IDDEB__0A9D95DB",
+                        name: "FK__CHITIETDO__IDDEB__49C3F6B7",
                         column: x => x.IDDEBANH,
                         principalTable: "DEBANH",
                         principalColumn: "IDDEBANH");
                     table.ForeignKey(
-                        name: "FK__CHITIETDO__IDDON__09A971A2",
+                        name: "FK__CHITIETDO__IDDON__47DBAE45",
                         column: x => x.IDDONHANG,
                         principalTable: "DONHANG",
                         principalColumn: "IDDONHANG");
                     table.ForeignKey(
-                        name: "FK__CHITIETDO__IDSIZ__0C85DE4D",
+                        name: "FK__CHITIETDO__IDMON__48CFD27E",
+                        column: x => x.IDMONAN,
+                        principalTable: "MONAN",
+                        principalColumn: "IDMONAN");
+                    table.ForeignKey(
+                        name: "FK__CHITIETDO__IDSIZ__4AB81AF0",
                         column: x => x.IDSIZE,
                         principalTable: "SIZE",
                         principalColumn: "IDSIZE");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CHITIETTOPPINGONL",
-                columns: table => new
-                {
-                    IDTOPPING = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDDONHANGONL = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__CHITIETT__AC0BDD50F7A79B3B", x => new { x.IDTOPPING, x.IDDONHANGONL, x.IDMONAN, x.IDMONAN2 });
-                    table.ForeignKey(
-                        name: "FK__CHITIETTOPPINGON__19DFD96B",
-                        columns: x => new { x.IDDONHANGONL, x.IDMONAN, x.IDMONAN2 },
-                        principalTable: "CHITIETDONHANGONL",
-                        principalColumns: new[] { "IDDONHANGONL", "IDMONAN", "IDMONAN2" });
-                    table.ForeignKey(
-                        name: "FK__CHITIETTO__IDTOP__18EBB532",
-                        column: x => x.IDTOPPING,
-                        principalTable: "TOPPING",
-                        principalColumn: "IDTOPPING");
                 });
 
             migrationBuilder.CreateTable(
@@ -598,19 +453,18 @@ namespace WebsiteOrdering.Migrations
                 {
                     IDTOPPING = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     IDDONHANG = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
-                    IDMONAN2 = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
+                    IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__CHITIETT__799084CEE74352D4", x => new { x.IDTOPPING, x.IDDONHANG, x.IDMONAN, x.IDMONAN2 });
+                    table.PrimaryKey("PK__CHITIETT__B17F5B45F7D210ED", x => x.IDTOPPING);
                     table.ForeignKey(
-                        name: "FK__CHITIETTOPPING__160F4887",
-                        columns: x => new { x.IDDONHANG, x.IDMONAN, x.IDMONAN2 },
+                        name: "FK__CHITIETTOPPING__4E88ABD4",
+                        columns: x => new { x.IDDONHANG, x.IDMONAN },
                         principalTable: "CHITIETDONHANG",
-                        principalColumns: new[] { "IDDONHANG", "IDMONAN", "IDMONAN2" });
+                        principalColumns: new[] { "IDDONHANG", "IDMONAN" });
                     table.ForeignKey(
-                        name: "FK__CHITIETTO__IDTOP__151B244E",
+                        name: "FK__CHITIETTO__IDTOP__4D94879B",
                         column: x => x.IDTOPPING,
                         principalTable: "TOPPING",
                         principalColumn: "IDTOPPING");
@@ -649,9 +503,9 @@ namespace WebsiteOrdering.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_IDCHINHANH",
+                name: "IX_AspNetUsers_IdchinhanhNavigationIdchinhanh",
                 table: "AspNetUsers",
-                column: "IDCHINHANH");
+                column: "IdchinhanhNavigationIdchinhanh");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -666,8 +520,8 @@ namespace WebsiteOrdering.Migrations
                 column: "IDCHINHANH");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CHITIETBAN_IDBAN",
-                table: "CHITIETBAN",
+                name: "IX_CHITIETDATBAN_IDBAN",
+                table: "CHITIETDATBAN",
                 column: "IDBAN");
 
             migrationBuilder.CreateIndex(
@@ -676,9 +530,9 @@ namespace WebsiteOrdering.Migrations
                 column: "IDDEBANH");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CHITIETDONHANG_IDMONAN_IDMONAN2",
+                name: "IX_CHITIETDONHANG_IDMONAN",
                 table: "CHITIETDONHANG",
-                columns: new[] { "IDMONAN", "IDMONAN2" });
+                column: "IDMONAN");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CHITIETDONHANG_IDSIZE",
@@ -686,29 +540,9 @@ namespace WebsiteOrdering.Migrations
                 column: "IDSIZE");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CHITIETDONHANGONL_IDDEBANH",
-                table: "CHITIETDONHANGONL",
-                column: "IDDEBANH");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CHITIETDONHANGONL_IDMONAN_IDMONAN2",
-                table: "CHITIETDONHANGONL",
-                columns: new[] { "IDMONAN", "IDMONAN2" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CHITIETDONHANGONL_IDSIZE",
-                table: "CHITIETDONHANGONL",
-                column: "IDSIZE");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CHITIETTOPPING_IDDONHANG_IDMONAN_IDMONAN2",
+                name: "IX_CHITIETTOPPING_IDDONHANG_IDMONAN",
                 table: "CHITIETTOPPING",
-                columns: new[] { "IDDONHANG", "IDMONAN", "IDMONAN2" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CHITIETTOPPINGONL_IDDONHANGONL_IDMONAN_IDMONAN2",
-                table: "CHITIETTOPPINGONL",
-                columns: new[] { "IDDONHANGONL", "IDMONAN", "IDMONAN2" });
+                columns: new[] { "IDDONHANG", "IDMONAN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DATBAN_IDCHINHANH",
@@ -716,9 +550,9 @@ namespace WebsiteOrdering.Migrations
                 column: "IDCHINHANH");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DATBAN_USERID",
+                name: "IX_DATBAN_IDNGDUNG",
                 table: "DATBAN",
-                column: "USERID");
+                column: "IDNGDUNG");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DONHANG_IDCHINHANH",
@@ -731,29 +565,9 @@ namespace WebsiteOrdering.Migrations
                 column: "IDDATBAN");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DONHANG_IDKHUYENMAI",
+                name: "IX_DONHANG_IDNGDUNG",
                 table: "DONHANG",
-                column: "IDKHUYENMAI");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DONHANG_USERID",
-                table: "DONHANG",
-                column: "USERID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DONHANGONL_IDCHINHANH",
-                table: "DONHANGONL",
-                column: "IDCHINHANH");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DONHANGONL_IDKHUYENMAI",
-                table: "DONHANGONL",
-                column: "IDKHUYENMAI");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DONHANGONL_USERID",
-                table: "DONHANGONL",
-                column: "USERID");
+                column: "IDNGDUNG");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LISTGIASIZE_IDSIZE",
@@ -790,19 +604,10 @@ namespace WebsiteOrdering.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CHITIETBAN");
-
-            migrationBuilder.DropTable(
-                name: "ChitietdonhangonlTopping");
-
-            migrationBuilder.DropTable(
-                name: "ChitietdonhangTopping");
+                name: "CHITIETDATBAN");
 
             migrationBuilder.DropTable(
                 name: "CHITIETTOPPING");
-
-            migrationBuilder.DropTable(
-                name: "CHITIETTOPPINGONL");
 
             migrationBuilder.DropTable(
                 name: "LISTGIASIZE");
@@ -820,22 +625,16 @@ namespace WebsiteOrdering.Migrations
                 name: "CHITIETDONHANG");
 
             migrationBuilder.DropTable(
-                name: "CHITIETDONHANGONL");
+                name: "TOPPING");
 
             migrationBuilder.DropTable(
-                name: "TOPPING");
+                name: "DEBANH");
 
             migrationBuilder.DropTable(
                 name: "DONHANG");
 
             migrationBuilder.DropTable(
                 name: "MONAN");
-
-            migrationBuilder.DropTable(
-                name: "DEBANH");
-
-            migrationBuilder.DropTable(
-                name: "DONHANGONL");
 
             migrationBuilder.DropTable(
                 name: "SIZE");
@@ -845,9 +644,6 @@ namespace WebsiteOrdering.Migrations
 
             migrationBuilder.DropTable(
                 name: "LOAIMONAN");
-
-            migrationBuilder.DropTable(
-                name: "DANHMUCKHUYENMAI");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

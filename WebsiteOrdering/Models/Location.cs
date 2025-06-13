@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace WebsiteOrdering.Models.Entities
+namespace WebsiteOrdering.Models
 {
     public class Location
     {

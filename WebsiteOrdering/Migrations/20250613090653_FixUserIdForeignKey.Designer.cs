@@ -12,8 +12,8 @@ using WebsiteOrdering.Data;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250609103358_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20250613090653_FixUserIdForeignKey")]
+    partial class FixUserIdForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,120 +24,6 @@ namespace WebsiteOrdering.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ChitietdonhangTopping", b =>
-                {
-                    b.Property<string>("Idtopping")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Iddonhang")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Idmonan")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Idmonan2")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Idtopping", "Iddonhang", "Idmonan", "Idmonan2");
-
-                    b.ToTable("ChitietdonhangTopping");
-                });
-
-            modelBuilder.Entity("ChitietdonhangonlTopping", b =>
-                {
-                    b.Property<string>("Idtopping")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Iddonhangonl")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Idmonan")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Idmonan2")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Idtopping", "Iddonhangonl", "Idmonan", "Idmonan2");
-
-                    b.ToTable("ChitietdonhangonlTopping");
-                });
-
-            modelBuilder.Entity("Chitiettopping", b =>
-                {
-                    b.Property<string>("Idtopping")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDTOPPING")
-                        .IsFixedLength();
-
-                    b.Property<string>("Iddonhang")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANG")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan2")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN2")
-                        .IsFixedLength();
-
-                    b.HasKey("Idtopping", "Iddonhang", "Idmonan", "Idmonan2")
-                        .HasName("PK__CHITIETT__799084CEE74352D4");
-
-                    b.HasIndex("Iddonhang", "Idmonan", "Idmonan2");
-
-                    b.ToTable("CHITIETTOPPING", (string)null);
-                });
-
-            modelBuilder.Entity("Chitiettoppingonl", b =>
-                {
-                    b.Property<string>("Idtopping")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDTOPPING")
-                        .IsFixedLength();
-
-                    b.Property<string>("Iddonhangonl")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANGONL")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan2")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN2")
-                        .IsFixedLength();
-
-                    b.HasKey("Idtopping", "Iddonhangonl", "Idmonan", "Idmonan2")
-                        .HasName("PK__CHITIETT__AC0BDD50F7A79B3B");
-
-                    b.HasIndex("Iddonhangonl", "Idmonan", "Idmonan2");
-
-                    b.ToTable("CHITIETTOPPINGONL", (string)null);
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -295,16 +181,18 @@ namespace WebsiteOrdering.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FullName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("HOTEN");
+
                     b.Property<string>("Gender")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("GIOITINH");
 
-                    b.Property<string>("Idchinhanh")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDCHINHANH");
+                    b.Property<string>("IdchinhanhNavigationIdchinhanh")
+                        .HasColumnType("char(5)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -341,7 +229,7 @@ namespace WebsiteOrdering.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Idchinhanh");
+                    b.HasIndex("IdchinhanhNavigationIdchinhanh");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -354,7 +242,7 @@ namespace WebsiteOrdering.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Ban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Ban", b =>
                 {
                     b.Property<string>("Idban")
                         .HasMaxLength(5)
@@ -372,8 +260,9 @@ namespace WebsiteOrdering.Migrations
                         .IsFixedLength();
 
                     b.Property<string>("Khuvuc")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("KHUVUC");
 
                     b.Property<int>("Songuoi")
@@ -382,19 +271,25 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Tenban")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENBAN");
 
+                    b.Property<string>("Trangthaiban")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TRANGTHAIBAN");
+
                     b.HasKey("Idban")
-                        .HasName("PK__BAN__9367225EC3E6D028");
+                        .HasName("PK__BAN__9367225E468C45A0");
 
                     b.HasIndex("Idchinhanh");
 
-                    b.ToTable("BAN");
+                    b.ToTable("BAN", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chinhanh", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chinhanh", b =>
                 {
                     b.Property<string>("Idchinhanh")
                         .HasMaxLength(5)
@@ -405,23 +300,23 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Diachicn")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("DIACHICN");
 
-                    b.Property<string>("Tenchinhanh")
+                    b.Property<string>("Tencnhanh")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("TENCHINHANH");
+                        .HasColumnName("TENCNHANH");
 
                     b.HasKey("Idchinhanh")
-                        .HasName("PK__CHINHANH__5F20FC4041DF698B");
+                        .HasName("PK__CHINHANH__5F20FC40654C6C03");
 
-                    b.ToTable("CHINHANH");
+                    b.ToTable("CHINHANH", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitietdatban", b =>
                 {
                     b.Property<string>("Iddatban")
                         .HasMaxLength(5)
@@ -445,21 +340,15 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("time")
                         .HasColumnName("GIOVAO");
 
-                    b.Property<string>("Trangthaiban")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("TRANGTHAIBAN");
-
                     b.HasKey("Iddatban", "Idban")
-                        .HasName("PK__CHITIETB__27F2122C9119BD2E");
+                        .HasName("PK__CHITIETD__27F2122C38F80AE0");
 
                     b.HasIndex("Idban");
 
-                    b.ToTable("CHITIETBAN");
+                    b.ToTable("CHITIETDATBAN", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietdonhang", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitietdonhang", b =>
                 {
                     b.Property<string>("Iddonhang")
                         .HasMaxLength(5)
@@ -475,21 +364,15 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDMONAN")
                         .IsFixedLength();
 
-                    b.Property<string>("Idmonan2")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN2")
-                        .IsFixedLength();
+                    b.Property<int>("Dongia")
+                        .HasColumnType("int")
+                        .HasColumnName("DONGIA");
 
                     b.Property<string>("Ghichu")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("GHICHU");
-
-                    b.Property<int>("Gia")
-                        .HasColumnType("int")
-                        .HasColumnName("GIA");
 
                     b.Property<string>("Iddebanh")
                         .HasMaxLength(5)
@@ -498,8 +381,14 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDDEBANH")
                         .IsFixedLength();
 
+                    b.Property<string>("Idmonan2")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDMONAN2")
+                        .IsFixedLength();
+
                     b.Property<string>("Idsize")
-                        .IsRequired()
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
@@ -515,134 +404,56 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("SOLUONG");
 
-                    b.Property<int>("Tongtien")
+                    b.Property<int>("Tongtiendh")
                         .HasColumnType("int")
-                        .HasColumnName("TONGTIEN");
+                        .HasColumnName("TONGTIENDH");
 
-                    b.HasKey("Iddonhang", "Idmonan", "Idmonan2")
-                        .HasName("PK__CHITIETD__8EFDF8BDABAA408C");
+                    b.HasKey("Iddonhang", "Idmonan")
+                        .HasName("PK__CHITIETD__150E02391C3C3DE5");
 
                     b.HasIndex("Iddebanh");
 
+                    b.HasIndex("Idmonan");
+
                     b.HasIndex("Idsize");
 
-                    b.HasIndex("Idmonan", "Idmonan2");
-
-                    b.ToTable("CHITIETDONHANG");
+                    b.ToTable("CHITIETDONHANG", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietdonhangonl", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
-                    b.Property<string>("Iddonhangonl")
+                    b.Property<string>("Idtopping")
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANGONL")
+                        .HasColumnName("IDTOPPING")
+                        .IsFixedLength();
+
+                    b.Property<string>("Iddonhang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDDONHANG")
                         .IsFixedLength();
 
                     b.Property<string>("Idmonan")
+                        .IsRequired()
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
                         .HasColumnName("IDMONAN")
                         .IsFixedLength();
 
-                    b.Property<string>("Idmonan2")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN2")
-                        .IsFixedLength();
+                    b.HasKey("Idtopping")
+                        .HasName("PK__CHITIETT__B17F5B45F7D210ED");
 
-                    b.Property<string>("Ghichu")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("GHICHU");
+                    b.HasIndex("Iddonhang", "Idmonan");
 
-                    b.Property<int>("Giadh")
-                        .HasColumnType("int")
-                        .HasColumnName("GIADH");
-
-                    b.Property<string>("Iddebanh")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDEBANH")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idsize")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDSIZE")
-                        .IsFixedLength();
-
-                    b.Property<string>("Kieupizzaonl")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("KIEUPIZZAONL");
-
-                    b.Property<int>("Soluongdh")
-                        .HasColumnType("int")
-                        .HasColumnName("SOLUONGDH");
-
-                    b.Property<int>("Tongtiendh")
-                        .HasColumnType("int")
-                        .HasColumnName("TONGTIENDH");
-
-                    b.HasKey("Iddonhangonl", "Idmonan", "Idmonan2")
-                        .HasName("PK__CHITIETD__D7486150E300646B");
-
-                    b.HasIndex("Iddebanh");
-
-                    b.HasIndex("Idsize");
-
-                    b.HasIndex("Idmonan", "Idmonan2");
-
-                    b.ToTable("CHITIETDONHANGONL");
+                    b.ToTable("CHITIETTOPPING", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Danhmuckhuyenmai", b =>
-                {
-                    b.Property<string>("Idkhuyenmai")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDKHUYENMAI")
-                        .IsFixedLength();
-
-                    b.Property<int>("Giatri")
-                        .HasColumnType("int")
-                        .HasColumnName("GIATRI");
-
-                    b.Property<string>("Motakm")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("MOTAKM");
-
-                    b.Property<DateOnly>("Ngayapdung")
-                        .HasColumnType("date")
-                        .HasColumnName("NGAYAPDUNG");
-
-                    b.Property<DateOnly>("Ngayhethan")
-                        .HasColumnType("date")
-                        .HasColumnName("NGAYHETHAN");
-
-                    b.Property<string>("Tenkhuyenmai")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("TENKHUYENMAI");
-
-                    b.HasKey("Idkhuyenmai")
-                        .HasName("PK__DANHMUCK__9E055897C118320B");
-
-                    b.ToTable("DANHMUCKHUYENMAI");
-                });
-
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Datban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Datban", b =>
                 {
                     b.Property<string>("Iddatban")
                         .HasMaxLength(5)
@@ -672,6 +483,10 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDCHINHANH")
                         .IsFixedLength();
 
+                    b.Property<string>("Idngdung")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("IDNGDUNG");
+
                     b.Property<DateOnly>("Ngaydat")
                         .HasColumnType("date")
                         .HasColumnName("NGAYDAT");
@@ -682,27 +497,21 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Trangthaidatban")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)")
                         .HasColumnName("TRANGTHAIDATBAN");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("USERID");
-
                     b.HasKey("Iddatban")
-                        .HasName("PK__DATBAN__DEC46009C032B7D1");
+                        .HasName("PK__DATBAN__DEC460099CB35DD0");
 
                     b.HasIndex("Idchinhanh");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Idngdung");
 
-                    b.ToTable("DATBAN");
+                    b.ToTable("DATBAN", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Debanh", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Debanh", b =>
                 {
                     b.Property<string>("Iddebanh")
                         .HasMaxLength(5)
@@ -717,17 +526,17 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Tendebanh")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENDEBANH");
 
                     b.HasKey("Iddebanh")
-                        .HasName("PK__DEBANH__555F23FFB140968E");
+                        .HasName("PK__DEBANH__555F23FF6173600D");
 
-                    b.ToTable("DEBANH");
+                    b.ToTable("DEBANH", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhang", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Donhang", b =>
                 {
                     b.Property<string>("Iddonhang")
                         .HasMaxLength(5)
@@ -736,8 +545,13 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDDONHANG")
                         .IsFixedLength();
 
-                    b.Property<string>("Idchinhanh")
+                    b.Property<string>("Diachidh")
                         .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("DIACHIDH");
+
+                    b.Property<string>("Idchinhanh")
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
@@ -745,105 +559,36 @@ namespace WebsiteOrdering.Migrations
                         .IsFixedLength();
 
                     b.Property<string>("Iddatban")
-                        .IsRequired()
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
                         .HasColumnName("IDDATBAN")
                         .IsFixedLength();
 
-                    b.Property<string>("Idkhuyenmai")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDKHUYENMAI")
-                        .IsFixedLength();
+                    b.Property<string>("Idngdung")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("IDNGDUNG");
 
                     b.Property<DateOnly>("Ngaydat")
                         .HasColumnType("date")
                         .HasColumnName("NGAYDAT");
 
-                    b.Property<string>("Phuongthucthanhtoan")
+                    b.Property<string>("Ptttoan")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("PHUONGTHUCTHANHTOAN");
+                        .HasColumnName("PTTTOAN");
 
-                    b.Property<int>("Songuoi")
+                    b.Property<int?>("Songuoi")
                         .HasColumnType("int")
                         .HasColumnName("SONGUOI");
 
                     b.Property<string>("Tenkh")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENKH");
 
-                    b.Property<int>("Tongdh")
-                        .HasColumnType("int")
-                        .HasColumnName("TONGDH");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("USERID");
-
-                    b.HasKey("Iddonhang")
-                        .HasName("PK__DONHANG__F59FA8B118A5D193");
-
-                    b.HasIndex("Idchinhanh");
-
-                    b.HasIndex("Iddatban");
-
-                    b.HasIndex("Idkhuyenmai");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("DONHANG");
-                });
-
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhangonl", b =>
-                {
-                    b.Property<string>("Iddonhangonl")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANGONL")
-                        .IsFixedLength();
-
-                    b.Property<string>("Diachi")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("DIACHI");
-
-                    b.Property<string>("Idchinhanh")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDCHINHANH")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idkhuyenmai")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDKHUYENMAI")
-                        .IsFixedLength();
-
-                    b.Property<DateOnly>("Ngaydatdon")
-                        .HasColumnType("date")
-                        .HasColumnName("NGAYDATDON");
-
-                    b.Property<string>("Ptttonl")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("PTTTONL");
-
-                    b.Property<int>("Tienship")
+                    b.Property<int?>("Tienship")
                         .HasColumnType("int")
                         .HasColumnName("TIENSHIP");
 
@@ -857,25 +602,19 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("TRANGTHAI");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)")
-                        .HasColumnName("USERID");
-
-                    b.HasKey("Iddonhangonl")
-                        .HasName("PK__DONHANGO__AC2A315C15B12C03");
+                    b.HasKey("Iddonhang")
+                        .HasName("PK__DONHANG__F59FA8B171F225E2");
 
                     b.HasIndex("Idchinhanh");
 
-                    b.HasIndex("Idkhuyenmai");
+                    b.HasIndex("Iddatban");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Idngdung");
 
-                    b.ToTable("DONHANGONL");
+                    b.ToTable("DONHANG", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Listgiasize", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Listgiasize", b =>
                 {
                     b.Property<string>("Idloaimonan")
                         .HasMaxLength(5)
@@ -891,19 +630,19 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDSIZE")
                         .IsFixedLength();
 
-                    b.Property<int>("Gia")
+                    b.Property<int>("Giasize")
                         .HasColumnType("int")
-                        .HasColumnName("GIA");
+                        .HasColumnName("GIASIZE");
 
                     b.HasKey("Idloaimonan", "Idsize")
-                        .HasName("PK__LISTGIAS__93A480291F324B05");
+                        .HasName("PK__LISTGIAS__93A480290675CE8A");
 
                     b.HasIndex("Idsize");
 
-                    b.ToTable("LISTGIASIZE");
+                    b.ToTable("LISTGIASIZE", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Loaimonan", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Loaimonan", b =>
                 {
                     b.Property<string>("Idloaimonan")
                         .HasMaxLength(5)
@@ -912,24 +651,30 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDLOAIMONAN")
                         .IsFixedLength();
 
+                    b.Property<string>("IdloaimanCha")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDLOAIMAN_CHA")
+                        .IsFixedLength();
+
                     b.Property<string>("Tenloaimonan")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENLOAIMONAN");
 
                     b.HasKey("Idloaimonan")
-                        .HasName("PK__LOAIMONA__6B7E94ED8043D23A");
+                        .HasName("PK__LOAIMONA__6B7E94ED6B8131AD");
 
-                    b.ToTable("LOAIMONAN");
+                    b.ToTable("LOAIMONAN", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Location", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .IsFixedLength();
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -949,26 +694,18 @@ namespace WebsiteOrdering.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id")
-                        .HasName("PK__ID__6B7E94ED8043D11B");
+                    b.HasKey("Id");
 
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Monan", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
                     b.Property<string>("Idmonan")
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
                         .HasColumnName("IDMONAN")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan2")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN2")
                         .IsFixedLength();
 
                     b.Property<string>("Anhmonan")
@@ -978,9 +715,9 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("ANHMONAN");
 
-                    b.Property<int>("Giacoban")
+                    b.Property<int>("Giamonan")
                         .HasColumnType("int")
-                        .HasColumnName("GIACOBAN");
+                        .HasColumnName("GIAMONAN");
 
                     b.Property<string>("Idloaimonan")
                         .IsRequired()
@@ -990,11 +727,11 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDLOAIMONAN")
                         .IsFixedLength();
 
-                    b.Property<string>("Motamonan")
+                    b.Property<string>("Mota")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
-                        .HasColumnName("MOTAMONAN");
+                        .HasColumnName("MOTA");
 
                     b.Property<string>("Tenmonan")
                         .IsRequired()
@@ -1002,21 +739,21 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENMONAN");
 
-                    b.Property<string>("Trangthai")
+                    b.Property<string>("Trangthaiman")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("TRANGTHAI");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TRANGTHAIMAN");
 
-                    b.HasKey("Idmonan", "Idmonan2")
-                        .HasName("PK__MONAN__B62500C613AC53C3");
+                    b.HasKey("Idmonan")
+                        .HasName("PK__MONAN__091AA88F8490BF0E");
 
                     b.HasIndex("Idloaimonan");
 
-                    b.ToTable("MONAN");
+                    b.ToTable("MONAN", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Size", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Size", b =>
                 {
                     b.Property<string>("Idsize")
                         .HasMaxLength(5)
@@ -1027,17 +764,17 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Tensize")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENSIZE");
 
                     b.HasKey("Idsize")
-                        .HasName("PK__SIZE__8DA14C4E58CC03AA");
+                        .HasName("PK__SIZE__8DA14C4EE47FAF46");
 
-                    b.ToTable("SIZE");
+                    b.ToTable("SIZE", (string)null);
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Topping", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Topping", b =>
                 {
                     b.Property<string>("Idtopping")
                         .HasMaxLength(5)
@@ -1060,46 +797,16 @@ namespace WebsiteOrdering.Migrations
 
                     b.Property<string>("Tentopping")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENTOPPING");
 
                     b.HasKey("Idtopping")
-                        .HasName("PK__TOPPING__B17F5B459FE8393F");
+                        .HasName("PK__TOPPING__B17F5B453E08CBB9");
 
                     b.HasIndex("Idloaimonan");
 
-                    b.ToTable("TOPPING");
-                });
-
-            modelBuilder.Entity("Chitiettopping", b =>
-                {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Topping", null)
-                        .WithMany()
-                        .HasForeignKey("Idtopping")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTO__IDTOP__151B244E");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chitietdonhang", null)
-                        .WithMany()
-                        .HasForeignKey("Iddonhang", "Idmonan", "Idmonan2")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTOPPING__160F4887");
-                });
-
-            modelBuilder.Entity("Chitiettoppingonl", b =>
-                {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Topping", null)
-                        .WithMany()
-                        .HasForeignKey("Idtopping")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTO__IDTOP__18EBB532");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chitietdonhangonl", null)
-                        .WithMany()
-                        .HasForeignKey("Iddonhangonl", "Idmonan", "Idmonan2")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTOPPINGON__19DFD96B");
+                    b.ToTable("TOPPING", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1155,227 +862,174 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chinhanh", "IdchinhanhNavigation")
-                        .WithMany("Users")
-                        .HasForeignKey("Idchinhanh");
+                    b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
+                        .WithMany("Nguoidungs")
+                        .HasForeignKey("IdchinhanhNavigationIdchinhanh");
 
                     b.Navigation("IdchinhanhNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Ban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Ban", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chinhanh", "IdchinhanhNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Bans")
                         .HasForeignKey("Idchinhanh")
                         .IsRequired()
-                        .HasConstraintName("FK__BAN__IDCHINHANH__6477ECF3");
+                        .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
 
                     b.Navigation("IdchinhanhNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitietdatban", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Ban", "IdbanNavigation")
-                        .WithMany("Chitietbans")
+                    b.HasOne("WebsiteOrdering.Models.Ban", "IdbanNavigation")
+                        .WithMany("Chitietdatbans")
                         .HasForeignKey("Idban")
                         .IsRequired()
-                        .HasConstraintName("FK__CHITIETBA__IDBAN__76969D2E");
+                        .HasConstraintName("FK__CHITIETDA__IDBAN__403A8C7D");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Datban", "IddatbanNavigation")
-                        .WithMany("Chitietbans")
+                    b.HasOne("WebsiteOrdering.Models.Datban", "IddatbanNavigation")
+                        .WithMany("Chitietdatbans")
                         .HasForeignKey("Iddatban")
                         .IsRequired()
-                        .HasConstraintName("FK__CHITIETBA__IDDAT__75A278F5");
+                        .HasConstraintName("FK__CHITIETDA__IDDAT__3F466844");
 
                     b.Navigation("IdbanNavigation");
 
                     b.Navigation("IddatbanNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietdonhang", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitietdonhang", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Debanh", "IddebanhNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Debanh", "IddebanhNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Iddebanh")
-                        .HasConstraintName("FK__CHITIETDO__IDDEB__0A9D95DB");
+                        .HasConstraintName("FK__CHITIETDO__IDDEB__49C3F6B7");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Donhang", "IddonhangNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Donhang", "IddonhangNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Iddonhang")
                         .IsRequired()
-                        .HasConstraintName("FK__CHITIETDO__IDDON__09A971A2");
+                        .HasConstraintName("FK__CHITIETDO__IDDON__47DBAE45");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Size", "IdsizeNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Monan", "IdmonanNavigation")
+                        .WithMany("Chitietdonhangs")
+                        .HasForeignKey("Idmonan")
+                        .IsRequired()
+                        .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
+
+                    b.HasOne("WebsiteOrdering.Models.Size", "IdsizeNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Idsize")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETDO__IDSIZ__0C85DE4D");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Monan", "Monan")
-                        .WithMany("Chitietdonhangs")
-                        .HasForeignKey("Idmonan", "Idmonan2")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETDONHANG__0B91BA14");
+                        .HasConstraintName("FK__CHITIETDO__IDSIZ__4AB81AF0");
 
                     b.Navigation("IddebanhNavigation");
 
                     b.Navigation("IddonhangNavigation");
 
-                    b.Navigation("IdsizeNavigation");
-
-                    b.Navigation("Monan");
-                });
-
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chitietdonhangonl", b =>
-                {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Debanh", "IddebanhNavigation")
-                        .WithMany("Chitietdonhangonls")
-                        .HasForeignKey("Iddebanh")
-                        .HasConstraintName("FK__CHITIETDO__IDDEB__10566F31");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Donhangonl", "IddonhangonlNavigation")
-                        .WithMany("Chitietdonhangonls")
-                        .HasForeignKey("Iddonhangonl")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETDO__IDDON__0F624AF8");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Size", "IdsizeNavigation")
-                        .WithMany("Chitietdonhangonls")
-                        .HasForeignKey("Idsize")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETDO__IDSIZ__114A936A");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Monan", "Monan")
-                        .WithMany("Chitietdonhangonls")
-                        .HasForeignKey("Idmonan", "Idmonan2")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETDONHANGON__123EB7A3");
-
-                    b.Navigation("IddebanhNavigation");
-
-                    b.Navigation("IddonhangonlNavigation");
+                    b.Navigation("IdmonanNavigation");
 
                     b.Navigation("IdsizeNavigation");
-
-                    b.Navigation("Monan");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Datban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chinhanh", "IdchinhanhNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Topping", "IdtoppingNavigation")
+                        .WithOne("Chitiettopping")
+                        .HasForeignKey("WebsiteOrdering.Models.Chitiettopping", "Idtopping")
+                        .IsRequired()
+                        .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
+
+                    b.HasOne("WebsiteOrdering.Models.Chitietdonhang", "Chitietdonhang")
+                        .WithMany("Chitiettoppings")
+                        .HasForeignKey("Iddonhang", "Idmonan")
+                        .IsRequired()
+                        .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
+
+                    b.Navigation("Chitietdonhang");
+
+                    b.Navigation("IdtoppingNavigation");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.Models.Datban", b =>
+                {
+                    b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Datbans")
                         .HasForeignKey("Idchinhanh")
                         .IsRequired()
-                        .HasConstraintName("FK__DATBAN__IDCHINHA__60A75C0F");
+                        .HasConstraintName("FK__DATBAN__IDCHINHA__3C69FB99");
 
-                    b.HasOne("WebsiteOrdering.Models.ApplicationUser", "User")
+                    b.HasOne("WebsiteOrdering.Models.ApplicationUser", "Nguoidung")
                         .WithMany("Datbans")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK__DATBAN__USERID__619B8048");
+                        .HasForeignKey("Idngdung")
+                        .HasConstraintName("FK__DATBAN__IDNGDUNG__3B75D760");
 
                     b.Navigation("IdchinhanhNavigation");
 
-                    b.Navigation("User");
+                    b.Navigation("Nguoidung");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhang", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Donhang", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chinhanh", "IdchinhanhNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Donhangs")
                         .HasForeignKey("Idchinhanh")
-                        .IsRequired()
-                        .HasConstraintName("FK__DONHANG__IDCHINH__7C4F7684");
+                        .HasConstraintName("FK__DONHANG__IDCHINH__4316F928");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Datban", "IddatbanNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Datban", "IddatbanNavigation")
                         .WithMany("Donhangs")
                         .HasForeignKey("Iddatban")
-                        .IsRequired()
-                        .HasConstraintName("FK__DONHANG__IDDATBA__7E37BEF6");
+                        .HasConstraintName("FK__DONHANG__IDDATBA__440B1D61");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Danhmuckhuyenmai", "IdkhuyenmaiNavigation")
+                    b.HasOne("WebsiteOrdering.Models.ApplicationUser", "IdngdungNavigation")
                         .WithMany("Donhangs")
-                        .HasForeignKey("Idkhuyenmai")
-                        .HasConstraintName("FK__DONHANG__IDKHUYE__7F2BE32F");
-
-                    b.HasOne("WebsiteOrdering.Models.ApplicationUser", "User")
-                        .WithMany("Donhangs")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK__DONHANG__USERID__7D439ABD");
+                        .HasForeignKey("Idngdung")
+                        .HasConstraintName("FK__DONHANG__IDNGDUN__44FF419A");
 
                     b.Navigation("IdchinhanhNavigation");
 
                     b.Navigation("IddatbanNavigation");
 
-                    b.Navigation("IdkhuyenmaiNavigation");
-
-                    b.Navigation("User");
+                    b.Navigation("IdngdungNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhangonl", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Listgiasize", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Chinhanh", "IdchinhanhNavigation")
-                        .WithMany("Donhangonls")
-                        .HasForeignKey("Idchinhanh")
-                        .IsRequired()
-                        .HasConstraintName("FK__DONHANGON__IDCHI__02FC7413");
-
-                    b.HasOne("WebsiteOrdering.Models.Entities.Danhmuckhuyenmai", "IdkhuyenmaiNavigation")
-                        .WithMany("Donhangonls")
-                        .HasForeignKey("Idkhuyenmai")
-                        .HasConstraintName("FK__DONHANGON__IDKHU__03F0984C");
-
-                    b.HasOne("WebsiteOrdering.Models.ApplicationUser", "User")
-                        .WithMany("Donhangonls")
-                        .HasForeignKey("UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK__DONHANGONL__USERID__02084FDA");
-
-                    b.Navigation("IdchinhanhNavigation");
-
-                    b.Navigation("IdkhuyenmaiNavigation");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Listgiasize", b =>
-                {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Loaimonan", "IdloaimonanNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Listgiasizes")
                         .HasForeignKey("Idloaimonan")
                         .IsRequired()
-                        .HasConstraintName("FK__LISTGIASI__IDLOA__71D1E811");
+                        .HasConstraintName("FK__LISTGIASI__IDLOA__31EC6D26");
 
-                    b.HasOne("WebsiteOrdering.Models.Entities.Size", "IdsizeNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Size", "IdsizeNavigation")
                         .WithMany("Listgiasizes")
                         .HasForeignKey("Idsize")
                         .IsRequired()
-                        .HasConstraintName("FK__LISTGIASI__IDSIZ__72C60C4A");
+                        .HasConstraintName("FK__LISTGIASI__IDSIZ__32E0915F");
 
                     b.Navigation("IdloaimonanNavigation");
 
                     b.Navigation("IdsizeNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Monan", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Loaimonan", "IdloaimonanNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Monans")
                         .HasForeignKey("Idloaimonan")
                         .IsRequired()
-                        .HasConstraintName("FK__MONAN__IDLOAIMON__06CD04F7");
+                        .HasConstraintName("FK__MONAN__IDLOAIMON__38996AB5");
 
                     b.Navigation("IdloaimonanNavigation");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Topping", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Topping", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Entities.Loaimonan", "IdloaimonanNavigation")
+                    b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Toppings")
                         .HasForeignKey("Idloaimonan")
                         .IsRequired()
-                        .HasConstraintName("FK__TOPPING__IDLOAIM__6B24EA82");
+                        .HasConstraintName("FK__TOPPING__IDLOAIM__2B3F6F97");
 
                     b.Navigation("IdloaimonanNavigation");
                 });
@@ -1384,61 +1038,48 @@ namespace WebsiteOrdering.Migrations
                 {
                     b.Navigation("Datbans");
 
-                    b.Navigation("Donhangonls");
-
                     b.Navigation("Donhangs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Ban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Ban", b =>
                 {
-                    b.Navigation("Chitietbans");
+                    b.Navigation("Chitietdatbans");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Chinhanh", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chinhanh", b =>
                 {
                     b.Navigation("Bans");
 
                     b.Navigation("Datbans");
 
-                    b.Navigation("Donhangonls");
-
                     b.Navigation("Donhangs");
 
-                    b.Navigation("Users");
+                    b.Navigation("Nguoidungs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Danhmuckhuyenmai", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Chitietdonhang", b =>
                 {
-                    b.Navigation("Donhangonls");
-
-                    b.Navigation("Donhangs");
+                    b.Navigation("Chitiettoppings");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Datban", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Datban", b =>
                 {
-                    b.Navigation("Chitietbans");
+                    b.Navigation("Chitietdatbans");
 
                     b.Navigation("Donhangs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Debanh", b =>
-                {
-                    b.Navigation("Chitietdonhangonls");
-
-                    b.Navigation("Chitietdonhangs");
-                });
-
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhang", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Debanh", b =>
                 {
                     b.Navigation("Chitietdonhangs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Donhangonl", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Donhang", b =>
                 {
-                    b.Navigation("Chitietdonhangonls");
+                    b.Navigation("Chitietdonhangs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Loaimonan", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Loaimonan", b =>
                 {
                     b.Navigation("Listgiasizes");
 
@@ -1447,20 +1088,21 @@ namespace WebsiteOrdering.Migrations
                     b.Navigation("Toppings");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Monan", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
-                    b.Navigation("Chitietdonhangonls");
-
                     b.Navigation("Chitietdonhangs");
                 });
 
-            modelBuilder.Entity("WebsiteOrdering.Models.Entities.Size", b =>
+            modelBuilder.Entity("WebsiteOrdering.Models.Size", b =>
                 {
-                    b.Navigation("Chitietdonhangonls");
-
                     b.Navigation("Chitietdonhangs");
 
                     b.Navigation("Listgiasizes");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.Models.Topping", b =>
+                {
+                    b.Navigation("Chitiettopping");
                 });
 #pragma warning restore 612, 618
         }

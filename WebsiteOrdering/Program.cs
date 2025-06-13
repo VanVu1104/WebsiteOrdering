@@ -19,6 +19,8 @@ builder.Services.AddMemoryCache();
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("SpeedSms"));
+builder.Services.Configure<OpenRouteServiceSettings>(
+    builder.Configuration.GetSection("OpenRouteService"));
 builder.Services.AddTransient<ISmsService, SmsService>();
 
 //Cấu hình cookie
@@ -65,6 +67,16 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddHttpClient<IGeoService, GeoService>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddHttpClient();
 
 
 var app = builder.Build();
@@ -91,6 +103,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -100,6 +113,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Location}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
