@@ -28,7 +28,7 @@ namespace WebsiteOrdering.Models
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=.;Database=pizzanhahang1;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=.;Database=pizza6;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,7 +62,7 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Bans)
                     .HasForeignKey(d => d.Idchinhanh)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
             });
 
@@ -106,12 +106,12 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdbanNavigation).WithMany(p => p.Chitietdatbans)
                     .HasForeignKey(d => d.Idban)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETDA__IDBAN__403A8C7D");
 
                 entity.HasOne(d => d.IddatbanNavigation).WithMany(p => p.Chitietdatbans)
                     .HasForeignKey(d => d.Iddatban)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETDA__IDDAT__3F466844");
             });
 
@@ -162,12 +162,12 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IddonhangNavigation).WithMany(p => p.Chitietdonhangs)
                     .HasForeignKey(d => d.Iddonhang)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETDO__IDDON__47DBAE45");
 
                 entity.HasOne(d => d.IdmonanNavigation).WithMany(p => p.Chitietdonhangs)
                     .HasForeignKey(d => d.Idmonan)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
 
                 entity.HasOne(d => d.IdsizeNavigation).WithMany(p => p.Chitietdonhangs)
@@ -197,14 +197,14 @@ namespace WebsiteOrdering.Models
                     .IsFixedLength()
                     .HasColumnName("IDMONAN");
 
-                entity.HasOne(d => d.IdtoppingNavigation).WithOne(p => p.Chitiettopping)
-                    .HasForeignKey<Chitiettopping>(d => d.Idtopping)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                entity.HasOne(d => d.IdtoppingNavigation).WithMany(p => p.Chitiettoppings)
+                    .HasForeignKey(d => d.Idtopping)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
 
                 entity.HasOne(d => d.Chitietdonhang).WithMany(p => p.Chitiettoppings)
                     .HasForeignKey(d => new { d.Iddonhang, d.Idmonan })
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
             });
 
@@ -239,7 +239,7 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Datbans)
                     .HasForeignKey(d => d.Idchinhanh)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__DATBAN__IDCHINHA__3C69FB99");
 
                 entity.HasOne(d => d.Nguoidung).WithMany(p => p.Datbans)
@@ -339,12 +339,12 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Listgiasizes)
                     .HasForeignKey(d => d.Idloaimonan)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__LISTGIASI__IDLOA__31EC6D26");
 
                 entity.HasOne(d => d.IdsizeNavigation).WithMany(p => p.Listgiasizes)
                     .HasForeignKey(d => d.Idsize)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__LISTGIASI__IDSIZ__32E0915F");
             });
 
@@ -402,7 +402,7 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Monans)
                     .HasForeignKey(d => d.Idloaimonan)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__MONAN__IDLOAIMON__38996AB5");
             });
 
@@ -445,7 +445,7 @@ namespace WebsiteOrdering.Models
 
                 entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Toppings)
                     .HasForeignKey(d => d.Idloaimonan)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__TOPPING__IDLOAIM__2B3F6F97");
             });
 

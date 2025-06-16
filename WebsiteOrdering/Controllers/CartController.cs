@@ -255,12 +255,12 @@ namespace WebsiteOrdering.Controllers
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-            // 1. Parse topping cũ
+            // Parse topping cũ
             var originalToppingIds = !string.IsNullOrEmpty(originalToppings)
                 ? originalToppings.Split(',').ToList()
                 : new List<string>();
 
-            // 2. Tìm sản phẩm cũ trong giỏ hàng (so sánh theo ID + toppings)
+            // Tìm sản phẩm cũ trong giỏ hàng (so sánh theo ID + toppings)
             var oldItem = cart.FirstOrDefault(c =>
                 c.IDMONAN == originalIdmonan &&
                 c.IDMMONAN2 == originalIdmonan2 &&
@@ -279,21 +279,19 @@ namespace WebsiteOrdering.Controllers
                 return Json(new { success = false, message = "Không tìm thấy sản phẩm trong giỏ hàng." });
 
             cart.Remove(oldItem); // Xoá bản cũ
-
-            // 3. Lấy sản phẩm mới
+            //  Lấy sản phẩm mới
             var product = await _appDbContext.SanPhams
                 .Include(p => p.IdloaimonanNavigation)
                 .FirstOrDefaultAsync(p => p.Idmonan == idmonan);
 
             if (product == null)
                 return Json(new { success = false, message = "Sản phẩm không tồn tại." });
-
-        
-            // 4. Lấy size và đế bánh
+       
+            //  Lấy size và đế bánh
             var size = await _appDbContext.Sizes.FindAsync(selectedSizeId);
             var debanh = await _appDbContext.debanh.FindAsync(selectedDeBanhId);
 
-            // 5. Tính giá cơ bản
+            //  Tính giá cơ bản
             int giacoban = product.Giamonan;
             string? tenmonan2 = null;
 
@@ -307,14 +305,7 @@ namespace WebsiteOrdering.Controllers
                 }
             }
 
-            // 6. Tính giá size theo Idloaimonan
-            //int? giasize = await _appDbContext.ListGiaSizes
-            //    .Where(l => l.Idloaimonan == product.Idloaimonan && l.Idsize == selectedSizeId)
-            //    .Select(l => (int?)l.Giasize)
-            //    .FirstOrDefaultAsync();
-
-            //if (giasize == null)
-            //    return Json(new { success = false, message = "Không tìm thấy giá cho size đã chọn." });
+            //  Tính giá size theo Idloaimonan
             int giasize = 0;
             if (!string.IsNullOrEmpty(selectedSizeId))
             {
@@ -331,7 +322,7 @@ namespace WebsiteOrdering.Controllers
 
             int giadebanh = debanh?.Giadebanh ?? 0;
 
-            // 7. Lấy topping theo ID và loại món ăn
+            //  Lấy topping theo ID và loại món ăn
             var toppingObjs = new List<Topping>();
             if (selectedToppingIds != null && selectedToppingIds.Count > 0)
             {
@@ -347,8 +338,7 @@ namespace WebsiteOrdering.Controllers
                     .ToListAsync();
 
             }
-
-            // 8. Kiểm tra sản phẩm tương tự đã có trong giỏ hàng chưa
+            //  Kiểm tra sản phẩm tương tự đã có trong giỏ hàng chưa
             var existingItem = cart.FirstOrDefault(c =>
                 c.IDMONAN == idmonan &&
                 c.IDMMONAN2 == idmonan2 &&
@@ -390,11 +380,11 @@ namespace WebsiteOrdering.Controllers
 
                 cart.Add(newCartItem);
             }
-
-            // 9. Lưu lại session
+            // Lưu lại session
             HttpContext.Session.Set("Cart", cart);
             return Json(new { success = true});
         }
+        //Hàm để lấy thuộc tính theo loại
         [HttpGet]
         public async Task<IActionResult> GetOptionsByMonAnId(string idmonan)
         {

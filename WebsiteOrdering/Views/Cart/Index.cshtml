@@ -42,7 +42,6 @@
                     } else if (value > 1) {
                         value -= 1;
                     }
-                   // const editForm = document.getElementById("edit-cart-form");
                     const form = this.closest("form");
                     const formData = new FormData(form);
                     formData.set("soluong", value);
@@ -65,10 +64,7 @@
                                 const cb = row.querySelector(".cart-select");
                                 cb.dataset.tongtien = data.tongTienMoi; // cập nhật giá trị data-tongtien
                                 const tongTienCell = row.querySelector("td:nth-last-child(2)");
-                                tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + "₫";
-                                // Đóng modal
-                                // const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                                // modal.hide();
+                                tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + "₫";         
                                 calculateTotal();
 
                             } else {
@@ -296,37 +292,7 @@
                         modal.show();
                     });
             }
-            // document.getElementById("edit-soluong")?.addEventListener("input", updateTotalPrice);
-            // document.getElementById("edit-size")?.addEventListener("change", updateTotalPrice);
-            // document.getElementById("edit-debanh")?.addEventListener("change", updateTotalPrice);
-            // document.querySelectorAll(".edit-topping-checkbox").forEach(cb => {
-            //     cb.addEventListener("change", updateTotalPrice);
-            // });
-            // //Xử lý tổng tiền trong modal mà chưa hoàn thành
-            // function updateTotalPrice() {
-            //     const giaCoBan = parseInt(document.getElementById("edit-idmonan").dataset.giacoban || 0);
-
-            //     const selectedSize = document.getElementById("edit-size");
-            //     const selectedSizePrice = selectedSize.selectedOptions[0]?.dataset.gia || 0;
-            //     const giaSize = parseInt(selectedSizePrice || 0);
-
-            //     const selectedDeBanh = document.getElementById("edit-debanh");
-            //     const selectedDeBanhPrice = selectedDeBanh.selectedOptions[0]?.dataset.gia || 0;
-            //     const giaDeBanh = parseInt(selectedDeBanhPrice || 0);
-
-            //     const selectedToppings = Array.from(document.querySelectorAll(".edit-topping-checkbox:checked"));
-            //     const giaTopping = selectedToppings.reduce((sum, cb) => {
-            //         const priceText = cb.nextElementSibling.innerText.match(/\+(\d+)/);
-            //         if (priceText && priceText[1]) {
-            //             return sum + parseInt(priceText[1]);
-            //         }
-            //         return sum;
-            //     }, 0);
-
-            //     const soLuong = parseInt(document.getElementById("edit-soluong").value || "1");
-            //     const tongTien = (giaCoBan + giaSize + giaDeBanh + giaTopping) * soLuong;
-            //     document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + "₫";
-            // }
+         
 
         });
     </script>

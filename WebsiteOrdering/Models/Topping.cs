@@ -14,8 +14,8 @@ namespace WebsiteOrdering.Models
 
         public string Idloaimonan { get; set; } = null!;
 
-        public virtual Chitiettopping? Chitiettopping { get; set; }
-
+       // public virtual Chitiettopping? Chitiettopping { get; set; }
+         public virtual ICollection<Chitiettopping> Chitiettoppings { get; set; } = new List<Chitiettopping>();
         public virtual Loaimonan IdloaimonanNavigation { get; set; } = null!;
     }
 
