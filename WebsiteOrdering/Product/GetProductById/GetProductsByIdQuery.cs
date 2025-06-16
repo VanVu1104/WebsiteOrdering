@@ -1,10 +1,10 @@
 ﻿using MediatR;
+using WebsiteOrdering.Models;
 using WebsiteOrdering.Product.GetAllProducts;
-using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Product.GetProductById
 {
-    public class GetProductsByIdQuery :IRequest<ProductsViewModel>
+    public class GetProductsByIdQuery :IRequest<Monan>
     {
         public string Id { get;  }
    

@@ -4,7 +4,7 @@ using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Models
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser>
+    public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext()
         {
@@ -12,174 +12,446 @@ namespace WebsiteOrdering.Models
         }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public  DbSet<ProductsViewModel> SanPhams { get; set; }
-        public  DbSet<CategoryViewModel> Categories { get; set; }
-        public  DbSet<SizeViewModel> Sizes { get; set; }
-        public  DbSet<ListGiaSizeViewModel> ListGiaSizes { get; set; }
-        public DbSet<ToppingViewModel> Topping { get; set; }
-        public DbSet<ChitietDHangOnlViewModel> CtDHOnl { get; set; }
-        public DbSet<ChitietDHangViewModel> ctdh {  get; set; }
-        public DbSet<ChitietToppingOnlViewModel> cttoppingonl { get; set; }
-        public DbSet<ChitietToppingViewModel> cttopping {  get; set; }
-        public DbSet<ChiNhanhViewModel> chinhanh    { get; set; }
-        public DbSet<DonHangOnlViewModel> dhangonl  { get; set; }
-        public DbSet<DonHangViewModel> dhang { get; set; }
-        public DbSet<DeBanhViewModel> debanh { get; set; }
-        
+        public DbSet<Monan> SanPhams { get; set; }
+        public DbSet<Loaimonan> Category { get; set; }
+        public DbSet<Size> Sizes { get; set; }
+        public DbSet<Listgiasize> ListGiaSizes { get; set; }
+        public DbSet<Topping> Topping { get; set; }
+
+        public DbSet<Chitietdonhang> ctdh { get; set; }
+
+        public DbSet<Chitiettopping> cttopping { get; set; }
+        public DbSet<Chinhanh> chinhanh { get; set; }
+
+        public DbSet<Donhang> dhang { get; set; }
+        public DbSet<Debanh> debanh { get; set; }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseSqlServer("Server=.;Database=pizzanhahang1;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //Bảng chi tiết đơn hàng onl
-            modelBuilder.Entity<ChitietDHangOnlViewModel>()
-                .ToTable("CHITIETDONHANGONL")
-                .HasKey(c => new { c.IDDONHANGONL, c.IDMONAN, c.IDMONAN2 });
+            modelBuilder.Entity<Ban>(entity =>
+            {
+                entity.HasKey(e => e.Idban).HasName("PK__BAN__9367225E468C45A0");
 
-            modelBuilder.Entity<ChitietDHangOnlViewModel>()
-                .HasOne(c => c.Product)
-                .WithMany() // hoặc .WithMany(p => p.ChiTietDHOnl) nếu có navigation ngược
-                .HasForeignKey(c => new { c.IDMONAN, c.IDMONAN2 });
+                entity.ToTable("BAN");
 
-            modelBuilder.Entity<ChitietDHangOnlViewModel>()
-                .HasOne(c => c.DonHangOnl)
-                .WithMany()
-                .HasForeignKey(c => c.IDDONHANGONL);
+                entity.Property(e => e.Idban)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDBAN");
+                entity.Property(e => e.Idchinhanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDCHINHANH");
+                entity.Property(e => e.Khuvuc)
+                    .HasMaxLength(50)
+                    .HasColumnName("KHUVUC");
+                entity.Property(e => e.Songuoi).HasColumnName("SONGUOI");
+                entity.Property(e => e.Tenban)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENBAN");
+                entity.Property(e => e.Trangthaiban)
+                    .HasMaxLength(50)
+                    .HasColumnName("TRANGTHAIBAN");
 
-            modelBuilder.Entity<ChitietDHangOnlViewModel>()
-                .HasOne(c => c.Size)
-                .WithMany()
-                .HasForeignKey(c => c.IDSIZE);
+                entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Bans)
+                    .HasForeignKey(d => d.Idchinhanh)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
+            });
 
-            modelBuilder.Entity<ChitietDHangOnlViewModel>()
-                .HasOne(c => c.DeBanh)
-                .WithMany()
-                .HasForeignKey(c => c.IDDEBANH);
+            modelBuilder.Entity<Chinhanh>(entity =>
+            {
+                entity.HasKey(e => e.Idchinhanh).HasName("PK__CHINHANH__5F20FC40654C6C03");
 
-            //Bảng chi tiết đơn hàng 
-            modelBuilder.Entity<ChitietDHangViewModel>()
-               .ToTable("CHITIETDONHANG")
-               .HasKey(c => new { c.IDDONHANG, c.IDMONAN, c.IDMONAN2 });
+                entity.ToTable("CHINHANH");
 
-            modelBuilder.Entity<ChitietDHangViewModel>()
-                .HasOne(c => c.Product)
-                .WithMany() // hoặc .WithMany(p => p.ChiTietDHOnl) nếu có navigation ngược
-                .HasForeignKey(c => new { c.IDMONAN, c.IDMONAN2 });
+                entity.Property(e => e.Idchinhanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDCHINHANH");
+                entity.Property(e => e.Diachicn)
+                    .HasMaxLength(500)
+                    .HasColumnName("DIACHICN");
+                entity.Property(e => e.Tencnhanh)
+                    .HasMaxLength(100)
+                    .HasColumnName("TENCNHANH");
+            });
 
-            modelBuilder.Entity<ChitietDHangViewModel>()
-                .HasOne(c => c.DonHang)
-                .WithMany()
-                .HasForeignKey(c => c.IDDONHANG);
+            modelBuilder.Entity<Chitietdatban>(entity =>
+            {
+                entity.HasKey(e => new { e.Iddatban, e.Idban }).HasName("PK__CHITIETD__27F2122C38F80AE0");
 
-            modelBuilder.Entity<ChitietDHangViewModel>()
-                .HasOne(c => c.Size)
-                .WithMany()
-                .HasForeignKey(c => c.IDSIZE);
+                entity.ToTable("CHITIETDATBAN");
 
-            modelBuilder.Entity<ChitietDHangViewModel>()
-                .HasOne(c => c.DeBanh)
-                .WithMany()
-                .HasForeignKey(c => c.IDDEBANH);
+                entity.Property(e => e.Iddatban)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDATBAN");
+                entity.Property(e => e.Idban)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDBAN");
+                entity.Property(e => e.Giora).HasColumnName("GIORA");
+                entity.Property(e => e.Giovao).HasColumnName("GIOVAO");
+
+                entity.HasOne(d => d.IdbanNavigation).WithMany(p => p.Chitietdatbans)
+                    .HasForeignKey(d => d.Idban)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETDA__IDBAN__403A8C7D");
+
+                entity.HasOne(d => d.IddatbanNavigation).WithMany(p => p.Chitietdatbans)
+                    .HasForeignKey(d => d.Iddatban)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETDA__IDDAT__3F466844");
+            });
+
+            modelBuilder.Entity<Chitietdonhang>(entity =>
+            {
+                entity.HasKey(e => new { e.Iddonhang, e.Idmonan }).HasName("PK__CHITIETD__150E02391C3C3DE5");
+
+                entity.ToTable("CHITIETDONHANG");
+
+                entity.Property(e => e.Iddonhang)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDONHANG");
+                entity.Property(e => e.Idmonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDMONAN");
+                entity.Property(e => e.Dongia).HasColumnName("DONGIA");
+                entity.Property(e => e.Ghichu)
+                    .HasMaxLength(500)
+                    .HasColumnName("GHICHU");
+                entity.Property(e => e.Iddebanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDEBANH");
+                entity.Property(e => e.Idmonan2)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDMONAN2");
+                entity.Property(e => e.Idsize)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDSIZE");
+                entity.Property(e => e.Kieupizza)
+                    .HasMaxLength(50)
+                    .HasColumnName("KIEUPIZZA");
+                entity.Property(e => e.Soluong).HasColumnName("SOLUONG");
+                entity.Property(e => e.Tongtiendh).HasColumnName("TONGTIENDH");
+
+                entity.HasOne(d => d.IddebanhNavigation).WithMany(p => p.Chitietdonhangs)
+                    .HasForeignKey(d => d.Iddebanh)
+                    .HasConstraintName("FK__CHITIETDO__IDDEB__49C3F6B7");
+
+                entity.HasOne(d => d.IddonhangNavigation).WithMany(p => p.Chitietdonhangs)
+                    .HasForeignKey(d => d.Iddonhang)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETDO__IDDON__47DBAE45");
+
+                entity.HasOne(d => d.IdmonanNavigation).WithMany(p => p.Chitietdonhangs)
+                    .HasForeignKey(d => d.Idmonan)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
+
+                entity.HasOne(d => d.IdsizeNavigation).WithMany(p => p.Chitietdonhangs)
+                    .HasForeignKey(d => d.Idsize)
+                    .HasConstraintName("FK__CHITIETDO__IDSIZ__4AB81AF0");
+            });
+
+            modelBuilder.Entity<Chitiettopping>(entity =>
+            {
+                entity.HasKey(e => e.Idtopping).HasName("PK__CHITIETT__B17F5B45F7D210ED");
+
+                entity.ToTable("CHITIETTOPPING");
+
+                entity.Property(e => e.Idtopping)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDTOPPING");
+                entity.Property(e => e.Iddonhang)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDONHANG");
+                entity.Property(e => e.Idmonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDMONAN");
+
+                entity.HasOne(d => d.IdtoppingNavigation).WithOne(p => p.Chitiettopping)
+                    .HasForeignKey<Chitiettopping>(d => d.Idtopping)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
+
+                entity.HasOne(d => d.Chitietdonhang).WithMany(p => p.Chitiettoppings)
+                    .HasForeignKey(d => new { d.Iddonhang, d.Idmonan })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
+            });
+
+            modelBuilder.Entity<Datban>(entity =>
+            {
+                entity.HasKey(e => e.Iddatban).HasName("PK__DATBAN__DEC460099CB35DD0");
+
+                entity.ToTable("DATBAN");
+
+                entity.Property(e => e.Iddatban)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDATBAN");
+                entity.Property(e => e.Ghichu)
+                    .HasMaxLength(500)
+                    .HasColumnName("GHICHU");
+                entity.Property(e => e.Giobatdau).HasColumnName("GIOBATDAU");
+                entity.Property(e => e.Gioketthuc).HasColumnName("GIOKETTHUC");
+                entity.Property(e => e.Idchinhanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDCHINHANH");
+                entity.Property(e => e.Idngdung)
+                .HasColumnName("IDNGDUNG");
+                entity.Property(e => e.Ngaydat).HasColumnName("NGAYDAT");
+                entity.Property(e => e.Songuoidat).HasColumnName("SONGUOIDAT");
+                entity.Property(e => e.Trangthaidatban)
+                    .IsUnicode(false)
+                    .HasColumnName("TRANGTHAIDATBAN");
+
+                entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Datbans)
+                    .HasForeignKey(d => d.Idchinhanh)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__DATBAN__IDCHINHA__3C69FB99");
+
+                entity.HasOne(d => d.Nguoidung).WithMany(p => p.Datbans)
+                    .HasForeignKey(d => d.Idngdung)
+                    .HasConstraintName("FK__DATBAN__IDNGDUNG__3B75D760");
+            });
+
+            modelBuilder.Entity<Debanh>(entity =>
+            {
+                entity.HasKey(e => e.Iddebanh).HasName("PK__DEBANH__555F23FF6173600D");
+
+                entity.ToTable("DEBANH");
+
+                entity.Property(e => e.Iddebanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDEBANH");
+                entity.Property(e => e.Giadebanh).HasColumnName("GIADEBANH");
+                entity.Property(e => e.Tendebanh)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENDEBANH");
+            });
+
+            modelBuilder.Entity<Donhang>(entity =>
+            {
+                entity.HasKey(e => e.Iddonhang).HasName("PK__DONHANG__F59FA8B171F225E2");
+
+                entity.ToTable("DONHANG");
+
+                entity.Property(e => e.Iddonhang)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDONHANG");
+                entity.Property(e => e.Diachidh)
+                    .HasMaxLength(500)
+                    .HasColumnName("DIACHIDH");
+                entity.Property(e => e.Idchinhanh)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDCHINHANH");
+                entity.Property(e => e.Iddatban)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDDATBAN");
+                entity.Property(e => e.Idngdung)
+        .HasColumnName("IDNGDUNG");
+                entity.Property(e => e.Ngaydat).HasColumnName("NGAYDAT");
+                entity.Property(e => e.Ptttoan)
+                    .HasMaxLength(50)
+                    .HasColumnName("PTTTOAN");
+                entity.Property(e => e.Songuoi).HasColumnName("SONGUOI");
+                entity.Property(e => e.Tenkh)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENKH");
+                entity.Property(e => e.Tienship).HasColumnName("TIENSHIP");
+                entity.Property(e => e.Tongtien).HasColumnName("TONGTIEN");
+                entity.Property(e => e.Trangthai)
+                    .HasMaxLength(50)
+                    .HasColumnName("TRANGTHAI");
+
+                entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Donhangs)
+                    .HasForeignKey(d => d.Idchinhanh)
+                    .HasConstraintName("FK__DONHANG__IDCHINH__4316F928");
+
+                entity.HasOne(d => d.IddatbanNavigation).WithMany(p => p.Donhangs)
+                    .HasForeignKey(d => d.Iddatban)
+                    .HasConstraintName("FK__DONHANG__IDDATBA__440B1D61");
+
+                entity.HasOne(d => d.IdngdungNavigation)
+                     .WithMany(p => p.Donhangs)
+                     .HasForeignKey(d => d.Idngdung)
+                     .HasConstraintName("FK__DONHANG__IDNGDUN__44FF419A");
+            });
 
 
-            //Bảng size
-            modelBuilder.Entity<SizeViewModel>()
-                .ToTable("SIZE")
-                .HasKey(s => new { s.IDSIZE });
+            modelBuilder.Entity<Listgiasize>(entity =>
+            {
+                entity.HasKey(e => new { e.Idloaimonan, e.Idsize }).HasName("PK__LISTGIAS__93A480290675CE8A");
 
-            //Bảng list giá size
-            modelBuilder.Entity<ListGiaSizeViewModel>()
-                .ToTable("LISTGIASIZE")
-                .HasKey(x => new { x.IDLOAIMONAN, x.IDSIZE });
+                entity.ToTable("LISTGIASIZE");
 
-            modelBuilder.Entity<ListGiaSizeViewModel>()
-                .HasOne(x => x.LoaiMonAn)
-                .WithMany()
-                .HasForeignKey(x => x.IDLOAIMONAN);
+                entity.Property(e => e.Idloaimonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDLOAIMONAN");
+                entity.Property(e => e.Idsize)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDSIZE");
+                entity.Property(e => e.Giasize).HasColumnName("GIASIZE");
 
-            modelBuilder.Entity<ListGiaSizeViewModel>()
-                .HasOne(x => x.Size)
-                .WithMany()
-                .HasForeignKey(x => x.IDSIZE);
+                entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Listgiasizes)
+                    .HasForeignKey(d => d.Idloaimonan)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__LISTGIASI__IDLOA__31EC6D26");
 
-            //Bảng loại món ăn
-            modelBuilder.Entity<CategoryViewModel>()
-                .ToTable("LOAIMONAN")
-                .HasKey(l => new { l.IDLOAIMONAN });
+                entity.HasOne(d => d.IdsizeNavigation).WithMany(p => p.Listgiasizes)
+                    .HasForeignKey(d => d.Idsize)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__LISTGIASI__IDSIZ__32E0915F");
+            });
 
-            //Bảng đế bánh
-            modelBuilder.Entity<DeBanhViewModel>()
-                .ToTable("DEBANH")
-                .HasKey(b => b.IDDEBANH);
-         
+            modelBuilder.Entity<Loaimonan>(entity =>
+            {
+                entity.HasKey(e => e.Idloaimonan).HasName("PK__LOAIMONA__6B7E94ED6B8131AD");
 
-            //Bảng sản phẩm
-            modelBuilder.Entity<ProductsViewModel>()
-                .ToTable("MONAN")
-                .HasKey(sp => new {sp.IDMONAN,sp.IDMONAN2});
-            modelBuilder.Entity<ProductsViewModel>()
-                .HasOne(sp => sp.Category)
-                .WithMany(c => c.Products)
-                .HasForeignKey(sp => sp.IDLoaiMonAn);
+                entity.ToTable("LOAIMONAN");
 
-            //Bảng topping
-            modelBuilder.Entity<ToppingViewModel>()
-                .ToTable("TOPPING")
-                .HasKey(t => new { t.IDTOPPING });
+                entity.Property(e => e.Idloaimonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDLOAIMONAN");
+                entity.Property(e => e.IdloaimanCha)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDLOAIMAN_CHA");
+                entity.Property(e => e.Tenloaimonan)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENLOAIMONAN");
+            });
 
-            modelBuilder.Entity<ToppingViewModel>()
-                .HasOne(t => t.IdLoaiMonAn)
-                .WithMany()
-                .HasForeignKey(t => t.IDLOAIMONAN);
+            modelBuilder.Entity<Monan>(entity =>
+            {
+                entity.HasKey(e => e.Idmonan).HasName("PK__MONAN__091AA88F8490BF0E");
 
-            //Bảng chi nhánh
-            modelBuilder.Entity<ChiNhanhViewModel>()
-                .ToTable("CHINHANH")
-                .HasKey(cn => cn.IDCHINHANH);
-            
-            //Bảng đơn hàng online
-            modelBuilder.Entity<DonHangOnlViewModel>()
-                .ToTable("DONHANGONL")
-                .HasKey(dho => dho.IDDONHANGONL);
-            modelBuilder.Entity<DonHangOnlViewModel>()
-                .HasOne(dho => dho.chinhanh)
-                .WithMany()
-                .HasForeignKey(dho => dho.IDCHINHANH);
+                entity.ToTable("MONAN");
 
-            //Bảng đơn hàng 
-            modelBuilder.Entity<DonHangViewModel>()
-                .ToTable("DONHANG")
-                .HasKey(dh => dh.IDDONHANG);
-            modelBuilder.Entity<DonHangViewModel>()
-                .HasOne(dh => dh.chinhanh)
-                .WithMany()
-                .HasForeignKey(dh => dh.IDCHINHANH);
+                entity.Property(e => e.Idmonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDMONAN");
+                entity.Property(e => e.Anhmonan)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("ANHMONAN");
+                entity.Property(e => e.Giamonan).HasColumnName("GIAMONAN");
+                entity.Property(e => e.Idloaimonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDLOAIMONAN");
+                entity.Property(e => e.Mota)
+                    .HasMaxLength(500)
+                    .HasColumnName("MOTA");
+                entity.Property(e => e.Tenmonan)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENMONAN");
+                entity.Property(e => e.Trangthaiman)
+                    .HasMaxLength(50)
+                    .HasColumnName("TRANGTHAIMAN");
 
-            //Bảng chi tiết topping online
-            modelBuilder.Entity<ChitietToppingOnlViewModel>()
-                .ToTable("CHITIETTOPPINGONL")
-                .HasKey(ct => new { ct.IDTOPING, ct.IDDONHANGONL, ct.IDMONAN, ct.IDMONAN2 });
-            modelBuilder.Entity<ChitietToppingOnlViewModel>()
-                .HasOne(ct =>ct.chitietdhangonl)
-                .WithMany()
-                .HasForeignKey(ct => new {ct.IDDONHANGONL,ct.IDMONAN,ct.IDMONAN2});
-            modelBuilder.Entity<ChitietToppingOnlViewModel>()
-                .HasOne(ct => ct.Topping)
-                .WithMany()
-                .HasForeignKey(ct =>ct.IDTOPING);
+                entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Monans)
+                    .HasForeignKey(d => d.Idloaimonan)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__MONAN__IDLOAIMON__38996AB5");
+            });
 
-            //Bảng chi tiết topping 
-            modelBuilder.Entity<ChitietToppingViewModel>()
-               .ToTable("CHITIETTOPPING")
-               .HasKey(ct => new { ct.IDTOPING, ct.IDDONHANG, ct.IDMONAN, ct.IDMONAN2 });
-            modelBuilder.Entity<ChitietToppingViewModel>()
-                .HasOne(ct => ct.chitietdhang)
-                .WithMany()
-                .HasForeignKey(ct => new { ct.IDDONHANG, ct.IDMONAN, ct.IDMONAN2 });
-            modelBuilder.Entity<ChitietToppingViewModel>()
-                .HasOne(ct => ct.Topping)
-                .WithMany()
-                .HasForeignKey(ct => ct.IDTOPING);
+            modelBuilder.Entity<Size>(entity =>
+            {
+                entity.HasKey(e => e.Idsize).HasName("PK__SIZE__8DA14C4EE47FAF46");
+
+                entity.ToTable("SIZE");
+
+                entity.Property(e => e.Idsize)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDSIZE");
+                entity.Property(e => e.Tensize)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENSIZE");
+            });
+
+            modelBuilder.Entity<Topping>(entity =>
+            {
+                entity.HasKey(e => e.Idtopping).HasName("PK__TOPPING__B17F5B453E08CBB9");
+
+                entity.ToTable("TOPPING");
+
+                entity.Property(e => e.Idtopping)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDTOPPING");
+                entity.Property(e => e.Giatopping).HasColumnName("GIATOPPING");
+                entity.Property(e => e.Idloaimonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDLOAIMONAN");
+                entity.Property(e => e.Tentopping)
+                    .HasMaxLength(500)
+                    .HasColumnName("TENTOPPING");
+
+                entity.HasOne(d => d.IdloaimonanNavigation).WithMany(p => p.Toppings)
+                    .HasForeignKey(d => d.Idloaimonan)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__TOPPING__IDLOAIM__2B3F6F97");
+            });
+
+            OnModelCreatingPartial(modelBuilder);
         }
 
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

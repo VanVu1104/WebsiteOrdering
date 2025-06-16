@@ -1,7 +1,8 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model List<WebsiteOrdering.ViewModels.ProductsViewModel>
+@using WebsiteOrdering.Models
+@model List<Monan>
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
     Layout = "_Layout";
@@ -121,54 +122,55 @@
 
         @{
             // Lấy tất cả categories
-            var allCategories = (List<WebsiteOrdering.ViewModels.CategoryViewModel>)ViewBag.Categories;
+            var allCategories = (List<Loaimonan>)ViewBag.Categories;
             
             // Chỉ lấy các category cha (không có IDLOAIMONANCHA hoặc IDLOAIMONANCHA = null)
-            var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IDLOAIMONANCHA)).ToList();
+            var parentCategories = allCategories.Where(c => string.IsNullOrEmpty(c.IdloaimanCha)).ToList();
         }
 
         @foreach (var parentCategory in parentCategories)
         {
             // Kiểm tra xem category cha này có được chọn không
-            var isParentSelected = ViewBag.SelectedCategory?.ToString() == parentCategory.IDLOAIMONAN;
+            var isParentSelected = ViewBag.SelectedCategory?.ToString() == parentCategory.Idloaimonan;
             
             // Tìm các category con trực tiếp của category cha này
-            var directChildren = allCategories.Where(c => c.IDLOAIMONANCHA == parentCategory.IDLOAIMONAN).ToList();
+          //  var directChildren = allCategories.Where(c => c.IdloaimanCha == parentCategory.IdloaimanCha).ToList();
+            var directChildren = allCategories.Where(c => c.IdloaimanCha == parentCategory.Idloaimonan).ToList();
 
             if (directChildren.Any())
             {
                 <!-- Category cha có con - tạo dropdown -->
                 <div class="category-dropdown">
-                    <button type="submit" name="categoryId" value="@parentCategory.IDLOAIMONAN"
+                    <button type="submit" name="categoryId" value="@parentCategory. Idloaimonan"
                             class="btn @(isParentSelected ? "btn-primary" : "btn-outline-primary") no-arrow">
-                        @parentCategory.TENLOAIMONAN
+                        @parentCategory.Tenloaimonan
                     </button>
                     
                     <div class="dropdown-menu">
                         @foreach (var childCategory in directChildren)
                         {
-                            var isChildSelected = ViewBag.SelectedCategory?.ToString() == childCategory.IDLOAIMONAN;
+                            var isChildSelected = ViewBag.SelectedCategory?.ToString() == childCategory.Idloaimonan;
                             
                             // Tìm các category con của category con này (cháu)
-                            var grandChildren = allCategories.Where(c => c.IDLOAIMONANCHA == childCategory.IDLOAIMONAN).ToList();
+                            var grandChildren = allCategories.Where(c => c.IdloaimanCha == childCategory.Idloaimonan).ToList();
                             
                             if (grandChildren.Any())
                             {
                                 <!-- Category con có con - tạo submenu -->
                                 <div class="dropdown-submenu">
-                                    <button type="submit" name="categoryId" value="@childCategory.IDLOAIMONAN"
+                                    <button type="submit" name="categoryId" value="@childCategory.Idloaimonan"
                                             class="dropdown-item @(isChildSelected ? "active" : "")">
-                                        @childCategory.TENLOAIMONAN
+                                        @childCategory.Tenloaimonan
                                     </button>
                                     
                                     <div class="dropdown-menu">
                                         @foreach (var grandChild in grandChildren)
                                         {
-                                            var isGrandChildSelected = ViewBag.SelectedCategory?.ToString() == grandChild.IDLOAIMONAN;
-                                            
-                                            <button type="submit" name="categoryId" value="@grandChild.IDLOAIMONAN"
+                                            var isGrandChildSelected = ViewBag.SelectedCategory?.ToString() == grandChild.Idloaimonan;
+
+                                            <button type="submit" name="categoryId" value="@grandChild.Idloaimonan"
                                                     class="dropdown-item @(isGrandChildSelected ? "active" : "")">
-                                                @grandChild.TENLOAIMONAN
+                                                @grandChild.Tenloaimonan
                                             </button>
                                         }
                                     </div>
@@ -177,9 +179,9 @@
                             else
                             {
                                 <!-- Category con không có con -->
-                                <button type="submit" name="categoryId" value="@childCategory.IDLOAIMONAN"
+                                <button type="submit" name="categoryId" value="@childCategory.Idloaimonan"
                                         class="dropdown-item @(isChildSelected ? "active" : "")">
-                                    @childCategory.TENLOAIMONAN
+                                    @childCategory.Tenloaimonan
                                 </button>
                             }
                         }
@@ -189,9 +191,9 @@
             else
             {
                 <!-- Category cha không có con - nút bình thường -->
-                <button type="submit" name="categoryId" value="@parentCategory.IDLOAIMONAN"
+                <button type="submit" name="categoryId" value="@parentCategory.Idloaimonan"
                         class="btn @(isParentSelected ? "btn-primary" : "btn-outline-primary")">
-                    @parentCategory.TENLOAIMONAN
+                    @parentCategory.Tenloaimonan
                 </button>
             }
         }
@@ -202,14 +204,14 @@
 @{
     string categoryName = "Danh sách sản phẩm";
     var selectedCategoryId = ViewBag.SelectedCategory as string;
-    var categories = (List<WebsiteOrdering.ViewModels.CategoryViewModel>)ViewBag.Categories;
+    var categories = (List<Loaimonan>)ViewBag.Categories;
 
     if (!string.IsNullOrEmpty(selectedCategoryId))
     {
-        var selectedCategory = categories.FirstOrDefault(c => c.IDLOAIMONAN == selectedCategoryId);
+        var selectedCategory = categories.FirstOrDefault(c => c.Idloaimonan == selectedCategoryId);
         if (selectedCategory != null)
         {
-            categoryName = selectedCategory.TENLOAIMONAN;
+            categoryName = selectedCategory.Tenloaimonan;
         }
     }
 }
@@ -224,18 +226,18 @@
             foreach (var product in Model)
             {
                 <div class="col-md-4 mb-4">
-                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.IDMONAN" name="idmonan" class="text-decoration-none text-dark">
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@product.Idmonan" name="idmonan" class="text-decoration-none text-dark">
                         <div class="card shadow-sm h-100">
-                            <img src="~/css/img/@product.ANHMONAN" class="card-img-top" alt="@product.TENMONAN"
+                            <img src="~/css/img/@product.Anhmonan" class="card-img-top" alt="@product.Tenmonan"
                                  style="height: 200px; object-fit: cover;" />
                             <div class="card-body">
-                                <h5 class="card-title text-primary">@product.TENMONAN</h5>
-                                <p class="card-text">@product.MOTAMONAN</p>
+                                <h5 class="card-title text-primary">@product.Tenmonan</h5>
+                                <p class="card-text">@product.Mota</p>
                                @*  <p class="card-text fw-bold text-danger">@string.Format("{0:N0} VND", product.GIACOBAN)</p> *@
                                 @{
                                     var culture = new System.Globalization.CultureInfo("vi-VN");
                                     culture.NumberFormat.CurrencySymbol = ""; // bỏ ký hiệu ₫
-                                    var giaTien = string.Format(culture, "{0:C0}", product.GIACOBAN).Trim(); // bỏ khoảng trắng đầu
+                                    var giaTien = string.Format(culture, "{0:C0}", product.Giamonan).Trim(); // bỏ khoảng trắng đầu
                                 }
                                 <p class="card-text fw-bold text-danger">@giaTien VNĐ</p>
 

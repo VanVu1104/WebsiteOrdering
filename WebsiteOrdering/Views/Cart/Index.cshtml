@@ -1,12 +1,335 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@model List<WebsiteOrdering.ViewModels.CartItem>
-
+﻿@model List<WebsiteOrdering.ViewModels.CartItem>
 @{
     ViewData["Title"] = "Giỏ hàng của bạn";
+    var cart = Model;
+    var selectedIds = TempData["SelectedIds"] as List<string> ?? new List<string>();
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll(".cart-select");
+            const totalLabel = document.getElementById("totalAmount");
+           
+            function formatCurrency(amount) {
+                return amount.toLocaleString("vi-VN") + "₫";
+            }
+
+            function calculateTotal() {
+                let total = 0;
+                checkboxes.forEach(function (cb) {
+                    if (cb.checked) {
+                        total += parseInt(cb.dataset.tongtien);
+                    }
+                });
+                totalLabel.innerText = formatCurrency(total);
+            }
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener("change", calculateTotal);
+            });
+            //Xử lý nút tăng giảm
+            document.querySelectorAll(".btn-increase, .btn-decrease").forEach(btn => {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault(); 
+
+                    const input = this.parentElement.querySelector(".quantity-input");
+                    let value = parseInt(input.value);
+                    if (isNaN(value)) value = 1;
+
+                    if (this.classList.contains("btn-increase")) {
+                        value += 1;
+                    } else if (value > 1) {
+                        value -= 1;
+                    }
+                   // const editForm = document.getElementById("edit-cart-form");
+                    const form = this.closest("form");
+                    const formData = new FormData(form);
+                    formData.set("soluong", value);
+
+                    fetch("/Cart/UpdateCart", {
+                        method: "POST",
+                        body: formData
+                    })
+                        .then(response => response.json()) // server trả về JSON gồm tổng tiền mới
+                        .then(data => {
+                            if (data.success) {
+                                fetch("/Cart/CartCountPartial")
+                                    .then(res => res.text())
+                                    .then(html => {
+                                        document.getElementById("cart-count").outerHTML = html;
+                                    });
+                                input.value = value;
+
+                                const row = form.closest("tr");
+                                const cb = row.querySelector(".cart-select");
+                                cb.dataset.tongtien = data.tongTienMoi; // cập nhật giá trị data-tongtien
+                                const tongTienCell = row.querySelector("td:nth-last-child(2)");
+                                tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + "₫";
+                                // Đóng modal
+                                // const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                                // modal.hide();
+                                calculateTotal();
+
+                            } else {
+                                alert("Cập nhật thất bại!");
+                            }
+                        });
+
+                });
+            });
+            calculateTotal();
+
+
+            // Xử lý nút lưu thông tin trong modal
+            document.getElementById("edit-cart-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const form = this;
+                const formData = new FormData(form);
+
+                fetch("/Cart/UpdateCartItem", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Lỗi HTTP: " + res.status);
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log("✅ Phản hồi từ server:", data);
+                        if (data.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                            modal.hide();
+                            alert("Cập nhật thành công!");
+                            location.reload();
+                        } else {
+                            const message = data.message || "Không rõ nguyên nhân";
+                            console.error("❌ Lỗi từ server:", message);
+                            alert("Cập nhật thất bại: " + message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("❗Lỗi fetch:", err);
+                        alert("Có lỗi khi gửi dữ liệu lên server: " + err.message);
+                    });
+               
+            });
+
+
+            // Xử lý nút sửa giỏ hàng
+            document.querySelectorAll(".btn-edit").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    const cartItem = {
+                        idmonan: this.dataset.idmonan,
+                        idmonan2: this.dataset.idmonan2 || "",
+                        size: this.dataset.size,
+                        debanh: this.dataset.debanh,
+                        soluong: this.dataset.soluong,
+                        ghichu: this.dataset.ghichu,
+                        toppings: this.dataset.toppings || "",
+                        giacoban: parseInt(this.dataset.giacoban || 0),
+                        giasize: parseInt(this.dataset.giasize || 0),
+                        giadebanh: parseInt(this.dataset.giadebanh || 0),
+                    };
+
+                    // Gọi hàm hiển thị modal
+                    showEditModal(cartItem);
+                    // Gán hidden values gốc
+                    document.getElementById("edit-original-idmonan").value = this.dataset.idmonan;
+                    document.getElementById("edit-original-idmonan2").value = this.dataset.idmonan2 || "";
+                    document.getElementById("edit-original-size").value = this.dataset.size;
+                    document.getElementById("edit-original-debanh").value = this.dataset.debanh;
+                    document.getElementById("edit-original-toppings").value = this.dataset.toppings;
+
+                    // Gán hidden values mới (giữ nguyên món ăn hiện tại)
+                    document.getElementById("edit-idmonan").value = this.dataset.idmonan;
+                    document.getElementById("edit-idmonan2").value = this.dataset.idmonan2 || "";
+
+                    // Set dropdown
+                    document.getElementById("edit-size").value = this.dataset.size;
+                    document.getElementById("edit-debanh").value = this.dataset.debanh;
+
+                    // Set số lượng, ghi chú
+                    document.getElementById("edit-soluong").value = this.dataset.soluong;
+                    document.getElementById("edit-ghichu").value = this.dataset.ghichu;
+
+                    // Reset topping checkbox
+                    document.querySelectorAll(".edit-topping-checkbox").forEach(cb => cb.checked = false);
+                    const selectedToppings = (this.dataset.toppings || "").split(',');
+                    selectedToppings.forEach(tid => {
+                        const cb = document.querySelector(`#edit_top_${tid}`);
+                        if (cb) cb.checked = true;
+                    });
+
+                    // Cập nhật tổng tiền
+                    const giaCoBan = parseInt(this.dataset.giacoban || 0);
+                    const giaSize = parseInt(this.dataset.giasize || 0);
+                    const giaDeBanh = parseInt(this.dataset.giadebanh || 0);
+                    const giaTopping = selectedToppings.reduce((sum, tid) => {
+                        const cb = document.querySelector(`#edit_top_${tid}`);
+                        if (cb && cb.nextElementSibling.innerText.includes("+")) {
+                            const priceText = cb.nextElementSibling.innerText.match(/\+(\d+)/);
+                            if (priceText && priceText[1]) {
+                                return sum + parseInt(priceText[1]);
+                            }
+                        }
+                        return sum;
+                    }, 0);
+                    const soLuong = parseInt(this.dataset.soluong || 1);
+                    const tongTien = (giaCoBan + giaSize + giaDeBanh + giaTopping) * soLuong;
+                    document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + "₫";
+
+                    // Mở modal
+                    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
+                });
+            });
+            function loadOptionsForEditModal(idmonan) {
+                fetch(`/Cart/GetOptionsByMonAnId?idmonan=${idmonan}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        // Load size
+                        const sizeSelect = document.getElementById("edit-size");
+                        sizeSelect.innerHTML = "";
+                        if (data.sizes.length > 0) {
+                            sizeSelect.closest('.mb-3').style.display = 'block';
+                            data.sizes.forEach(s => {
+                                sizeSelect.innerHTML += `<option value="${s.idsize}">${s.ten}</option>`;
+                            });
+                        } else {
+                            sizeSelect.closest('.mb-3').style.display = 'none';
+                        }
+
+                        // Load đế bánh
+                        const debanhSelect = document.getElementById("edit-debanh");
+                        debanhSelect.innerHTML = "";
+                        if (data.debanhs.length > 0) {
+                            debanhSelect.closest('.mb-3').style.display = 'block';
+                            data.debanhs.forEach(d => {
+                                debanhSelect.innerHTML += `<option value="${d.iddebanh}">${d.ten}</option>`;
+                            });
+                        } else {
+                            debanhSelect.closest('.mb-3').style.display = 'none';
+                        }
+
+                        // Load topping
+                        const toppingList = document.getElementById("edit-topping-list");
+                        toppingList.innerHTML = "";
+                        if (data.toppings.length > 0) {
+                            toppingList.closest('.mb-3').style.display = 'block';
+                            data.toppings.forEach(t => {
+                                toppingList.innerHTML += `
+                                            <div class="form-check">
+                                                <input class="form-check-input edit-topping-checkbox" type="checkbox"
+                                                       name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
+                                                <label class="form-check-label" for="edit_top_${t.idtopping}">
+                                                    ${t.ten} (+${t.gia}₫)
+                                                </label>
+                                            </div>`;
+                            });
+                        } else {
+                            toppingList.closest('.mb-3').style.display = 'none';
+                        }
+                    });
+            }
+
+            function showEditModal(cartItem) {
+                fetch(`/Cart/GetOptionsByMonAnId?idmonan=${cartItem.idmonan}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        // Ẩn/hiện Size
+                        const sizeDiv = document.querySelector('#edit-size').closest('.mb-3');
+                        if (data.sizes.length > 0) {
+                            sizeDiv.style.display = 'block';
+                            const sizeSelect = document.getElementById('edit-size');
+                            sizeSelect.innerHTML = '';
+                            data.sizes.forEach(size => {
+                                const opt = document.createElement('option');
+                                opt.value = size.idsize;
+                                opt.textContent = size.ten;
+                                sizeSelect.appendChild(opt);
+                            });
+                        } else {
+                            sizeDiv.style.display = 'none';
+                        }
+
+                        // Ẩn/hiện Đế bánh
+                        const debanhDiv = document.querySelector('#edit-debanh').closest('.mb-3');
+                        if (data.debanhs.length > 0) {
+                            debanhDiv.style.display = 'block';
+                            const debanhSelect = document.getElementById('edit-debanh');
+                            debanhSelect.innerHTML = '';
+                            data.debanhs.forEach(d => {
+                                const opt = document.createElement('option');
+                                opt.value = d.iddebanh;
+                                opt.textContent = d.ten;
+                                debanhSelect.appendChild(opt);
+                            });
+                        } else {
+                            debanhDiv.style.display = 'none';
+                        }
+
+                        // Ẩn/hiện Topping
+                        const toppingDiv = document.querySelector('#edit-topping-list').closest('.mb-3');
+                        const toppingList = document.getElementById('edit-topping-list');
+                        toppingList.innerHTML = '';
+                        if (data.toppings.length > 0) {
+                            toppingDiv.style.display = 'block';
+                            data.toppings.forEach(t => {
+                                const div = document.createElement('div');
+                                div.className = 'form-check';
+                                div.innerHTML = `
+                                        <input class="form-check-input edit-topping-checkbox" type="checkbox"
+                                               name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
+                                        <label class="form-check-label" for="edit_top_${t.idtopping}">
+                                            ${t.ten} (+${t.gia}₫)
+                                        </label>`;
+                                toppingList.appendChild(div);
+                            });
+                        } else {
+                            toppingDiv.style.display = 'none';
+                        }
+
+                        // Mở modal
+                        const modal = new bootstrap.Modal(document.getElementById('editModal'));
+                        modal.show();
+                    });
+            }
+            // document.getElementById("edit-soluong")?.addEventListener("input", updateTotalPrice);
+            // document.getElementById("edit-size")?.addEventListener("change", updateTotalPrice);
+            // document.getElementById("edit-debanh")?.addEventListener("change", updateTotalPrice);
+            // document.querySelectorAll(".edit-topping-checkbox").forEach(cb => {
+            //     cb.addEventListener("change", updateTotalPrice);
+            // });
+            // //Xử lý tổng tiền trong modal mà chưa hoàn thành
+            // function updateTotalPrice() {
+            //     const giaCoBan = parseInt(document.getElementById("edit-idmonan").dataset.giacoban || 0);
+
+            //     const selectedSize = document.getElementById("edit-size");
+            //     const selectedSizePrice = selectedSize.selectedOptions[0]?.dataset.gia || 0;
+            //     const giaSize = parseInt(selectedSizePrice || 0);
+
+            //     const selectedDeBanh = document.getElementById("edit-debanh");
+            //     const selectedDeBanhPrice = selectedDeBanh.selectedOptions[0]?.dataset.gia || 0;
+            //     const giaDeBanh = parseInt(selectedDeBanhPrice || 0);
+
+            //     const selectedToppings = Array.from(document.querySelectorAll(".edit-topping-checkbox:checked"));
+            //     const giaTopping = selectedToppings.reduce((sum, cb) => {
+            //         const priceText = cb.nextElementSibling.innerText.match(/\+(\d+)/);
+            //         if (priceText && priceText[1]) {
+            //             return sum + parseInt(priceText[1]);
+            //         }
+            //         return sum;
+            //     }, 0);
+
+            //     const soLuong = parseInt(document.getElementById("edit-soluong").value || "1");
+            //     const tongTien = (giaCoBan + giaSize + giaDeBanh + giaTopping) * soLuong;
+            //     document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + "₫";
+            // }
+
+        });
+    </script>
 }
 
 <h2>Giỏ hàng của bạn</h2>
@@ -17,13 +340,14 @@
 }
 else
 {
-    <form asp-action="CartEmpty" method="post">
+    <form asp-action="CartEmpty" asp-controller="Cart" >
         <button type="submit" class="btn btn-danger mb-3">Xoá toàn bộ giỏ hàng</button>
     </form>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered align-middle">
         <thead>
             <tr>
+                <th>Chọn</th>
                 <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Size</th>
@@ -36,20 +360,39 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in cart)
             {
+                var itemId = $"{item.IDMONAN}_{item.IDMMONAN2}_{item.Size}_{item.DeBanh}_{string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())}";
+
                 <tr>
-                    <td><img src="@item.ANHSANPHAM" alt="Ảnh" width="100" /></td>
-                    <td>@item.TENSANPHAM</td>
+                    <td>
+                        <input type="checkbox" class="form-check-input cart-select"
+                               data-tongtien="@item.TongTien"
+                               checked />
+                    </td>
+
+                    <td><img src="~/css/img/@item.ANHSANPHAM" alt="Ảnh" width="100" /></td>
+
+                    <td>
+                        @item.TENSANPHAM
+                        @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                        {
+                            <br />
+
+                            <small>+ Ghép với: <b>@item.TENSANPHAM2</b></small>
+                        }
+                    </td>
+
                     <td>@item.Size</td>
                     <td>@item.DeBanh</td>
+
                     <td>
-                        @if (item.Topping.Any())
+                        @if (item.Topping != null && item.Topping.Any())
                         {
-                            <ul>
+                            <ul class="mb-0">
                                 @foreach (var top in item.Topping)
                                 {
-                                    <li>@top.TENTOPPING (@top.GIATOPPING₫)</li>
+                                    <li>@top.Tentopping (@top.Giatopping₫)</li>
                                 }
                             </ul>
                         }
@@ -58,42 +401,156 @@ else
                             <span>Không có</span>
                         }
                     </td>
+
                     <td>
-                        <form asp-action="UpdateCart" method="post" class="d-flex">
+                        <form asp-action="UpdateCart" asp-controller="Cart"  class="d-flex align-items-center">
                             <input type="hidden" name="idmonan" value="@item.IDMONAN" />
-                            <input type="hidden" name="idmonan2" value="@item.IDMONAN2" />
+                            <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
                             <input type="hidden" name="size" value="@item.Size" />
                             <input type="hidden" name="debanh" value="@item.DeBanh" />
-                            @for (int i = 0; i < item.Topping.Count; i++)
+                            @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
                             {
-                                <input type="hidden" name="toppings" value="@item.Topping[i].IDTOPPING" />
+                                <input type="hidden" name="toppings" value="@top.Idtopping" />
                             }
 
-                            <input type="number" name="soluong" value="@item.SoLuong" min="1" class="form-control w-50" />
-                            <button type="submit" class="btn btn-primary btn-sm ms-2">Cập nhật</button>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary btn-decrease">−</button>
+                                <input type="text" name="soluong" class="form-control text-center quantity-input" value="@item.SoLuong" style="width: 50px;" />
+                                <button type="button" class="btn btn-outline-secondary btn-increase">+</button>
+                            </div>
                         </form>
+
                     </td>
+
                     <td>@item.GhiChu</td>
                     <td>@item.TongTien.ToString("N0")₫</td>
+
                     <td>
-                        <form asp-action="DeleteItem" method="post">
+                        <form asp-action="DeleteItem" asp-controller="Cart" >
                             <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                            <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
                             <input type="hidden" name="size" value="@item.Size" />
                             <input type="hidden" name="debanh" value="@item.DeBanh" />
-                            @for (int i = 0; i < item.Topping.Count; i++)
+                            @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
                             {
-                                <input type="hidden" name="toppings" value="@item.Topping[i].IDTOPPING" />
+                                <input type="hidden" name="toppings" value="@top.Idtopping" />
                             }
                             <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
                         </form>
+                        <button type="button" class="btn btn-sm btn-warning btn-edit"
+                                data-idmonan="@item.IDMONAN"
+                                data-idmonan2="@item.IDMMONAN2"
+                                data-size="@item.Size"
+                                data-debanh="@item.DeBanh"
+                                data-toppings="@string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())"
+                                data-soluong="@item.SoLuong"
+                                data-ghichu="@item.GhiChu"
+                                data-name="@item.TENSANPHAM"
+                                data-name2="@item.TENSANPHAM2"
+                                data-anhsanpham="@item.ANHSANPHAM"
+                                data-giasize="@item.GiaSize"
+                                data-giadebanh="@item.GiaDeBanh"
+                                data-giacoban="@item.GiaCoBan"
+                                data-toggle="modal" data-target="#editModal">
+                            Sửa
+                        </button>
+
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <!-- Modal Sửa Giỏ Hàng -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="edit-cart-form" asp-action="UpdateCartItem" asp-controller="Cart" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Sửa sản phẩm trong giỏ hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Hidden fields cho sản phẩm gốc -->
+                        <input type="hidden" id="edit-original-idmonan" name="originalIdmonan" />
+                        <input type="hidden" id="edit-original-idmonan2" name="originalIdmonan2" />
+                        <input type="hidden" id="edit-original-size" name="originalSizeId" />
+                        <input type="hidden" id="edit-original-debanh" name="originalDeBanhId" />
+                        <input type="hidden" id="edit-original-toppings" name="originalToppings" />
 
+                        <!-- Hidden fields cho sản phẩm mới -->
+                        <input type="hidden" id="edit-idmonan" name="idmonan" />
+                        <input type="hidden" id="edit-idmonan2" name="idmonan2" />
+
+                        <div class="mb-3">
+                            <label for="edit-size" class="form-label">Size</label>
+                            <select class="form-select" id="edit-size" name="selectedSizeId" >
+                                @if (ViewBag.AllSizes != null)
+                                {
+                                    @foreach (var size in ViewBag.AllSizes as List<WebsiteOrdering.Models.Size>)
+                                    {
+                                        <option value="@size.Idsize">@size.Tensize</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit-debanh" class="form-label">Đế bánh</label>
+                            <select class="form-select" id="edit-debanh" name="selectedDeBanhId" >
+                                @if (ViewBag.AllDeBanh != null)
+                                {
+                                    @foreach (var debanh in ViewBag.AllDeBanh as List<WebsiteOrdering.Models.Debanh>)
+                                    {
+                                        <option value="@debanh.Iddebanh">@debanh.Tendebanh</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit-soluong" class="form-label">Số lượng</label>
+                            <input type="number" class="form-control" id="edit-soluong" name="soluong" min="1" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit-ghichu" class="form-label">Ghi chú</label>
+                            <textarea class="form-control" id="edit-ghichu" name="ghichu" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Topping</label>
+                            <div id="edit-topping-list">
+                                @if (ViewBag.AllToppings != null)
+                                {
+                                    @foreach (var top in ViewBag.AllToppings as List<WebsiteOrdering.Models.Topping>)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input edit-topping-checkbox" type="checkbox"
+                                                   name="selectedToppingIds" value="@top.Idtopping" id="edit_top_@top.Idtopping">
+                                            <label class="form-check-label" for="edit_top_@top.Idtopping">
+                                                @top.Tentopping (+@top.Giatopping₫)
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                     @*   <div class="mb-3">
+                            <strong>Tổng tiền dự kiến: <span id="edit-total-price">0₫</span></strong>
+                        </div>*@
+                    </div>
+                   
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                 
+                </form>
+            </div>
+        </div>
+    </div>
     <h4 class="text-end">
-        Tổng đơn:
-        @Model.Sum(i => i.TongTien).ToString("N0")₫
+        Tổng đơn: <span id="totalAmount">0₫</span>
     </h4>
 }

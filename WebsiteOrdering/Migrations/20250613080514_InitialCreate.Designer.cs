@@ -12,15 +12,15 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250601171508_AddNewFields")]
-    partial class AddNewFields
+    [Migration("20250613080514_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.16")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -229,7 +229,7 @@ namespace WebsiteOrdering.Migrations
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
-                    b.Property<string>("IDLOAIMONANCHA")
+                    b.Property<string>("IDLOAIMAN_CHA")
                         .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
@@ -240,95 +240,256 @@ namespace WebsiteOrdering.Migrations
 
                     b.HasKey("IDLOAIMONAN");
 
-                    b.ToTable("LOAIMONAN");
+                    b.ToTable("LOAIMONAN", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ChiNhanhViewModel", b =>
+                {
+                    b.Property<string>("IDCHINHANH")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DIACHICN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TENCHINHANH")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDCHINHANH");
+
+                    b.ToTable("CHINHANH", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ChitietDHangViewModel", b =>
+                {
+                    b.Property<string>("IDDONHANG")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDMONAN")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("DonHangViewModelIDDONHANG")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("GHICHU")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GIADH")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IDDEBANH")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDSIZE")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("KIEUPIZZA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SOLUONG")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TONGTIEN")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDDONHANG", "IDMONAN");
+
+                    b.HasIndex("DonHangViewModelIDDONHANG");
+
+                    b.HasIndex("IDDEBANH");
+
+                    b.HasIndex("IDMONAN");
+
+                    b.HasIndex("IDSIZE");
+
+                    b.ToTable("CHITIETDONHANG", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ChitietToppingViewModel", b =>
+                {
+                    b.Property<string>("IDTOPING")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDDONHANG")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDMONAN")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("IDTOPING", "IDDONHANG", "IDMONAN");
+
+                    b.HasIndex("IDDONHANG", "IDMONAN");
+
+                    b.ToTable("CHITIETTOPPING", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.DeBanhViewModel", b =>
+                {
+                    b.Property<string>("IDDEBANH")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GIADEBANH")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TENDEBANH")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDDEBANH");
+
+                    b.ToTable("DEBANH", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.DonHangViewModel", b =>
+                {
+                    b.Property<string>("IDDONHANG")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDCHINHANH")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDDATBAN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IDNV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NGAYDAT")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PHUONGTHUCTHANHTOAN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SONGUOI")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TENKH")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TONGDH")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDDONHANG");
+
+                    b.HasIndex("IDCHINHANH");
+
+                    b.ToTable("DONHANG", (string)null);
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.ListGiaSizeViewModel", b =>
                 {
                     b.Property<string>("IDLOAIMONAN")
-                        .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("IDSIZE")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GIA")
+                    b.Property<int>("GIASIZE")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductsViewModelIDMONAN")
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProductsViewModelIDMONAN2")
-                        .HasColumnType("nvarchar(5)");
+                    b.Property<string>("SizeViewModelIDSIZE")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("IDLOAIMONAN", "IDSIZE");
 
                     b.HasIndex("IDSIZE");
 
-                    b.HasIndex("ProductsViewModelIDMONAN", "ProductsViewModelIDMONAN2");
+                    b.HasIndex("ProductsViewModelIDMONAN");
 
-                    b.ToTable("LISTGIASIZE");
+                    b.HasIndex("SizeViewModelIDSIZE");
+
+                    b.ToTable("LISTGIASIZE", (string)null);
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.ProductsViewModel", b =>
                 {
                     b.Property<string>("IDMONAN")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<string>("IDMONAN2")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ANHMONAN")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoryIDLOAIMONAN")
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<int>("GIACOBAN")
+                    b.Property<int>("GIAMONAN")
                         .HasColumnType("int");
 
                     b.Property<string>("IDLoaiMonAn")
                         .IsRequired()
-                        .HasMaxLength(5)
                         .HasColumnType("nvarchar(5)");
 
-                    b.Property<string>("MOTAMONAN")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("MOTA")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TENMONAN")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TRANGTHAI")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<string>("TRANGTHAIMAN")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("IDMONAN", "IDMONAN2");
+                    b.HasKey("IDMONAN");
 
-                    b.HasIndex("CategoryIDLOAIMONAN");
+                    b.HasIndex("IDLoaiMonAn");
 
-                    b.ToTable("SanPhams");
+                    b.ToTable("MONAN", (string)null);
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.SizeViewModel", b =>
                 {
                     b.Property<string>("IDSIZE")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("TENSIZE")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IDSIZE");
 
-                    b.ToTable("SIZE");
+                    b.ToTable("SIZE", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ToppingViewModel", b =>
+                {
+                    b.Property<string>("IDTOPPING")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryViewModelIDLOAIMONAN")
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<int>("GIATOPPING")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IDLOAIMONAN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("ProductsViewModelIDMONAN")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TENTOPPING")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IDTOPPING");
+
+                    b.HasIndex("CategoryViewModelIDLOAIMONAN");
+
+                    b.HasIndex("IDLOAIMONAN");
+
+                    b.HasIndex("ProductsViewModelIDMONAN");
+
+                    b.ToTable("TOPPING", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -382,6 +543,75 @@ namespace WebsiteOrdering.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ChitietDHangViewModel", b =>
+                {
+                    b.HasOne("WebsiteOrdering.ViewModels.DonHangViewModel", null)
+                        .WithMany("chitietdh")
+                        .HasForeignKey("DonHangViewModelIDDONHANG");
+
+                    b.HasOne("WebsiteOrdering.ViewModels.DeBanhViewModel", "DeBanh")
+                        .WithMany()
+                        .HasForeignKey("IDDEBANH")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsiteOrdering.ViewModels.DonHangViewModel", "DonHang")
+                        .WithMany()
+                        .HasForeignKey("IDDONHANG")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsiteOrdering.ViewModels.ProductsViewModel", "Product")
+                        .WithMany()
+                        .HasForeignKey("IDMONAN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsiteOrdering.ViewModels.SizeViewModel", "Size")
+                        .WithMany()
+                        .HasForeignKey("IDSIZE")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeBanh");
+
+                    b.Navigation("DonHang");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ChitietToppingViewModel", b =>
+                {
+                    b.HasOne("WebsiteOrdering.ViewModels.ToppingViewModel", "Topping")
+                        .WithMany()
+                        .HasForeignKey("IDTOPING")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsiteOrdering.ViewModels.ChitietDHangViewModel", "chitietdhang")
+                        .WithMany()
+                        .HasForeignKey("IDDONHANG", "IDMONAN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Topping");
+
+                    b.Navigation("chitietdhang");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.DonHangViewModel", b =>
+                {
+                    b.HasOne("WebsiteOrdering.ViewModels.ChiNhanhViewModel", "chinhanh")
+                        .WithMany()
+                        .HasForeignKey("IDCHINHANH")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("chinhanh");
+                });
+
             modelBuilder.Entity("WebsiteOrdering.ViewModels.ListGiaSizeViewModel", b =>
                 {
                     b.HasOne("WebsiteOrdering.ViewModels.CategoryViewModel", "LoaiMonAn")
@@ -391,14 +621,18 @@ namespace WebsiteOrdering.Migrations
                         .IsRequired();
 
                     b.HasOne("WebsiteOrdering.ViewModels.SizeViewModel", "Size")
-                        .WithMany("ListGiaSize")
+                        .WithMany()
                         .HasForeignKey("IDSIZE")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WebsiteOrdering.ViewModels.ProductsViewModel", null)
                         .WithMany("ListGiaSizes")
-                        .HasForeignKey("ProductsViewModelIDMONAN", "ProductsViewModelIDMONAN2");
+                        .HasForeignKey("ProductsViewModelIDMONAN");
+
+                    b.HasOne("WebsiteOrdering.ViewModels.SizeViewModel", null)
+                        .WithMany("ListGiaSize")
+                        .HasForeignKey("SizeViewModelIDSIZE");
 
                     b.Navigation("LoaiMonAn");
 
@@ -409,19 +643,49 @@ namespace WebsiteOrdering.Migrations
                 {
                     b.HasOne("WebsiteOrdering.ViewModels.CategoryViewModel", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryIDLOAIMONAN");
+                        .HasForeignKey("IDLoaiMonAn")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.ToppingViewModel", b =>
+                {
+                    b.HasOne("WebsiteOrdering.ViewModels.CategoryViewModel", null)
+                        .WithMany("Topping")
+                        .HasForeignKey("CategoryViewModelIDLOAIMONAN");
+
+                    b.HasOne("WebsiteOrdering.ViewModels.CategoryViewModel", "IdLoaiMonAn")
+                        .WithMany()
+                        .HasForeignKey("IDLOAIMONAN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsiteOrdering.ViewModels.ProductsViewModel", null)
+                        .WithMany("Toppings")
+                        .HasForeignKey("ProductsViewModelIDMONAN");
+
+                    b.Navigation("IdLoaiMonAn");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.CategoryViewModel", b =>
                 {
                     b.Navigation("Products");
+
+                    b.Navigation("Topping");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.ViewModels.DonHangViewModel", b =>
+                {
+                    b.Navigation("chitietdh");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.ProductsViewModel", b =>
                 {
                     b.Navigation("ListGiaSizes");
+
+                    b.Navigation("Toppings");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.ViewModels.SizeViewModel", b =>

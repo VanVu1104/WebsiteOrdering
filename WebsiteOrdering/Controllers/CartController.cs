@@ -15,85 +15,6 @@ namespace WebsiteOrdering.Controllers
             _appDbContext = appDbContext;
         }
 
-        //Thêm vào giỏ hàng
-        //[HttpPost]
-        //public async Task<IActionResult> AddToCart(string idmonan, string idsize,string iddebanh,List<string> toppings, int soluong,string ghichu,string idmonan2)
-        //{
-        //    var product = await _appDbContext.SanPhams
-        //        .Where(p => p.IDMONAN == idmonan)
-        //        .Select(p => new
-        //        {
-        //            p.IDMONAN,
-        //            p.IDMONAN2,
-        //            p.TENMONAN,
-        //            p.ANHMONAN,
-        //            p.GIACOBAN,
-        //            p.IDLoaiMonAn
-        //        })
-        //        .FirstOrDefaultAsync();
-
-        //    var size = await _appDbContext.Sizes.FindAsync(idsize);
-        //    var debanh = await _appDbContext.debanh.FindAsync(iddebanh);
-
-        // //  string idmonan2 = product.IDMONAN2;
-
-        //    int giacoban = product.GIACOBAN;
-        //    int giasize = _appDbContext.ListGiaSizes.FirstOrDefault(l => l.IDLOAIMONAN == product.IDLoaiMonAn && l.IDSIZE == idsize)?.GIA ?? 0;
-        //    int giadebanh = debanh?.GIADEBANH ?? 0;
-
-        //    var toppingObjs = new List<ToppingViewModel>();
-        //    if (toppings != null && toppings.Count > 0)
-        //    {
-        //        toppingObjs = await _appDbContext.Topping
-        //            .Where(t=> toppings.Contains(t.IDTOPPING))
-        //            .Select(t=> new ToppingViewModel
-        //            {
-        //                IDTOPPING = t.IDTOPPING,
-        //                TENTOPPING = t.TENTOPPING,
-        //                GIATOPPING = t.GIATOPPING
-        //            }).ToListAsync();
-        //    }
-        //    //var cart = HttpContext.Session.Get<List<CartItem>>("Cart");
-        //    var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
-
-        //    // Kiểm tra trùng sản phẩm
-        //    var existingItem = cart.FirstOrDefault(c =>
-        //        c.IDMONAN == idmonan &&
-        //        c.Size == size.TENSIZE &&
-        //        c.DeBanh == debanh.TENDEBANH &&
-        //        c.Topping.Select(t => t.IDTOPPING).OrderBy(x => x).SequenceEqual(toppingObjs.Select(t => t.IDTOPPING).OrderBy(x => x)));
-
-        //    if (existingItem != null)
-        //    {
-        //        existingItem.SoLuong += soluong;
-        //    }
-        //    else
-        //    {
-        //        cart.Add(new CartItem
-        //        {
-        //            IDMONAN = product.IDMONAN,
-        //            IDMONAN2 = product.IDMONAN2,
-        //            TENSANPHAM = product.TENMONAN,
-        //            ANHSANPHAM = product.ANHMONAN,
-        //            Size = size.TENSIZE,
-        //            DeBanh = debanh.TENDEBANH,
-        //            SoLuong = soluong,
-        //            GhiChu = ghichu,
-        //            GiaCoBan = giacoban,
-        //            GiaSize = giasize,
-        //            GiaDeBanh = giadebanh,
-        //            Topping = toppingObjs
-        //        });
-        //    }
-
-        //    // Lưu lại vào session
-        //    HttpContext.Session.Set("Cart", cart);
-
-        //    return RedirectToAction("Index", "Cart");
-
-        //}
-
-  
         [HttpPost]
         public async Task<IActionResult> AddToCart(IFormCollection form)
         {
@@ -108,8 +29,8 @@ namespace WebsiteOrdering.Controllers
             string idsize = form["SelectedSizeId"];
             string iddebanh = form["SelectedDeBanhId"];
             string ghichu = form["ghichu"];
-            string idmonan2 = form["idmonan2"];
-
+            string idmonan2 = form["SelectedPizzaGhepId"];
+          
             // Parse các giá trị số
             int soluong = 1;
             if (form.ContainsKey("soluong") && !string.IsNullOrEmpty(form["soluong"]))
@@ -130,22 +51,9 @@ namespace WebsiteOrdering.Controllers
                 return BadRequest("ID món ăn không hợp lệ");
             }
 
-            // Tìm sản phẩm
-            //var product = await _appDbContext.SanPhams
-            //    .Where(p => p.IDMONAN == idmonan)
-            //    .Select(p => new
-            //    {
-            //        p.IDMONAN,
-            //        p.IDMONAN2,
-            //        p.TENMONAN,
-            //        p.ANHMONAN,
-            //        p.GIACOBAN,
-            //        p.IDLoaiMonAn
-            //    })
-            //    .FirstOrDefaultAsync();
             var product = await _appDbContext.SanPhams
-                .Include(p=>p.Category)
-    .Where(p => p.IDMONAN == idmonan).FirstOrDefaultAsync();
+                .Include(p=>p.IdloaimonanNavigation)
+                .Where(p => p.Idmonan == idmonan).FirstOrDefaultAsync();
 
            
             // Kiểm tra product có tồn tại không
@@ -158,29 +66,40 @@ namespace WebsiteOrdering.Controllers
             var size = await _appDbContext.Sizes.FindAsync(idsize);
             var debanh = await _appDbContext.debanh.FindAsync(iddebanh);
 
-            // Kiểm tra size và debanh có tồn tại không
-            if (size == null || debanh == null)
+            // Tính giá
+            int giacoban = product.Giamonan;
+            string tenmonan2 = null;
+            if (!string.IsNullOrEmpty(idmonan2))
             {
-                return BadRequest("Size hoặc đế bánh không hợp lệ");
+                var product2 = await _appDbContext.SanPhams.FindAsync(idmonan2);
+                if (product2 != null)
+                {
+                    giacoban = (giacoban + product2.Giamonan) / 2;
+                    tenmonan2 = product2.Tenmonan;
+                }
             }
 
-            // Tính giá
-            int giacoban = product.GIACOBAN;
-            int giasize = _appDbContext.ListGiaSizes
-                .FirstOrDefault(l => l.IDLOAIMONAN == product.IDLoaiMonAn && l.IDSIZE == idsize)?.GIA ?? 0;
-            int giadebanh = debanh.GIADEBANH;
+            int giasize = 0;
+            if (size != null)
+            {
+                giasize = await _appDbContext.ListGiaSizes
+                   .Where(l => l.Idloaimonan == product.Idloaimonan && l.Idsize == idsize)
+                   .Select(l => l.Giasize)
+                   .FirstOrDefaultAsync();
+            }
+            int giadebanh = debanh?.Giadebanh ?? 0;
 
             // Lấy thông tin toppings
-            var toppingObjs = new List<ToppingViewModel>();
+            var toppingObjs = new List<Topping>();
             if (toppings != null && toppings.Count > 0)
             {
                 toppingObjs = await _appDbContext.Topping
-                    .Where(t => toppings.Contains(t.IDTOPPING))
-                    .Select(t => new ToppingViewModel
+                    .Where(t => toppings.Contains(t.Idtopping))
+                    .Select(t => new Topping
                     {
-                        IDTOPPING = t.IDTOPPING,
-                        TENTOPPING = t.TENTOPPING,
-                        GIATOPPING = t.GIATOPPING
+                        Idtopping = t.Idtopping,
+                        Tentopping = t.Tentopping,
+                        Giatopping = t.Giatopping
                     }).ToListAsync();
             }
 
@@ -189,11 +108,12 @@ namespace WebsiteOrdering.Controllers
 
             // Kiểm tra sản phẩm đã tồn tại trong giỏ hàng chưa
             var existingItem = cart.FirstOrDefault(c =>
-                c.IDMONAN == idmonan &&
-                c.Size == size.TENSIZE &&
-                c.DeBanh == debanh.TENDEBANH &&
-                c.Topping.Select(t => t.IDTOPPING).OrderBy(x => x)
-                    .SequenceEqual(toppingObjs.Select(t => t.IDTOPPING).OrderBy(x => x)));
+               c.IDMONAN == idmonan &&
+               c.IDMMONAN2 == idmonan2 &&
+               c.Size == (size?.Tensize ?? null) &&
+               c.DeBanh == (debanh?.Tendebanh ?? null) &&
+               c.Topping.Select(t => t.Idtopping).OrderBy(x => x)
+                   .SequenceEqual(toppingObjs.Select(t => t.Idtopping).OrderBy(x => x)));
 
             if (existingItem != null)
             {
@@ -205,12 +125,13 @@ namespace WebsiteOrdering.Controllers
                 // Nếu chưa tồn tại, thêm mới vào giỏ hàng
                 cart.Add(new CartItem
                 {
-                    IDMONAN = product.IDMONAN,
-                    IDMONAN2 = product.IDMONAN2,
-                    TENSANPHAM = product.TENMONAN,
-                    ANHSANPHAM = product.ANHMONAN,
-                    Size = size.TENSIZE,
-                    DeBanh = debanh.TENDEBANH,
+                    IDMONAN = product.Idmonan,
+                    IDMMONAN2 = idmonan2,
+                    TENSANPHAM = product.Tenmonan,
+                    TENSANPHAM2 = tenmonan2,
+                    ANHSANPHAM = product.Anhmonan,
+                    Size = size?.Tensize,
+                    DeBanh = debanh?.Tendebanh,
                     SoLuong = soluong,
                     GhiChu = ghichu,
                     GiaCoBan = giacoban,
@@ -218,69 +139,303 @@ namespace WebsiteOrdering.Controllers
                     GiaDeBanh = giadebanh,
                     Topping = toppingObjs
                 });
-            }
 
+            }
+            var addedItemId = $"{idmonan}_{idmonan2}_{size?.Tensize}_{debanh?.Tendebanh}_{string.Join(",", toppingObjs.Select(t => t.Idtopping))}";
+            TempData["SelectedIds"] = new List<string> { addedItemId };
             // Lưu giỏ hàng vào session
             HttpContext.Session.Set("Cart", cart);
 
             return RedirectToAction("Index", "Cart");
         }
+
+
         //Hiển thị giỏ hàng
-        public IActionResult Index()
+        public async Task< IActionResult >Index()
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+            ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
+            ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();
+            ViewBag.AllToppings = await _appDbContext.Topping
+                    .Select(t => new Topping
+                    {
+                        Idtopping = t.Idtopping,
+                        Tentopping = t.Tentopping,
+                        Giatopping = t.Giatopping,
+                        Idloaimonan = t.Idloaimonan
+                    })
+                    .ToListAsync();
+            // hoặc lọc theo loại nếu cần
+
             return View(cart);
         }
 
         //Cập nhật số lượng
-        [HttpPut]
-        public IActionResult UpdateCart(string idmonan, string size, string debanh, List<string> toppings, int soluong ,string idmonan2)
+        [HttpPost]
+        public IActionResult UpdateCart(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings, int soluong)
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             var item = cart.FirstOrDefault(c =>
                 c.IDMONAN == idmonan &&
-                c.IDMONAN2 == idmonan2 &&
-                c.Size == size &&
-                c.DeBanh == debanh &&
-                c.Topping.Select(t => t.IDTOPPING).OrderBy(x => x).SequenceEqual(toppings.OrderBy(x => x)));
+                c.IDMMONAN2 == idmonan2 &&
+                c.Size == (size ?? null) &&
+                c.DeBanh == (debanh ?? null) &&
+                (c.Topping?.Select(t => t.Idtopping).OrderBy(x => x)
+                    .SequenceEqual((toppings ?? new List<string>()).OrderBy(x => x)) ?? toppings == null));
 
             if (item != null)
             {
-                item.SoLuong = soluong;
+                if (soluong <= 0)
+                {
+                    cart.Remove(item);
+                }
+                else
+                {
+                    item.SoLuong = soluong;
+                }
+
+                HttpContext.Session.Set("Cart", cart);
+
+                return Json(new
+                {
+                    success = true,
+                    tongTienMoi = item.TongTien // ✅ Tự động tính đúng
+                });
             }
 
-            HttpContext.Session.Set("Cart", cart);
-            return RedirectToAction("Index");
+            return Json(new { success = false });
         }
+
+
         //Xóa sản phẩm ra giỏ hàng
-        [HttpDelete]
-        public IActionResult DeleteItem(string idmonan, string size, string debanh, List<string> toppings)
+        [HttpPost]
+        public IActionResult DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             var itemToRemove = cart.FirstOrDefault(c =>
                 c.IDMONAN == idmonan &&
-                c.Size == size &&
-                c.DeBanh == debanh &&
-                c.Topping.Select(t => t.IDTOPPING).OrderBy(x => x).SequenceEqual(toppings.OrderBy(x => x)));
+                c.IDMMONAN2 == idmonan2 &&
+                c.Size == (size ?? null) &&
+                c.DeBanh == (debanh ?? null) &&
+                (c.Topping?.Select(t => t.Idtopping).OrderBy(x => x)
+                    .SequenceEqual((toppings ?? new List<string>()).OrderBy(x => x)) ?? toppings == null));
 
             if (itemToRemove != null)
             {
                 cart.Remove(itemToRemove);
+                HttpContext.Session.Set("Cart", cart);
             }
 
-            HttpContext.Session.Set("Cart", cart);
-            return RedirectToAction("Index");
+            return View("Index", cart);
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng
-        [HttpDelete]
+        [HttpPost]
         public IActionResult CartEmpty()
         {
             HttpContext.Session.Remove("Cart");
-            return RedirectToAction("Index");
+            return View("Index", new List<CartItem>());
         }
+
+        //Hàm tính số sản phẩm trong icon giỏ hàng
+        public IActionResult CartCountPartial()
+        {
+            var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+            return PartialView("_CartCount", cart);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCartItem(
+     string originalIdmonan, string originalIdmonan2, string originalSizeId, string originalDeBanhId, string originalToppings,
+     string idmonan, string idmonan2, string selectedSizeId, string selectedDeBanhId,
+     List<string> selectedToppingIds, string ghichu, int soluong)
+        {
+            var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+
+            // 1. Parse topping cũ
+            var originalToppingIds = !string.IsNullOrEmpty(originalToppings)
+                ? originalToppings.Split(',').ToList()
+                : new List<string>();
+
+            // 2. Tìm sản phẩm cũ trong giỏ hàng (so sánh theo ID + toppings)
+            var oldItem = cart.FirstOrDefault(c =>
+                c.IDMONAN == originalIdmonan &&
+                c.IDMMONAN2 == originalIdmonan2 &&
+                c.Size == originalSizeId &&
+                c.DeBanh == originalDeBanhId &&
+                (
+                    (c.Topping != null && originalToppingIds != null &&
+                     c.Topping.Select(t => t.Idtopping).OrderBy(x => x)
+                              .SequenceEqual(originalToppingIds.OrderBy(x => x)))
+                    ||
+                    (c.Topping == null && originalToppingIds.Count == 0)
+                )
+            );
+
+            if (oldItem == null)
+                return Json(new { success = false, message = "Không tìm thấy sản phẩm trong giỏ hàng." });
+
+            cart.Remove(oldItem); // Xoá bản cũ
+
+            // 3. Lấy sản phẩm mới
+            var product = await _appDbContext.SanPhams
+                .Include(p => p.IdloaimonanNavigation)
+                .FirstOrDefaultAsync(p => p.Idmonan == idmonan);
+
+            if (product == null)
+                return Json(new { success = false, message = "Sản phẩm không tồn tại." });
+
+        
+            // 4. Lấy size và đế bánh
+            var size = await _appDbContext.Sizes.FindAsync(selectedSizeId);
+            var debanh = await _appDbContext.debanh.FindAsync(selectedDeBanhId);
+
+            // 5. Tính giá cơ bản
+            int giacoban = product.Giamonan;
+            string? tenmonan2 = null;
+
+            if (!string.IsNullOrEmpty(idmonan2))
+            {
+                var product2 = await _appDbContext.SanPhams.FindAsync(idmonan2);
+                if (product2 != null)
+                {
+                    tenmonan2 = product2.Tenmonan;
+                    giacoban = (giacoban + product2.Giamonan) / 2;
+                }
+            }
+
+            // 6. Tính giá size theo Idloaimonan
+            //int? giasize = await _appDbContext.ListGiaSizes
+            //    .Where(l => l.Idloaimonan == product.Idloaimonan && l.Idsize == selectedSizeId)
+            //    .Select(l => (int?)l.Giasize)
+            //    .FirstOrDefaultAsync();
+
+            //if (giasize == null)
+            //    return Json(new { success = false, message = "Không tìm thấy giá cho size đã chọn." });
+            int giasize = 0;
+            if (!string.IsNullOrEmpty(selectedSizeId))
+            {
+                var giasizeQuery = await _appDbContext.ListGiaSizes
+                    .Where(l => l.Idloaimonan == product.Idloaimonan && l.Idsize == selectedSizeId)
+                    .Select(l => (int?)l.Giasize)
+                    .FirstOrDefaultAsync();
+
+                if (giasizeQuery == null)
+                    return Json(new { success = false, message = "Không tìm thấy giá cho size đã chọn." });
+
+                giasize = giasizeQuery.Value;
+            }
+
+            int giadebanh = debanh?.Giadebanh ?? 0;
+
+            // 7. Lấy topping theo ID và loại món ăn
+            var toppingObjs = new List<Topping>();
+            if (selectedToppingIds != null && selectedToppingIds.Count > 0)
+            {
+                toppingObjs = await _appDbContext.Topping
+                    .Where(t => selectedToppingIds.Contains(t.Idtopping) && t.Idloaimonan == product.Idloaimonan)
+                    .Select(t => new Topping
+                    {
+                        Idtopping = t.Idtopping,
+                        Tentopping = t.Tentopping,
+                        Giatopping = t.Giatopping,
+                        Idloaimonan = t.Idloaimonan
+                    })
+                    .ToListAsync();
+
+            }
+
+            // 8. Kiểm tra sản phẩm tương tự đã có trong giỏ hàng chưa
+            var existingItem = cart.FirstOrDefault(c =>
+                c.IDMONAN == idmonan &&
+                c.IDMMONAN2 == idmonan2 &&
+                c.Size == selectedSizeId&&
+                c.DeBanh == selectedDeBanhId &&
+                (
+                    (c.Topping != null && selectedToppingIds != null &&
+                     c.Topping.Select(t => t.Idtopping).OrderBy(x => x)
+                              .SequenceEqual(selectedToppingIds.OrderBy(x => x)))
+                    ||
+                    (c.Topping == null && (selectedToppingIds == null || selectedToppingIds.Count == 0))
+                )
+            );
+
+            if (existingItem != null)
+            {
+                existingItem.SoLuong += soluong;
+            }
+            else
+            {
+                var newCartItem = new CartItem
+                {
+                    IDMONAN = idmonan,
+                    TENSANPHAM = product.Tenmonan,
+                    IDMMONAN2 = idmonan2,
+                    TENSANPHAM2 = tenmonan2,
+                    ANHSANPHAM = product.Anhmonan,
+                   // Size = selectedSizeId,
+                    Size= size?.Tensize ?? null,
+                    DeBanh= debanh?.Tendebanh ?? null,
+                   // DeBanh = selectedDeBanhId,
+                    SoLuong = soluong,
+                    GhiChu = ghichu,
+                    GiaCoBan = giacoban,
+                    GiaSize = giasize,
+                    GiaDeBanh = giadebanh,
+                    Topping = toppingObjs ?? null
+                };
+
+                cart.Add(newCartItem);
+            }
+
+            // 9. Lưu lại session
+            HttpContext.Session.Set("Cart", cart);
+            return Json(new { success = true});
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetOptionsByMonAnId(string idmonan)
+        {
+            var monAn = await _appDbContext.SanPhams.FindAsync(idmonan);
+            if (monAn == null) return NotFound();
+
+            var idLoai = monAn.Idloaimonan;
+
+            var sizes = await _appDbContext.ListGiaSizes
+                .Where(l => l.Idloaimonan == idLoai)
+                .Select(l => new {
+                    Idsize = l.Idsize,
+                    Ten = l.IdsizeNavigation.Tensize
+                }).ToListAsync();
+
+            List<object> debanhs = new();
+            if (idLoai == "LMA01")
+            {
+                debanhs = await _appDbContext.debanh
+                    .Select(d => new {
+                        Iddebanh = d.Iddebanh,
+                        Ten = d.Tendebanh
+                    }).ToListAsync<object>();
+            }
+
+            var toppings = await _appDbContext.Topping
+                .Where(t => t.Idloaimonan == idLoai)
+                .Select(t => new {
+                    Idtopping = t.Idtopping,
+                    Ten = t.Tentopping,
+                    Gia = t.Giatopping
+                }).ToListAsync();
+
+            return Json(new
+            {
+                sizes,
+                debanhs,
+                toppings
+            });
+        }
+
 
     }
 }
