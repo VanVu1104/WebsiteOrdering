@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebsiteOrdering.Models
@@ -15,5 +15,4 @@ namespace WebsiteOrdering.Models
 
         public virtual Topping IdtoppingNavigation { get; set; } = null!;
     }
-
 }

@@ -36,6 +36,4 @@ namespace WebsiteOrdering.Models
 
         public virtual Size? IdsizeNavigation { get; set; }
     }
-
-
 }
