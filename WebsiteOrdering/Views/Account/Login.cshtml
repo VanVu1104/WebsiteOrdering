@@ -1,62 +1,23 @@
 ﻿@model WebsiteOrdering.ViewModels.LoginViewModel
-@{
-    <link rel="stylesheet" href="~/css/login.css" />
-
-}
-<h2>ĐĂNG NHẬP</h2>
-
 <form asp-action="Login" method="post">
-    @* <div> *@
-
-    @*     <label asp-for="Email"></label> *@
-    @*     <input asp-for="Email" /> *@
-    @*     <span asp-validation-for="Email"></span> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <label asp-for="Password"></label> *@
-    @*     <input asp-for="Password" /> *@
-    @*     <span asp-validation-for="Password"></span> *@
-    @* </div> *@
-
-    <div id="dn_email">
-        <span>
-            <img style="width:30px;height:23px" src="~/css/image/icon_email.png" alt="Email icon" />
-        </span>
-        <input asp-for="Email" type="email" placeholder="Email" />
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
         <span asp-validation-for="Email"></span>
     </div>
-
-    <div id="dn_mk">
-        <span>
-            <img style="width:25px; height:27px" src="~/css/image/icon_pass.png" alt="Password icon" />
-        </span>
-        <input asp-for="Password" type="password" placeholder="Mật khẩu" />
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </div>
-
-
-    @* <div> *@
-    @*     <input asp-for="RememberMe" /> Remember me *@
-    @* </div> *@
-
-    <div class="remmember_login">
-        <label class="checkbox_login">
-            <input type="checkbox" />
-            Ghi nhớ tài khoản
-        </label>
-        <a class="forgot_pass" asp-controller="#" asp-action="#">Quên mật khẩu</a>
+    <div>
+        <input asp-for="RememberMe" /> Remember me
     </div>
-
-    @* <button type="submit">Login</button> *@
-    <button type="submit" class="btn_login">ĐĂNG NHẬP</button>
-    <div class="signup_login">
-        Bạn chưa có tài khoản?
-        <a asp-controller="#" asp-action="#" class="register_link">Đăng ký ngay</a>
-    </div>
+    <button type="submit">Login</button>
 </form>
-@* <p> *@
-@*     Chưa có tài khoản? <a asp-action="Register">Đăng ký</a> *@
-@* </p> *@
+<p>
+    Chưa có tài khoản? <a asp-action="Register">Đăng ký</a>
+</p>
 <p>
     <a asp-controller="Account" asp-action="LoginWithGoogle" class="btn btn-danger">
         Đăng nhập bằng Google

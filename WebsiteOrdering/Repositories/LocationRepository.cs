@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebsiteOrdering.Data;
 using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Repositories

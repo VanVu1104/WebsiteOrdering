@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
 
-namespace WebsiteOrdering.Models;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using WebsiteOrdering.ViewModels;
 
-public partial class Debanh
+namespace WebsiteOrdering.Models
 {
-    public string Iddebanh { get; set; } = null!;
+    public partial class Debanh
+    {
+        public string Iddebanh { get; set; } = null!;
 
-    public string Tendebanh { get; set; } = null!;
+        public string Tendebanh { get; set; } = null!;
 
-    public int Giadebanh { get; set; }
+        public int Giadebanh { get; set; }
 
-    public virtual ICollection<Chitietdonhang> Chitietdonhangs { get; set; } = new List<Chitietdonhang>();
+        public virtual ICollection<Chitietdonhang> Chitietdonhangs { get; set; } = new List<Chitietdonhang>();
+    }
 }

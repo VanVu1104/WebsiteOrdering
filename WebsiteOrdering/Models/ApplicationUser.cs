@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Models;
 
+
 namespace WebsiteOrdering.Models
 {
     [Table("NGUOIDUNG")]

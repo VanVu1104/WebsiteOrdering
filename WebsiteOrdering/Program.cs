@@ -1,14 +1,25 @@
+
+﻿using MediatR;
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebsiteOrdering.Data;
+using System.Reflection;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Thêm dịch vụ Session
+builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -64,6 +75,10 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
 });
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+//builder.Services.AddTransient<IMyService, MyService>();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
@@ -77,7 +92,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddHttpClient();
-
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -102,11 +116,24 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+//Kiểm tra có kết nối database chưa
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    bool canConnect = dbContext.Database.CanConnect();
 
-app.UseSession();
+    if (canConnect)
+    {
+        Console.WriteLine("✅ Kết nối cơ sở dữ liệu thành công!");
+    }
+    else
+    {
+        Console.WriteLine("❌ Không thể kết nối đến cơ sở dữ liệu.");
+    }
+}
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthorization();

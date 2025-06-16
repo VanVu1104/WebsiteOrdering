@@ -137,7 +137,7 @@
 
         // Bind click events cho suggestions
         this.suggestionList.querySelectorAll('.suggestion-item').forEach((item, index) => {
-            /item.addEventListener('click', () => this.selectPlace(index));
+            item.addEventListener('click', () => this.selectPlace(index));
             item.addEventListener('mouseenter', () => this.highlightSuggestion(index));
         });
     }

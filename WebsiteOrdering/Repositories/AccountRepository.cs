@@ -226,6 +226,7 @@ namespace WebsiteOrdering.Repositories
                 Email = email,
                 EmailConfirmed = true,
                 FullName = fullName
+
             };
             var createResult = await _userManager.CreateAsync(newUser);
             if (!createResult.Succeeded)
