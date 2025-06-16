@@ -10,9 +10,7 @@ using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Thêm dịch vụ Session
 builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)

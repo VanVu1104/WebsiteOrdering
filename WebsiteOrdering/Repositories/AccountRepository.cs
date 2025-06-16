@@ -62,7 +62,6 @@ namespace WebsiteOrdering.Repositories
                 UserName = normalizedEmail,
                 Email = normalizedEmail,
                 EmailConfirmed = false
-
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
