@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using WebsiteOrdering.ViewModels;
+using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Product.GetAllCategory
 {
-    public class GetAllCategoriesQuery:IRequest<List<CategoryViewModel>>
+    public class GetAllCategoriesQuery:IRequest<List<Loaimonan>>
     {
 
     }

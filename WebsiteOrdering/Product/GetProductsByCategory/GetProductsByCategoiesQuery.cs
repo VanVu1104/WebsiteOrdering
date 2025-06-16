@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using WebsiteOrdering.ViewModels;
+using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Product.GetAllCategoryById
 {
-    public class GetProductsByCategoiesQuery :IRequest<List<ProductsViewModel>>
+    public class GetProductsByCategoiesQuery :IRequest<List<Monan>>
     {
         public string CategoryId { get;  }
         public GetProductsByCategoiesQuery(string categoryId)

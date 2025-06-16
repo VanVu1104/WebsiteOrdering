@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Models;
-using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Product.GetAllCategoryById
 {
-    public class GetProductsByCategoriesHandler :IRequestHandler<GetProductsByCategoiesQuery,List<ProductsViewModel>>
+    public class GetProductsByCategoriesHandler :IRequestHandler<GetProductsByCategoiesQuery,List<Monan>>
     {
         private readonly AppDbContext _appDbContext;
 
@@ -14,20 +13,21 @@ namespace WebsiteOrdering.Product.GetAllCategoryById
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<ProductsViewModel>> Handle(GetProductsByCategoiesQuery request, CancellationToken cancellationToken)
+        public async Task<List<Monan>> Handle(GetProductsByCategoiesQuery request, CancellationToken cancellationToken)
         {
             var products = await _appDbContext.SanPhams
-                .Where(p => p.IDLoaiMonAn == request.CategoryId && p.TRANGTHAI == "Còn" && p.IDMONAN2 == "1")
-                .Select(p => new ProductsViewModel
+                .Where(p => request.CategoryId.Contains(p.Idloaimonan) && p.Trangthaiman == "Còn")
+               // .Where(p => p.Idloaimonan == request.CategoryId && p.Trangthaiman == "Còn" )
+                .Select(p => new Monan
                 {
-                    IDMONAN = p.IDMONAN,
-                    IDMONAN2 = p.IDMONAN2,
-                    TENMONAN = p.TENMONAN,
-                    MOTAMONAN = p.MOTAMONAN,
-                    GIACOBAN = p.GIACOBAN,
-                    TRANGTHAI = p.TRANGTHAI,
-                    ANHMONAN = p.ANHMONAN,
-                    IDLoaiMonAn = p.IDLoaiMonAn
+                    Idmonan = p.Idmonan,
+                  
+                    Tenmonan = p.Tenmonan,
+                    Mota = p.Mota,
+                    Giamonan = p.Giamonan,
+                    Trangthaiman = p.Trangthaiman,
+                    Anhmonan = p.Anhmonan,
+                    Idloaimonan = p.Idloaimonan
                 })
                 .ToListAsync(cancellationToken);
             

@@ -1,101 +1,93 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
+
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Product.GetAllProducts;
 using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Product.GetProductById
 {
-    public class GetProductByIdQueryHandler :IRequestHandler<GetProductsByIdQuery, ProductsViewModel>
+    public class GetProductByIdQueryHandler :IRequestHandler<GetProductsByIdQuery, Monan>
     {
         private readonly AppDbContext _appDbContext;
         public GetProductByIdQueryHandler (AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }
-        public async Task<ProductsViewModel?> Handle(GetProductsByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Monan?> Handle(GetProductsByIdQuery request, CancellationToken cancellationToken)
         {
             var product = await _appDbContext.SanPhams
-                .Include(p => p.Category)
-                .Where(p => p.IDMONAN == request.Id)
-                .Select(p => new ProductsViewModel
+                .Include(p => p.IdloaimonanNavigation)
+                .Where(p => p.Idmonan == request.Id)
+                .Select(p => new Monan
                 {
-                IDMONAN = p.IDMONAN,
-                IDMONAN2 = p.IDMONAN2,
-                TENMONAN = p.TENMONAN,
-                MOTAMONAN = p.MOTAMONAN,
-                GIACOBAN = p.GIACOBAN,
-                TRANGTHAI = p.TRANGTHAI,
-                ANHMONAN = p.ANHMONAN,
+                Idmonan = p.Idmonan,
+               
+                Tenmonan = p.Tenmonan,
+                Mota = p.Mota,
+                Giamonan = p.Giamonan,
+                Trangthaiman = p.Trangthaiman,
+                Anhmonan = p.Anhmonan,
                 
                 SoLuong = 1,
-                IDLoaiMonAn = p.IDLoaiMonAn,
+                Idloaimonan = p.Idloaimonan,
                     //Hiển thị size theo loại món ăn
+
                     ListGiaSizes = _appDbContext.ListGiaSizes
-                 .Where(g => g.IDLOAIMONAN == p.IDLoaiMonAn)
-                 .Include(g => g.Size)
-                 .Select(g=> new ListGiaSizeViewModel
-                 {
-                        IDSIZE = g.IDSIZE,
-                        GIA = g.GIA,
-                        Size = new SizeViewModel
+                    .Where(g => g.Idloaimonan == p.Idloaimonan)
+                    .Select(g => new Listgiasize
+                    {
+                        Idsize = g.Idsize,
+                        Giasize = g.Giasize,
+                        IdsizeNavigation = new Size
                         {
-                            IDSIZE = g.Size.IDSIZE,
-                            TENSIZE = g.Size.TENSIZE
+                            Idsize = g.IdsizeNavigation.Idsize,
+                            Tensize = g.IdsizeNavigation.Tensize
                         }
                     }).ToList(),
 
-                  //Hiển thị đế bánh
-                     DeBanh = _appDbContext.debanh
-                    .Select(d => new DeBanhViewModel
+
+                    //Hiển thị đế bánh
+                    DeBanh = _appDbContext.debanh
+                    .Select(d => new Debanh
                         {
-                            IDDEBANH = d.IDDEBANH,
-                            TENDEBANH = d.TENDEBANH,
-                            GIADEBANH = d.GIADEBANH
+                            Iddebanh = d.Iddebanh,
+                            Tendebanh = d.Tendebanh,
+                            Giadebanh = d.Giadebanh
                         }).ToList(),
                      
 
                      //Hiển thị topping theo loại món ăn
                      Toppings = _appDbContext.Topping
-                     .Where(t=> t.IDLOAIMONAN == p.IDLoaiMonAn)
-                     .Select(t=> new ToppingViewModel
+                     .Where(t=> t.Idloaimonan == p.Idloaimonan)
+                     .Select(t=> new Topping
                      {
-                         IDTOPPING = t.IDTOPPING,
-                         TENTOPPING = t.TENTOPPING,
-                         GIATOPPING= t.GIATOPPING
+                         Idtopping = t.Idtopping,
+                         Tentopping = t.Tentopping,
+                         Giatopping= t.Giatopping
                      }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
             //Hàm để lấy được pizza ghép
-            if (product != null && product.IDLoaiMonAn == "LMA01" && product.IDMONAN2?.Trim() == "1")
-            {
-                Console.WriteLine("Product ID: " + product.IDMONAN);
 
-                var pizzaGhepList = (await _appDbContext.SanPhams
-                    .Where(sp => sp.IDMONAN == product.IDMONAN && sp.IDMONAN2 != "1")
-                    .Join(
-                        _appDbContext.SanPhams,
-                        sp => sp.IDMONAN2,
-                        original => original.IDMONAN,
-                        (sp, original) => new SanPhamViewModel
-                        {
-                            IDMONAN = sp.IDMONAN,
-                            IDMONAN2 = sp.IDMONAN2,
-                            GIACOBAN = sp.GIACOBAN,
-                            TENMONAN = original.TENMONAN,
-                            ANHMONAN = original.ANHMONAN
-                        }
-                    )
-                    .ToListAsync(cancellationToken))  // Đưa dữ liệu về client để xử lý tiếp
-                    .DistinctBy(p => p.IDMONAN2)       // Loại trùng theo IDMONAN
-                    .ToList();
+            if (product != null && product.Idloaimonan == "LMA01")
+            {
+                // Lấy tất cả các món pizza khác (có cùng loại LMA01 nhưng khác ID)
+                var pizzaGhepList = await _appDbContext.SanPhams
+                    .Where(sp => sp.Idloaimonan == "LMA01" && sp.Idmonan != product.Idmonan)
+                    .Select(sp => new SanPhamViewModel
+                    {
+                        IDMONAN2 = sp.Idmonan,
+                        TENMONAN2 = sp.Tenmonan,
+                        GIACOBAN2 = (sp.Giamonan + product.Giamonan) / 2,
+                        ANHMONAN2 = sp.Anhmonan
+                    })
+                    .ToListAsync(cancellationToken);
 
                 product.PizzaGhep = pizzaGhepList;
             }
 
-       
 
             return product;
         }

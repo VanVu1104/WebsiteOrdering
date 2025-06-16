@@ -6,7 +6,6 @@ using WebsiteOrdering.Product.GetAllCategory;
 using WebsiteOrdering.Product.GetAllCategoryById;
 using WebsiteOrdering.Product.GetAllProducts;
 using WebsiteOrdering.Product.GetProductById;
-using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Controllers
 {
@@ -21,56 +20,41 @@ namespace WebsiteOrdering.Controllers
             _appDbContext = appDbContext;
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
-
-
 
         [HttpGet("")]
         public async Task<IActionResult> Index(int page = 1, string categoryId = null)
         {
             var categories = await _mediator.Send(new GetAllCategoriesQuery());
             ViewBag.Categories = categories;
-            List<ProductsViewModel> products;
+            List<Monan> products;
 
+   
             if (!string.IsNullOrEmpty(categoryId))
             {
-                // Kiểm tra xem category này có con không
-                var hasChildren = categories.Any(c => c.IDLOAIMONANCHA == categoryId);
+                // Lấy tất cả category con đệ quy
+                var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
+                allChildrenIds.Add(categoryId); // Thêm chính nó nữa!
 
-                if (hasChildren)
+                // Lấy sản phẩm từ tất cả category con (bao gồm chính nó)
+                products = new List<Monan>();
+
+                foreach (var catId in allChildrenIds)
                 {
-                    // Nếu có category con, lấy tất cả category con đệ quy
-                    var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
-
-                    products = new List<ProductsViewModel>();
-
-                    // Lấy sản phẩm từ tất cả category con (đệ quy)
-                    foreach (var childId in allChildrenIds)
+                    var prods = await _mediator.Send(new GetProductsByCategoiesQuery(catId));
+                    if (prods != null && prods.Count > 0)
                     {
-                        var prods = await _mediator.Send(new GetProductsByCategoiesQuery(childId));
-                        if (prods != null && prods.Count > 0)
-                        {
-                            products.AddRange(prods);
-                        }
+                        products.AddRange(prods);
                     }
-                }
-                else
-                {
-                    // Nếu không có category con (là category lá), lấy sản phẩm trực tiếp
-                    products = await _mediator.Send(new GetProductsByCategoiesQuery(categoryId));
-                    if (products == null)
-                        products = new List<ProductsViewModel>();
                 }
 
                 ViewBag.SelectedCategory = categoryId;
+
                 if (products.Count == 0)
                 {
                     TempData["Message"] = "Không tìm thấy sản phẩm thuộc loại đã chọn.";
                 }
             }
+
             else
             {
                 products = await _mediator.Send(new GetAllProductQuery());
@@ -90,16 +74,19 @@ namespace WebsiteOrdering.Controllers
         }
 
         // Hàm đệ quy lấy tất cả category con của một category cha
-        private List<string> GetAllChildCategoryIds(List<CategoryViewModel> categories, string parentId)
+        private List<string> GetAllChildCategoryIds(List<Loaimonan> categories, string parentId)
         {
             var result = new List<string>();
-            var children = categories.Where(c => c.IDLOAIMONANCHA == parentId).ToList();
+            if (categories == null || parentId == null)
+                return result;
+
+            var children = categories.Where(c => c.IdloaimanCha == parentId).ToList();
 
             foreach (var child in children)
             {
-                result.Add(child.IDLOAIMONAN);
+                result.Add(child.Idloaimonan);
                 // Đệ quy lấy con của con
-                result.AddRange(GetAllChildCategoryIds(categories, child.IDLOAIMONAN));
+                result.AddRange(GetAllChildCategoryIds(categories, child.Idloaimonan));
             }
 
             return result;

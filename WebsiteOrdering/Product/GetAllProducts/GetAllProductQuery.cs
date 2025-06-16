@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using WebsiteOrdering.ViewModels;
+using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Product.GetAllProducts
 {
-    public class GetAllProductQuery :IRequest<List<ProductsViewModel>>
+    public class GetAllProductQuery :IRequest<List<Monan>>
     {
     }
   

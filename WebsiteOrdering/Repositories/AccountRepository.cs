@@ -216,9 +216,9 @@ namespace WebsiteOrdering.Repositories
             var fullName = (firstName + " " + lastName).Trim();
             var newUser = new ApplicationUser
             {
-                UserName = string.IsNullOrWhiteSpace(fullName) ? email : fullName,
+                UserName = email,
                 Email = email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
             };
             var createResult = await _userManager.CreateAsync(newUser);
             if (!createResult.Succeeded)
