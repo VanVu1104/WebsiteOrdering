@@ -25,10 +25,11 @@ namespace WebsiteOrdering.Models
 
         public DbSet<Donhang> dhang { get; set; }
         public DbSet<Debanh> debanh { get; set; }
+        public virtual DbSet<Location> Locations { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=.;Database=pizza6;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizzanhahang1;Trusted_Connection=True;MultipleActiveResultSets=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -30,6 +30,8 @@ builder.Services.AddMemoryCache();
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("SpeedSms"));
+builder.Services.Configure<OpenRouteServiceSettings>(
+    builder.Configuration.GetSection("OpenRouteService"));
 builder.Services.AddTransient<ISmsService, SmsService>();
 
 //Cấu hình cookie
@@ -80,9 +82,33 @@ builder.Services.AddSession();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddHttpClient<IGeoService, GeoService>();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+    string[] roleNames = { "Customer", "Admin", "Staff" };
+
+    foreach (var roleName in roleNames)
+    {
+        var roleExists = await roleManager.RoleExistsAsync(roleName);
+        if (!roleExists)
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -90,8 +116,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-
 //Kiểm tra có kết nối database chưa
 using (var scope = app.Services.CreateScope())
 {
@@ -107,10 +131,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("❌ Không thể kết nối đến cơ sở dữ liệu.");
     }
 }
-
-
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
@@ -120,6 +140,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Location}/{action=Index}/{id?}");
 
 app.Run();

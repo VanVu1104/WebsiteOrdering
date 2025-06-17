@@ -1,4 +1,3 @@
-﻿
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,5 +17,4 @@ namespace WebsiteOrdering.Models
 
         public virtual Size IdsizeNavigation { get; set; } = null!;
     }
-
 }

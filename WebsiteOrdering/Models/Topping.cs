@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,5 +18,4 @@ namespace WebsiteOrdering.Models
          public virtual ICollection<Chitiettopping> Chitiettoppings { get; set; } = new List<Chitiettopping>();
         public virtual Loaimonan IdloaimonanNavigation { get; set; } = null!;
     }
-
 }

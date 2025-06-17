@@ -1,0 +1,224 @@
+﻿html, body {
+    margin: 0;
+    padding: 0;
+    font-family: initial;
+    /*    height: 100%;
+    width: 100%;*/
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.total_login {
+    display: flex;
+    height: 100vh; /*  cao */
+    width: 99vw; /* rộng  */
+}
+
+.anh_login {
+    width:100%;
+    height:100%;
+    flex: 1;
+}
+
+    .anh_login img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+    }
+
+.form_login {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #ffffff;
+}
+
+    .form_login h2 {
+        align-self: center;
+        font-size: 45px;
+/*        color: #6BA2B0;*/
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .form_login p {
+        align-self:center;
+        color: #000000;
+        margin: 5px 0;
+        font-size: 24px;
+    }
+
+form {
+    width: 100%;
+    max-width: 565px; 
+    margin: 20px auto 0 auto; 
+}
+
+
+#dn_email, #dn_mk {
+    margin-bottom: 25px;
+    width: 100%;
+    position: relative; 
+}
+
+    #dn_email input, #dn_mk input {
+        
+        width: 100%;
+        height: 65px;
+        padding: 12px 10px 10px 70px; 
+        font-size: 24px;
+        border: none;
+        border-radius: 15px;
+        box-sizing: border-box;
+        background-color: rgba(217, 217, 217, 0.3);
+    }
+        #dn_email input::placeholder, #dn_mk input::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+    #dn_email span, #dn_mk span {
+        position: absolute;
+        top: 50%;
+        left: 25px; 
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+.btn_login {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin: 0 auto;
+    height:60px;
+    width: 48%;
+    padding: 12px;
+    background-color: #6BA2B0;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+    .btn_login:hover {
+        background-color: #558794;
+    }
+
+.remmember_login {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -5px;
+    margin-bottom:35px;
+    font-size: 20px;
+}
+
+.checkbox_login {
+    color: #858585;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+    .checkbox_login input {
+        height:16px;
+        width:20px;
+        margin-right: 10px;
+    }
+
+.remmember_login a {
+    color: #6BA2B0;
+    text-decoration: none;
+}
+
+    .remmember_login a:hover {
+        text-decoration: none;
+        color: #477a91;
+    }
+
+.signup_login {
+    text-align:center;
+    margin-top: 20px;
+    font-size: 22px;
+    color: #CCCCCC;
+}
+
+    .signup_login a {
+        color: #6BA2B0;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+        .signup_login a:hover {
+            text-decoration: none;
+            color: #477a91;
+        }
+
+@media (max-width: 768px) {
+    .anh_login {
+        display: none;
+    }
+
+    .total_login {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .form_login {
+        width: 100%;
+        padding: 20px;
+        align-items: center;
+        text-align: center;
+    }
+
+        .form_login h2 {
+            font-size: 32px;
+        }
+
+        .form_login p {
+            font-size: 18px;
+        }
+
+    form {
+        width: 100%;
+        max-width: 90%;
+    }
+
+    #dn_email input,
+    #dn_mk input {
+        font-size: 18px;
+        height: 50px;
+        padding-left: 50px;
+    }
+
+    #dn_email span,
+    #dn_mk span {
+        left: 15px;
+    }
+
+    .btn_login {
+        width: 80%;
+        font-size: 18px;
+        height: 50px;
+    }
+
+    .remmember_login {
+/*        flex-direction: column;
+*/        align-items: flex-start;
+        gap: 10px;
+        font-size: 16px;
+    }
+
+    .signup_login {
+        font-size: 18px;
+    }
+}

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebsiteOrdering.ViewModels;
@@ -39,5 +39,4 @@ namespace WebsiteOrdering.Models
 
         public virtual ApplicationUser? IdngdungNavigation { get; set; }
     }
-
 }
