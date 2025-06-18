@@ -10,7 +10,7 @@
         this.currentLayer = null;
         this.nearestStoreControl = null;
         this.routeInfoControl = null;
-
+        this.selectedLocation = { lat: null, lng: null, address: '' };
         // Map layers
         this.osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
@@ -60,8 +60,7 @@
         try {
             const userLocation = await this.locationService.initializeUserLocation();
             if (userLocation) {
-                this.showUserLocation(userLocation.latitude, userLocation.longitude, userLocation.address);
-                this.findNearestStore();
+                this.showUserLocation(userLocation.lat, userLocation.lng, userLocation.address);
                 this.updateResetButtonText('Về vị trí của tôi');
             }
         } catch (error) {
@@ -166,12 +165,11 @@
     async handleMapClick(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
-
         try {
             // Reverse geocoding để lấy địa chỉ
             const address = await this.locationService.reverseGeocode(lat, lng);
-            this.locationService.setUserLocation(lat, lng);
-            this.tempAddress = address; // lưu để sử dụng sau khi bấm nút
+            this.userLocationView = { lat: lat, lng: lng, address: address };
+            console.log(this.userLocationView);
             // Hiển thị popup xác nhận
             const popup = L.popup()
                 .setLatLng(e.latlng)
@@ -190,7 +188,6 @@
     // Xác nhận chọn vị trí từ map click
     async confirmLocationSelection(lat, lng, address) {
         // Cập nhật userLocation vào service
-    this.locationService.setUserLocation(lat, lng);
         try {
             const result = await this.locationService.saveSelectedLocationToSession(lat, lng, address);
 
@@ -236,7 +233,7 @@
 
     // Reset view
     resetView() {
-        const userLocationView = this.locationService.getUserLocationView();
+        const userLocationView = this.locationService.getUserLocation();
 
         if (userLocationView) {
             this.map.setView([userLocationView.lat, userLocationView.lng], userLocationView.zoom);
@@ -271,10 +268,10 @@
             this.showNotification('📍 Đang lấy vị trí của bạn...', 'info');
 
             const userLocation = await this.locationService.requestBrowserLocation();
-
+            this.userLocationView = userLocation;
             if (userLocation) {
-                this.showUserLocation(userLocation.latitude, userLocation.longitude, userLocation.address);
-                this.map.setView([userLocation.latitude, userLocation.longitude], 15);
+                this.showUserLocation(userLocation.lat, userLocation.lng, userLocation.address);
+                this.map.setView([userLocation.lat, userLocation.lng], 15);
                 this.updateResetButtonText('Về vị trí của tôi');
                 this.findNearestStore();
                 this.showNotification('✅ Đã lấy vị trí thành công!', 'success');
@@ -288,24 +285,23 @@
     // Lưu vị trí hiện tại vào session
     async saveCurrentLocationToSession() {
         try {
-            const userLocation = this.locationService.getUserLocation();
-
+            const userLocation = this.userLocationView;
+            console.log(userLocation);
             if (!userLocation) {
                 this.showNotification('⚠️ Vui lòng chọn vị trí trước!', 'warning');
                 return;
             }
 
-            const address = this.tempAddress || await this.locationService.reverseGeocode(userLocation.lat, userLocation.lng);
             const result = await this.locationService.saveSelectedLocationToSession(
                 userLocation.lat,
                 userLocation.lng,
-                address
+                userLocation.address
             );
 
             if (result.success) {
                 this.showUserLocation(userLocation.lat,
                     userLocation.lng,
-                    address);
+                    userLocation.address);
                 this.findNearestStore();
                 this.showNotification('✅ Đã lưu vị trí vào session thành công!', 'success');
             }
@@ -314,7 +310,7 @@
             this.showNotification('❌ Có lỗi xảy ra khi lưu vị trí!', 'error');
         }
     }
-
+    
     // Tìm cửa hàng gần nhất
     async findNearestStore() {
         try {
@@ -326,7 +322,7 @@
                 const store = nearestStore.store;
 
                 // Hiển thị thông tin cửa hàng
-                this.showNearestStoreInfo(store);
+                //this.showNearestStoreInfo(store);
 
                 // Hiển thị route đến cửa hàng
                 await this.showRouteToLocation(store.latitude, store.longitude);

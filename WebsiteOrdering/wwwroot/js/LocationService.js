@@ -13,9 +13,14 @@
 
             if (sessionRes.ok) {
                 const userLoc = await sessionRes.json();
-                this.userLocation = {
-                    lat: userLoc.latitude,
-                    lng: userLoc.longitude
+                this.setUserLocation(userLoc.lat, userLoc.lng);
+                //this.userLocation = {
+                //    lat: userLoc.latitude,
+                //    lng: userLoc.longitude
+                //};
+                this.userLocationView = {
+                    lat: userLoc.lat,
+                    lng: userLoc.lng
                 };
                 return userLoc;
             } else {
@@ -41,7 +46,7 @@
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
 
-                    this.userLocation = { lat, lng };
+                    this.setUserLocation(lat, lng);
 
                     try {
                         const result = await this.saveUserLocationToSession(lat, lng);
@@ -64,7 +69,7 @@
     }
 
     // Lưu vị trí người dùng vào session
-    async saveUserLocationToSession(lat, lng, address = null) {
+    async saveUserLocationToSession(lat, lng) {
         try {
             const response = await fetch('/SetSessionLocation', {
                 method: 'POST',
@@ -72,14 +77,14 @@
                 body: JSON.stringify({
                     latitude: lat,
                     longitude: lng,
-                    address: address
                 })
             });
 
             if (response.ok) {
                 const result = await response.json();
-                this.userLocation = { lat: result.latitude, lng: result.longitude };
-                this.userLocationView = { lat: result.latitude, lng: result.longitude, zoom: 15 };
+                this.setUserLocation(result.lat, result.lng);
+                //this.userLocation = { lat: result.lat, lng: result.lng };
+                this.userLocationView = { lat: result.lat, lng: result.lng, zoom: 15 };
                 return result;
             } else {
                 throw new Error("Failed to save location to session");
@@ -105,8 +110,8 @@
 
             const result = await response.json();
             if (result.success) {
-                this.userLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-                this.userLocationView = { lat: parseFloat(lat), lng: parseFloat(lng), zoom: 15 };
+                this.setUserLocation(lat, lng);
+                this.userLocationView = { lat: lat, lng: result.lng, zoom: 15 };
                 return result;
             } else {
                 throw new Error(result.message);

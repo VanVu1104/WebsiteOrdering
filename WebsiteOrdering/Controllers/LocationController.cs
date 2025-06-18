@@ -220,7 +220,7 @@ namespace WebsiteOrdering.Controllers
             HttpContext.Session.SetString("UserLat", userLoc.Latitude.ToString());
             HttpContext.Session.SetString("UserLng", userLoc.Longitude.ToString());
             HttpContext.Session.SetString("UserAddress", userLoc.Address ?? "");
-            return Ok(new { success = true, message = "Lưu địa chỉ vào session thành công" });
+            return Ok(new { success = true, message = "Lưu địa chỉ vào session thành công", });
         }
         [HttpGet]
         public IActionResult GetSessionLocation()
@@ -231,8 +231,8 @@ namespace WebsiteOrdering.Controllers
             {
                 return Ok(new
                 {
-                    latitude = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes)),
-                    longitude = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes)),
+                    lat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes)),
+                    lng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes)),
                     address = System.Text.Encoding.UTF8.GetString(addressBytes)
                 });
             }
@@ -249,11 +249,12 @@ namespace WebsiteOrdering.Controllers
             HttpContext.Session.SetString("UserAddress", address);
 
                 return Ok(new
-            {
-                latitude = model.Latitude,
-                longitude = model.Longitude,
+                {
+                success = true,
+                lat = model.Latitude,
+                lng = model.Longitude,
                 address
-            });
+                });
         }
         // Enhanced Location Controller with routing support
             [HttpGet]
