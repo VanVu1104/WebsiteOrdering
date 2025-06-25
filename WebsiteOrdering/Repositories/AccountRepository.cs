@@ -247,6 +247,25 @@ namespace WebsiteOrdering.Repositories
             await _signInManager.SignInAsync(newUser, isPersistent: true);
             return IdentityResult.Success;
         }
-        
+
+        public async Task FillUserInfoIfAuthenticated(UserCheckoutInfoViewModel model, ClaimsPrincipal userPrincipal)
+        {
+            if (userPrincipal.Identity != null && userPrincipal.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(userPrincipal);
+                if (user != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(user.FullName))
+                    {
+                        model.FullName = user.FullName;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+                    {
+                        model.PhoneNumber = user.PhoneNumber;
+                    }
+                }
+            }
+        }
     }
 }
