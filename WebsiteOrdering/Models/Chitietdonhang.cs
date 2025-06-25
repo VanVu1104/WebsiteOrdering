@@ -6,6 +6,7 @@ namespace WebsiteOrdering.Models
 {
     public partial class Chitietdonhang
     {
+        public string IdChitiet { get; set; } = null!;
         public string Ghichu { get; set; } = null!;
 
         public int Soluong { get; set; }
@@ -33,7 +34,7 @@ namespace WebsiteOrdering.Models
         public virtual Donhang IddonhangNavigation { get; set; } = null!;
 
         public virtual Monan IdmonanNavigation { get; set; } = null!;
-
+        public virtual Monan? Idmonan2Navigation { get; set; }
         public virtual Size? IdsizeNavigation { get; set; }
     }
 }

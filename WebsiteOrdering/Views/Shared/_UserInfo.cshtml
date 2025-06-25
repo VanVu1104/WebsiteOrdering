@@ -1,0 +1,42 @@
+﻿@model WebsiteOrdering.ViewModels.UserCheckoutInfoViewModel
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Thông tin người nhận</h5>
+
+        <div class="mb-2">
+            <strong>Họ tên:</strong>
+            @if (!string.IsNullOrEmpty(Model.FullName))
+            {
+                <input type="text" name="FullName" class="form-control form-control-sm"
+                       placeholder="Nhập họ tên" value="@Model.FullName" />
+            }
+            else
+            {
+                <input type="text" name="FullName" class="form-control form-control-sm" placeholder="Nhập họ tên">
+            }
+        </div>
+
+        <div class="mb-2">
+            <strong>Số điện thoại:</strong>
+            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+            {
+                <input type="text" name="PhoneNumber" class="form-control form-control-sm"
+                       placeholder="Nhập số điện thoại" value="@Model.PhoneNumber" />
+            }
+            else
+            {
+                <input type="text" name="PhoneNumber" class="form-control form-control-sm" placeholder="Nhập số điện thoại">
+            }
+        </div>
+
+        <div class="mb-2">
+            <strong>Địa chỉ giao hàng:</strong>
+            <p id="userAddress" class="mb-1">@Model.Address</p>
+            <input type="hidden" name="Address" value="@Model.Address" />
+            <button type="button" class="btn btn-sm btn-outline-primary"
+                    onclick="location.href='@Url.Action("Index", "Location")'">
+                Thay đổi địa chỉ
+            </button>
+        </div>
+    </div>
+</div>

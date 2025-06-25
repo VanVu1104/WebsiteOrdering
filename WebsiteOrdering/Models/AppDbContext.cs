@@ -29,7 +29,7 @@ namespace WebsiteOrdering.Models
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizzanhahang1;Trusted_Connection=True;MultipleActiveResultSets=True");
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,10 +118,14 @@ namespace WebsiteOrdering.Models
 
             modelBuilder.Entity<Chitietdonhang>(entity =>
             {
-                entity.HasKey(e => new { e.Iddonhang, e.Idmonan }).HasName("PK__CHITIETD__150E02391C3C3DE5");
+                entity.HasKey(e => e.IdChitiet).HasName("PK__CHITIETD__150E02391C3C3DE5");
 
                 entity.ToTable("CHITIETDONHANG");
-
+                entity.Property(e => e.IdChitiet)
+                    .HasColumnName("IDCHITIET")
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength();
                 entity.Property(e => e.Iddonhang)
                     .HasMaxLength(5)
                     .IsUnicode(false)
@@ -170,7 +174,11 @@ namespace WebsiteOrdering.Models
                     .HasForeignKey(d => d.Idmonan)
                     .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
-
+                entity.HasOne(d => d.Idmonan2Navigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.Idmonan2)
+                    .HasConstraintName("FK_CHITIETDONHANG_IDMONAN2")
+                    .OnDelete(DeleteBehavior.NoAction);
                 entity.HasOne(d => d.IdsizeNavigation).WithMany(p => p.Chitietdonhangs)
                     .HasForeignKey(d => d.Idsize)
                     .HasConstraintName("FK__CHITIETDO__IDSIZ__4AB81AF0");
@@ -178,7 +186,8 @@ namespace WebsiteOrdering.Models
 
             modelBuilder.Entity<Chitiettopping>(entity =>
             {
-                entity.HasKey(e => e.Idtopping).HasName("PK__CHITIETT__B17F5B45F7D210ED");
+                entity.HasKey(e => new { e.IdChitiet, e.Idtopping })
+                      .HasName("PK_CHITIETTOPPING");
 
                 entity.ToTable("CHITIETTOPPING");
 
@@ -187,16 +196,11 @@ namespace WebsiteOrdering.Models
                     .IsUnicode(false)
                     .IsFixedLength()
                     .HasColumnName("IDTOPPING");
-                entity.Property(e => e.Iddonhang)
+                entity.Property(e => e.IdChitiet)
                     .HasMaxLength(5)
                     .IsUnicode(false)
                     .IsFixedLength()
-                    .HasColumnName("IDDONHANG");
-                entity.Property(e => e.Idmonan)
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .IsFixedLength()
-                    .HasColumnName("IDMONAN");
+                    .HasColumnName("IDCHITIET");
 
                 entity.HasOne(d => d.IdtoppingNavigation).WithMany(p => p.Chitiettoppings)
                     .HasForeignKey(d => d.Idtopping)
@@ -204,7 +208,7 @@ namespace WebsiteOrdering.Models
                     .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
 
                 entity.HasOne(d => d.Chitietdonhang).WithMany(p => p.Chitiettoppings)
-                    .HasForeignKey(d => new { d.Iddonhang, d.Idmonan })
+                    .HasForeignKey(d => d.IdChitiet)
                     .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
             });

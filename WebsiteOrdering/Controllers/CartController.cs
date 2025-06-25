@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
+using WebsiteOrdering.Repositories;
 using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Controllers
@@ -10,9 +13,12 @@ namespace WebsiteOrdering.Controllers
     public class CartController : Controller
     {
         private readonly AppDbContext _appDbContext;
-        public CartController(AppDbContext appDbContext)
+        private readonly IAccountRepository _accountRepository;
+
+        public CartController(AppDbContext appDbContext, IAccountRepository accountRepository)
         {
             _appDbContext = appDbContext;
+            _accountRepository = accountRepository;
         }
 
         [HttpPost]
@@ -154,6 +160,22 @@ namespace WebsiteOrdering.Controllers
         public async Task< IActionResult >Index()
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+            var model = new CartPageViewModel
+            {
+                CartItems = cart,
+                UserInfo = new UserCheckoutInfoViewModel()
+
+            };
+            await _accountRepository.FillUserInfoIfAuthenticated(model.UserInfo, User);
+            // Lấy địa chỉ từ session
+            if (HttpContext.Session.TryGetValue("UserAddress", out var addrBytes))
+            {
+                model.UserInfo.Address = Encoding.UTF8.GetString(addrBytes);
+            }
+            else
+            {
+                model.UserInfo.Address = "Chưa có vị trí";
+            }
             ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
             ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();
             ViewBag.AllToppings = await _appDbContext.Topping
@@ -166,8 +188,7 @@ namespace WebsiteOrdering.Controllers
                     })
                     .ToListAsync();
             // hoặc lọc theo loại nếu cần
-
-            return View(cart);
+            return View(model);
         }
 
         //Cập nhật số lượng

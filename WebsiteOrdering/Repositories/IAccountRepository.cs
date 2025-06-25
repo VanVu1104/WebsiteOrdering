@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.ViewModels;
@@ -19,5 +20,6 @@ namespace WebsiteOrdering.Repositories
         Task<IdentityResult> LinkGoogleLoginToExistingUser(ApplicationUser user, ExternalLoginInfo info);
         Task<IdentityResult> CreateAndSignInGoogleUser(ExternalLoginInfo info, string email);
         AuthenticationProperties GooglelLoginAsync(string provider, string redirectUrl);
+        Task FillUserInfoIfAuthenticated(UserCheckoutInfoViewModel model, ClaimsPrincipal userPrincipal);
     }
 }

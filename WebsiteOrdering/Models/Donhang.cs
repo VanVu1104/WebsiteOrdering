@@ -11,17 +11,18 @@ namespace WebsiteOrdering.Models
 
         public string Diachidh { get; set; } = null!;
 
-        public DateOnly Ngaydat { get; set; }
+        public DateTime Ngaydat { get; set; }
 
         public string Trangthai { get; set; } = null!;
 
-        public int Tongtien { get; set; }
+        public decimal Tongtien { get; set; }
 
         public string Ptttoan { get; set; } = null!;
 
         public int? Songuoi { get; set; }
 
         public string? Tenkh { get; set; }
+        public string? Sdtkh { get; set; }
 
         public int? Tienship { get; set; }
 

@@ -17,7 +17,7 @@ namespace WebsiteOrdering.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.13")
+                .HasAnnotation("ProductVersion", "8.0.16")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -347,18 +347,11 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitietdonhang", b =>
                 {
-                    b.Property<string>("Iddonhang")
+                    b.Property<string>("IdChitiet")
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANG")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
+                        .HasColumnName("IDCHITIET")
                         .IsFixedLength();
 
                     b.Property<int>("Dongia")
@@ -376,6 +369,22 @@ namespace WebsiteOrdering.Migrations
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
                         .HasColumnName("IDDEBANH")
+                        .IsFixedLength();
+
+                    b.Property<string>("Iddonhang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDDONHANG")
+                        .IsFixedLength();
+
+                    b.Property<string>("Idmonan")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDMONAN")
                         .IsFixedLength();
 
                     b.Property<string>("Idmonan2")
@@ -405,12 +414,16 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TONGTIENDH");
 
-                    b.HasKey("Iddonhang", "Idmonan")
+                    b.HasKey("IdChitiet")
                         .HasName("PK__CHITIETD__150E02391C3C3DE5");
 
                     b.HasIndex("Iddebanh");
 
+                    b.HasIndex("Iddonhang");
+
                     b.HasIndex("Idmonan");
+
+                    b.HasIndex("Idmonan2");
 
                     b.HasIndex("Idsize");
 
@@ -419,6 +432,13 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
+                    b.Property<string>("IdChitiet")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDCHITIET")
+                        .IsFixedLength();
+
                     b.Property<string>("Idtopping")
                         .HasMaxLength(5)
                         .IsUnicode(false)
@@ -426,26 +446,10 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDTOPPING")
                         .IsFixedLength();
 
-                    b.Property<string>("Iddonhang")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANG")
-                        .IsFixedLength();
+                    b.HasKey("IdChitiet", "Idtopping")
+                        .HasName("PK_CHITIETTOPPING");
 
-                    b.Property<string>("Idmonan")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
-                        .IsFixedLength();
-
-                    b.HasKey("Idtopping")
-                        .HasName("PK__CHITIETT__B17F5B45F7D210ED");
-
-                    b.HasIndex("Iddonhang", "Idmonan");
+                    b.HasIndex("Idtopping");
 
                     b.ToTable("CHITIETTOPPING", (string)null);
                 });
@@ -566,8 +570,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
-                    b.Property<DateOnly>("Ngaydat")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("Ngaydat")
+                        .HasColumnType("datetime2")
                         .HasColumnName("NGAYDAT");
 
                     b.Property<string>("Ptttoan")
@@ -575,6 +579,9 @@ namespace WebsiteOrdering.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("PTTTOAN");
+
+                    b.Property<string>("Sdtkh")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Songuoi")
                         .HasColumnType("int")
@@ -589,8 +596,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIENSHIP");
 
-                    b.Property<int>("Tongtien")
-                        .HasColumnType("int")
+                    b.Property<decimal>("Tongtien")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("TONGTIEN");
 
                     b.Property<string>("Trangthai")
@@ -670,6 +677,35 @@ namespace WebsiteOrdering.Migrations
                         .HasName("PK__LOAIMONA__6B7E94ED6B8131AD");
 
                     b.ToTable("LOAIMONAN", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.Models.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<decimal>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
@@ -901,6 +937,12 @@ namespace WebsiteOrdering.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
 
+                    b.HasOne("WebsiteOrdering.Models.Monan", "Idmonan2Navigation")
+                        .WithMany()
+                        .HasForeignKey("Idmonan2")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_CHITIETDONHANG_IDMONAN2");
+
                     b.HasOne("WebsiteOrdering.Models.Size", "IdsizeNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Idsize")
@@ -910,6 +952,8 @@ namespace WebsiteOrdering.Migrations
 
                     b.Navigation("IddonhangNavigation");
 
+                    b.Navigation("Idmonan2Navigation");
+
                     b.Navigation("IdmonanNavigation");
 
                     b.Navigation("IdsizeNavigation");
@@ -917,19 +961,19 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
+                    b.HasOne("WebsiteOrdering.Models.Chitietdonhang", "Chitietdonhang")
+                        .WithMany("Chitiettoppings")
+                        .HasForeignKey("IdChitiet")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
+
                     b.HasOne("WebsiteOrdering.Models.Topping", "IdtoppingNavigation")
                         .WithMany("Chitiettoppings")
                         .HasForeignKey("Idtopping")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
-
-                    b.HasOne("WebsiteOrdering.Models.Chitietdonhang", "Chitietdonhang")
-                        .WithMany("Chitiettoppings")
-                        .HasForeignKey("Iddonhang", "Idmonan")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
 
                     b.Navigation("Chitietdonhang");
 

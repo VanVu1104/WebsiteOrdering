@@ -1,7 +1,7 @@
-﻿@model List<WebsiteOrdering.ViewModels.CartItem>
+﻿@model WebsiteOrdering.ViewModels.CartPageViewModel
+
 @{
     ViewData["Title"] = "Giỏ hàng của bạn";
-    var cart = Model;
     var selectedIds = TempData["SelectedIds"] as List<string> ?? new List<string>();
 }
 
@@ -300,7 +300,7 @@
 
 <h2>Giỏ hàng của bạn</h2>
 
-@if (!Model.Any())
+@if (Model.CartItems == null || !Model.CartItems.Any())
 {
     <p>Giỏ hàng trống.</p>
 }
@@ -309,7 +309,7 @@ else
     <form asp-action="CartEmpty" asp-controller="Cart" >
         <button type="submit" class="btn btn-danger mb-3">Xoá toàn bộ giỏ hàng</button>
     </form>
-
+    <form method="post" asp-action="Confirm" asp-controller="Checkout">
     <table class="table table-bordered align-middle">
         <thead>
             <tr>
@@ -326,13 +326,13 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in cart)
+                @foreach (var item in Model.CartItems)
             {
                 var itemId = $"{item.IDMONAN}_{item.IDMMONAN2}_{item.Size}_{item.DeBanh}_{string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())}";
 
                 <tr>
                     <td>
-                        <input type="checkbox" class="form-check-input cart-select"
+                            <input type="checkbox" name="selectedIds" value="@itemId" class="form-check-input cart-select"
                                data-tongtien="@item.TongTien"
                                checked />
                     </td>
@@ -426,6 +426,11 @@ else
             }
         </tbody>
     </table>
+    @await Html.PartialAsync("_UserInfo", Model.UserInfo)
+    </form>
+    <hr />
+    <button type="submit" class="btn btn-primary">Thanh toán các món đã chọn</button>
+
     <!-- Modal Sửa Giỏ Hàng -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">

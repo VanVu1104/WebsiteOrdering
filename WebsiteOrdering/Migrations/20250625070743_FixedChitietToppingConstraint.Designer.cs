@@ -12,8 +12,8 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250613090653_FixUserIdForeignKey")]
-    partial class FixUserIdForeignKey
+    [Migration("20250625070743_FixedChitietToppingConstraint")]
+    partial class FixedChitietToppingConstraint
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -350,18 +350,11 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitietdonhang", b =>
                 {
-                    b.Property<string>("Iddonhang")
+                    b.Property<string>("IdChitiet")
                         .HasMaxLength(5)
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANG")
-                        .IsFixedLength();
-
-                    b.Property<string>("Idmonan")
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
+                        .HasColumnName("IDCHITIET")
                         .IsFixedLength();
 
                     b.Property<int>("Dongia")
@@ -379,6 +372,22 @@ namespace WebsiteOrdering.Migrations
                         .IsUnicode(false)
                         .HasColumnType("char(5)")
                         .HasColumnName("IDDEBANH")
+                        .IsFixedLength();
+
+                    b.Property<string>("Iddonhang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDDONHANG")
+                        .IsFixedLength();
+
+                    b.Property<string>("Idmonan")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDMONAN")
                         .IsFixedLength();
 
                     b.Property<string>("Idmonan2")
@@ -408,12 +417,16 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TONGTIENDH");
 
-                    b.HasKey("Iddonhang", "Idmonan")
+                    b.HasKey("IdChitiet")
                         .HasName("PK__CHITIETD__150E02391C3C3DE5");
 
                     b.HasIndex("Iddebanh");
 
+                    b.HasIndex("Iddonhang");
+
                     b.HasIndex("Idmonan");
+
+                    b.HasIndex("Idmonan2");
 
                     b.HasIndex("Idsize");
 
@@ -422,6 +435,13 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
+                    b.Property<string>("IdChitiet")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDCHITIET")
+                        .IsFixedLength();
+
                     b.Property<string>("Idtopping")
                         .HasMaxLength(5)
                         .IsUnicode(false)
@@ -429,26 +449,10 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDTOPPING")
                         .IsFixedLength();
 
-                    b.Property<string>("Iddonhang")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDDONHANG")
-                        .IsFixedLength();
+                    b.HasKey("IdChitiet", "Idtopping")
+                        .HasName("PK_CHITIETTOPPING");
 
-                    b.Property<string>("Idmonan")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .IsUnicode(false)
-                        .HasColumnType("char(5)")
-                        .HasColumnName("IDMONAN")
-                        .IsFixedLength();
-
-                    b.HasKey("Idtopping")
-                        .HasName("PK__CHITIETT__B17F5B45F7D210ED");
-
-                    b.HasIndex("Iddonhang", "Idmonan");
+                    b.HasIndex("Idtopping");
 
                     b.ToTable("CHITIETTOPPING", (string)null);
                 });
@@ -569,8 +573,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
-                    b.Property<DateOnly>("Ngaydat")
-                        .HasColumnType("date")
+                    b.Property<DateTime>("Ngaydat")
+                        .HasColumnType("datetime2")
                         .HasColumnName("NGAYDAT");
 
                     b.Property<string>("Ptttoan")
@@ -578,6 +582,9 @@ namespace WebsiteOrdering.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("PTTTOAN");
+
+                    b.Property<string>("Sdtkh")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Songuoi")
                         .HasColumnType("int")
@@ -592,8 +599,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("TIENSHIP");
 
-                    b.Property<int>("Tongtien")
-                        .HasColumnType("int")
+                    b.Property<decimal>("Tongtien")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("TONGTIEN");
 
                     b.Property<string>("Trangthai")
@@ -634,10 +641,15 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("GIASIZE");
 
+                    b.Property<string>("MonanIdmonan")
+                        .HasColumnType("char(5)");
+
                     b.HasKey("Idloaimonan", "Idsize")
                         .HasName("PK__LISTGIAS__93A480290675CE8A");
 
                     b.HasIndex("Idsize");
+
+                    b.HasIndex("MonanIdmonan");
 
                     b.ToTable("LISTGIASIZE", (string)null);
                 });
@@ -795,6 +807,9 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDLOAIMONAN")
                         .IsFixedLength();
 
+                    b.Property<string>("MonanIdmonan")
+                        .HasColumnType("char(5)");
+
                     b.Property<string>("Tentopping")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -805,6 +820,8 @@ namespace WebsiteOrdering.Migrations
                         .HasName("PK__TOPPING__B17F5B453E08CBB9");
 
                     b.HasIndex("Idloaimonan");
+
+                    b.HasIndex("MonanIdmonan");
 
                     b.ToTable("TOPPING", (string)null);
                 });
@@ -874,6 +891,7 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Bans")
                         .HasForeignKey("Idchinhanh")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
 
@@ -885,12 +903,14 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Ban", "IdbanNavigation")
                         .WithMany("Chitietdatbans")
                         .HasForeignKey("Idban")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETDA__IDBAN__403A8C7D");
 
                     b.HasOne("WebsiteOrdering.Models.Datban", "IddatbanNavigation")
                         .WithMany("Chitietdatbans")
                         .HasForeignKey("Iddatban")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETDA__IDDAT__3F466844");
 
@@ -909,14 +929,22 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Donhang", "IddonhangNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Iddonhang")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETDO__IDDON__47DBAE45");
 
                     b.HasOne("WebsiteOrdering.Models.Monan", "IdmonanNavigation")
                         .WithMany("Chitietdonhangs")
                         .HasForeignKey("Idmonan")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETDO__IDMON__48CFD27E");
+
+                    b.HasOne("WebsiteOrdering.Models.Monan", "Idmonan2Navigation")
+                        .WithMany()
+                        .HasForeignKey("Idmonan2")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasConstraintName("FK_CHITIETDONHANG_IDMONAN2");
 
                     b.HasOne("WebsiteOrdering.Models.Size", "IdsizeNavigation")
                         .WithMany("Chitietdonhangs")
@@ -927,6 +955,8 @@ namespace WebsiteOrdering.Migrations
 
                     b.Navigation("IddonhangNavigation");
 
+                    b.Navigation("Idmonan2Navigation");
+
                     b.Navigation("IdmonanNavigation");
 
                     b.Navigation("IdsizeNavigation");
@@ -934,17 +964,19 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chitiettopping", b =>
                 {
-                    b.HasOne("WebsiteOrdering.Models.Topping", "IdtoppingNavigation")
-                        .WithOne("Chitiettopping")
-                        .HasForeignKey("WebsiteOrdering.Models.Chitiettopping", "Idtopping")
-                        .IsRequired()
-                        .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
-
                     b.HasOne("WebsiteOrdering.Models.Chitietdonhang", "Chitietdonhang")
                         .WithMany("Chitiettoppings")
-                        .HasForeignKey("Iddonhang", "Idmonan")
+                        .HasForeignKey("IdChitiet")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__CHITIETTOPPING__4E88ABD4");
+
+                    b.HasOne("WebsiteOrdering.Models.Topping", "IdtoppingNavigation")
+                        .WithMany("Chitiettoppings")
+                        .HasForeignKey("Idtopping")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK__CHITIETTO__IDTOP__4D94879B");
 
                     b.Navigation("Chitietdonhang");
 
@@ -956,6 +988,7 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Datbans")
                         .HasForeignKey("Idchinhanh")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__DATBAN__IDCHINHA__3C69FB99");
 
@@ -998,14 +1031,20 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Listgiasizes")
                         .HasForeignKey("Idloaimonan")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__LISTGIASI__IDLOA__31EC6D26");
 
                     b.HasOne("WebsiteOrdering.Models.Size", "IdsizeNavigation")
                         .WithMany("Listgiasizes")
                         .HasForeignKey("Idsize")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__LISTGIASI__IDSIZ__32E0915F");
+
+                    b.HasOne("WebsiteOrdering.Models.Monan", null)
+                        .WithMany("ListGiaSizes")
+                        .HasForeignKey("MonanIdmonan");
 
                     b.Navigation("IdloaimonanNavigation");
 
@@ -1017,6 +1056,7 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Monans")
                         .HasForeignKey("Idloaimonan")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__MONAN__IDLOAIMON__38996AB5");
 
@@ -1028,8 +1068,13 @@ namespace WebsiteOrdering.Migrations
                     b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
                         .WithMany("Toppings")
                         .HasForeignKey("Idloaimonan")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK__TOPPING__IDLOAIM__2B3F6F97");
+
+                    b.HasOne("WebsiteOrdering.Models.Monan", null)
+                        .WithMany("Toppings")
+                        .HasForeignKey("MonanIdmonan");
 
                     b.Navigation("IdloaimonanNavigation");
                 });
@@ -1091,6 +1136,10 @@ namespace WebsiteOrdering.Migrations
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
                     b.Navigation("Chitietdonhangs");
+
+                    b.Navigation("ListGiaSizes");
+
+                    b.Navigation("Toppings");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.Models.Size", b =>
@@ -1102,7 +1151,7 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Topping", b =>
                 {
-                    b.Navigation("Chitiettopping");
+                    b.Navigation("Chitiettoppings");
                 });
 #pragma warning restore 612, 618
         }
