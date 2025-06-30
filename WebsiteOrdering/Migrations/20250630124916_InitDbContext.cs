@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteOrdering.Migrations
 {
     /// <inheritdoc />
-    public partial class FixedChitietToppingConstraint : Migration
+    public partial class InitDbContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -121,7 +121,7 @@ namespace WebsiteOrdering.Migrations
                     HOTEN = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     NGAYSINH = table.Column<DateOnly>(type: "date", nullable: true),
                     GIOITINH = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    IdchinhanhNavigationIdchinhanh = table.Column<string>(type: "char(5)", nullable: true),
+                    CHINHANH = table.Column<string>(type: "char(5)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -141,8 +141,8 @@ namespace WebsiteOrdering.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_CHINHANH_IdchinhanhNavigationIdchinhanh",
-                        column: x => x.IdchinhanhNavigationIdchinhanh,
+                        name: "FK_AspNetUsers_CHINHANH_CHINHANH",
+                        column: x => x.CHINHANH,
                         principalTable: "CHINHANH",
                         principalColumn: "IDCHINHANH");
                 });
@@ -156,6 +156,8 @@ namespace WebsiteOrdering.Migrations
                     SONGUOI = table.Column<int>(type: "int", nullable: false),
                     TRANGTHAIBAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     KHUVUC = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    X = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Y = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
                 },
                 constraints: table =>
@@ -285,9 +287,12 @@ namespace WebsiteOrdering.Migrations
                     GIOKETTHUC = table.Column<TimeOnly>(type: "time", nullable: false),
                     SONGUOIDAT = table.Column<int>(type: "int", nullable: false),
                     GHICHU = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    TRANGTHAIDATBAN = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    TRANGTHAIDATBAN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IDNGDUNG = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false)
+                    TENNGDAT = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SĐTNGDAT = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
+                    LYDO = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -393,6 +398,7 @@ namespace WebsiteOrdering.Migrations
                     TONGTIEN = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PTTTOAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SONGUOI = table.Column<int>(type: "int", nullable: true),
+                    Magiaodich = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TENKH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Sdtkh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TIENSHIP = table.Column<int>(type: "int", nullable: true),
@@ -521,9 +527,9 @@ namespace WebsiteOrdering.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_IdchinhanhNavigationIdchinhanh",
+                name: "IX_AspNetUsers_CHINHANH",
                 table: "AspNetUsers",
-                column: "IdchinhanhNavigationIdchinhanh");
+                column: "CHINHANH");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

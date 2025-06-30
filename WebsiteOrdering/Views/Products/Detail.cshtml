@@ -16,10 +16,9 @@
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 @* Đoạn Script để xử lý đổi ảnh khi chọn pizza ghép *@
 
-
 @section Scripts {
-    <script>
-        window.addEventListener("DOMContentLoaded", () => {
+    <script >
+        document.addEventListener("DOMContentLoaded", function () {
             const btnNguyen = document.getElementById("btnPizzaNguyen");//Khai báo nút pizza nguyên
             const btnGhep = document.getElementById("btnPizzaGhep");// Khai báo nút pizza ghép
             const imgNguyen = document.getElementById("imgPizzaNguyen"); // Khai báo ảnh pizza nguyên
@@ -181,65 +180,50 @@
 
             // Gọi tính tổng ngay khi load trang lần đầu
             tinhTongTien();
-        });
-
-
-
-
-        document.getElementById("btnAddToCart")?.addEventListener("click", function (e) {
-            const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower(); // true/false
-            const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower()); // true/false
-            // Kiểm tra số lượng
-            const soLuong = parseInt(document.getElementById("soluong")?.value || "0");
-            if (soLuong <= 0) {
-                alert("Vui lòng nhập số lượng hợp lệ.");
-                e.preventDefault();
-                return;
-            }
-
-            // Kiểm tra size
-            // const sizeChecked = document.querySelector("input[name='SelectedSizeId']:checked");
-            // if (!sizeChecked) {
-            //     alert("Vui lòng chọn kích cỡ (size) cho sản phẩm.");
-            //     e.preventDefault();
-            //     return;
-            // }
-            // Chỉ kiểm tra size nếu sản phẩm có size
-            if (hasSize === "true") {
-                const sizeChecked = document.querySelector("input[name='SelectedSizeId']:checked");
-                if (!sizeChecked) {
-                    alert("Vui lòng chọn kích cỡ (size) cho sản phẩm.");
+            document.getElementById("btnAddToCart")?.addEventListener("click", function (e) {
+                const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower(); // true/false
+                const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower()); // true/false
+                // Kiểm tra số lượng
+                const soLuong = parseInt(document.getElementById("soluong")?.value || "0");
+                if (soLuong <= 0) {
+                    alert("Vui lòng nhập số lượng hợp lệ.");
                     e.preventDefault();
                     return;
                 }
-            }
 
-            if (isPizzaLoai01) {
-                const btnGhep = document.getElementById("btnPizzaGhep");
-                const isGhepActive = btnGhep && btnGhep.classList.contains("active");
-
-                // Nếu là pizza ghép thì phải chọn phân nửa bên phải
-                if (isGhepActive) {
-                    const selectedGhep = document.querySelector("input[name='SelectedPizzaGhepId']:checked");
-                    if (!selectedGhep) {
-                        alert("Vui lòng chọn phần pizza ghép.");
+                // Chỉ kiểm tra size nếu sản phẩm có size
+                if (hasSize === "true") {
+                    const sizeChecked = document.querySelector("input[name='SelectedSizeId']:checked");
+                    if (!sizeChecked) {
+                        alert("Vui lòng chọn kích cỡ (size) cho sản phẩm.");
                         e.preventDefault();
                         return;
                     }
                 }
+                if (isPizzaLoai01) {
+                    const btnGhep = document.getElementById("btnPizzaGhep");
+                    const isGhepActive = btnGhep && btnGhep.classList.contains("active");
+                    // Nếu là pizza ghép thì phải chọn phân nửa bên phải
+                    if (isGhepActive) {
+                        const selectedGhep = document.querySelector("input[name='SelectedPizzaGhepId']:checked");
+                        if (!selectedGhep) {
+                            alert("Vui lòng chọn phần pizza ghép.");
+                            e.preventDefault();
+                            return;
+                        }
+                    }
 
-                // Kiểm tra đế bánh (nếu có)
-                const deBanhChecked = document.querySelector("input[name='SelectedDeBanhId']:checked");
-                if (!deBanhChecked) {
-                    alert("Vui lòng chọn đế bánh cho pizza.");
-                    e.preventDefault();
-                    return;
+                    // Kiểm tra đế bánh (nếu có)
+                    const deBanhChecked = document.querySelector("input[name='SelectedDeBanhId']:checked");
+                    if (!deBanhChecked) {
+                        alert("Vui lòng chọn đế bánh cho pizza.");
+                        e.preventDefault();
+                        return;
+                    }
                 }
-            }
-
-            // Nếu mọi thứ hợp lệ, cho phép submit / thêm vào giỏ hàng
+            });
         });
-    </script>
+        </script>
 }
 <div class="container mt-4">
     <form  method="post" asp-action="AddToCart" asp-controller="Cart">
@@ -439,13 +423,7 @@
 
                     </div>
                 </div>
-
-           @*  <form id="btnAddToCart" method="post" asp-action="AddToCart" asp-controller="Cart"> *@
-                <!-- các trường: size, topping, số lượng, đế bánh,... -->
-               
                 <button type="submit" class="btn btn-primary mt-2" id="btnAddToCart">Thêm vào giỏ hàng</button>
-            @* </form> *@
-
         </div>
     
     </div>

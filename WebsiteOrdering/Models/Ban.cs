@@ -16,6 +16,8 @@ namespace WebsiteOrdering.Models
         public string Trangthaiban { get; set; } = null!;
 
         public string Khuvuc { get; set; } = null!;
+        public string X { get; set; }
+        public string Y { get; set; }
 
         public string Idchinhanh { get; set; } = null!;
 

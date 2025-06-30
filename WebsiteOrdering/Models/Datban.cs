@@ -20,9 +20,11 @@ namespace WebsiteOrdering.Models
         public string Trangthaidatban { get; set; } = null!;
         [Column("IDNGDUNG")]
         public string? Idngdung { get; set; }
+        public string? Tenngdat {  get; set; }
+        public string? Sđtngdat { get; set; }
 
         public string Idchinhanh { get; set; } = null!;
-
+        public string? Lydo {  get; set; }
         public virtual ICollection<Chitietdatban> Chitietdatbans { get; set; } = new List<Chitietdatban>();
 
         public virtual ICollection<Donhang> Donhangs { get; set; } = new List<Donhang>();

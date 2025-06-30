@@ -187,7 +187,6 @@
 
     // Xác nhận chọn vị trí từ map click
     async confirmLocationSelection(lat, lng, address) {
-        // Cập nhật userLocation vào service
         try {
             const result = await this.locationService.saveSelectedLocationToSession(lat, lng, address);
 
@@ -291,7 +290,6 @@
                 this.showNotification('⚠️ Vui lòng chọn vị trí trước!', 'warning');
                 return;
             }
-
             const result = await this.locationService.saveSelectedLocationToSession(
                 userLocation.lat,
                 userLocation.lng,

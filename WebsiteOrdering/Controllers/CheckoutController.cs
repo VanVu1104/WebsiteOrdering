@@ -14,7 +14,6 @@ namespace WebsiteOrdering.Controllers
         private readonly ICheckoutService _checkoutService;
         private readonly IOrderRepository _orderRepository;
         private readonly IAccountRepository _accountRepository;
-
         public CheckoutController(IOrderRepository orderRepository, ICheckoutService checkoutService,
             IAccountRepository accountRepository)
         {
@@ -154,7 +153,6 @@ namespace WebsiteOrdering.Controllers
                 TempData["Error"] = "Vui lòng điền đầy đủ thông tin đặt hàng.";
                 return RedirectToAction("Index");
             }
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             // Kiểm tra phương thức thanh toán

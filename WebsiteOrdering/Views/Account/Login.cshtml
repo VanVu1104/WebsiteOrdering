@@ -17,19 +17,19 @@
     <div>
         <input asp-for="RememberMe" /> Remember me
     </div>
+    <div class="mt-2 mb-3">
+        <a asp-action="ForgotPassword">Quên mật khẩu?</a>
+    </div>
     <button type="submit">Login</button>
 </form>
-<div class="text-center mt-3">
-    <p>
-        Chưa có tài khoản?
-        <a asp-action="Register" asp-controller="Account"
-           asp-route-returnUrl="@ViewBag.ReturnUrl">Đăng ký ngay</a>
-    </p>
-</div>
-<div class="d-grid">
-    <a href="@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })"
-       class="btn btn-danger">
-        <i class="fab fa-google me-2"></i>Đăng nhập bằng Google
-    </a>
-</div>
+<p>
+    Chưa có tài khoản? <a asp-action="Register">Đăng ký</a>
+</p>
+<a href="@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })">
+        <p>Đăng nhập bằng Google</p>
+</a>
+
+<p>
+    <a asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff">Đăng nhập cho nhân viên</a>
+</p>
 <partial name="_ValidationScriptsPartial" />

@@ -12,8 +12,8 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250625070743_FixedChitietToppingConstraint")]
-    partial class FixedChitietToppingConstraint
+    [Migration("20250630124916_InitDbContext")]
+    partial class InitDbContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -191,8 +191,9 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("GIOITINH");
 
-                    b.Property<string>("IdchinhanhNavigationIdchinhanh")
-                        .HasColumnType("char(5)");
+                    b.Property<string>("Idchinhanh")
+                        .HasColumnType("char(5)")
+                        .HasColumnName("CHINHANH");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -229,7 +230,7 @@ namespace WebsiteOrdering.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdchinhanhNavigationIdchinhanh");
+                    b.HasIndex("Idchinhanh");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -280,6 +281,16 @@ namespace WebsiteOrdering.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("TRANGTHAIBAN");
+
+                    b.Property<string>("X")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("X");
+
+                    b.Property<string>("Y")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Y");
 
                     b.HasKey("Idban")
                         .HasName("PK__BAN__9367225E468C45A0");
@@ -491,6 +502,10 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
+                    b.Property<string>("Lydo")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("LYDO");
+
                     b.Property<DateOnly>("Ngaydat")
                         .HasColumnType("date")
                         .HasColumnName("NGAYDAT");
@@ -499,10 +514,19 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("int")
                         .HasColumnName("SONGUOIDAT");
 
+                    b.Property<string>("Sđtngdat")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("SĐTNGDAT");
+
+                    b.Property<string>("Tenngdat")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("TENNGDAT");
+
                     b.Property<string>("Trangthaidatban")
                         .IsRequired()
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)")
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("TRANGTHAIDATBAN");
 
                     b.HasKey("Iddatban")
@@ -572,6 +596,9 @@ namespace WebsiteOrdering.Migrations
                     b.Property<string>("Idngdung")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
+
+                    b.Property<string>("Magiaodich")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Ngaydat")
                         .HasColumnType("datetime2")
@@ -881,7 +908,7 @@ namespace WebsiteOrdering.Migrations
                 {
                     b.HasOne("WebsiteOrdering.Models.Chinhanh", "IdchinhanhNavigation")
                         .WithMany("Nguoidungs")
-                        .HasForeignKey("IdchinhanhNavigationIdchinhanh");
+                        .HasForeignKey("Idchinhanh");
 
                     b.Navigation("IdchinhanhNavigation");
                 });

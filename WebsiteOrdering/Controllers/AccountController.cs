@@ -7,6 +7,7 @@ using WebsiteOrdering.ViewModels;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 
+
 namespace WebsiteOrdering.Controllers
 {
     [Route("Account")]
@@ -75,7 +76,7 @@ namespace WebsiteOrdering.Controllers
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-        [HttpPost]
+        [HttpPost("Logout")]
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.LogoutAsync();
@@ -170,18 +171,14 @@ namespace WebsiteOrdering.Controllers
             {
                 HttpContext.Session.SetString("GoogleLoginReturnUrl", returnUrl);
             }
-
             var redirectUrl = Url.Action("GoogleResponse", "Account");
             var properties = _accountRepository.GooglelLoginAsync(GoogleDefaults.AuthenticationScheme, redirectUrl);
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
-
-
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await _accountRepository.GoogleLoginCallbackAsync();
-
             if (result.Succeeded)
             {
                 // Retrieve returnUrl from session
@@ -252,6 +249,58 @@ namespace WebsiteOrdering.Controllers
             }
 
             return View(model);
+        }
+        [HttpGet]
+        [Route("ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var templateUrl = $"{Request.Scheme}://{Request.Host}/Account/ResetPassword?userId={{0}}&token={{1}}";
+            var result = await _accountRepository.SendForgotPasswordEmailAsync(model.Email, templateUrl);
+
+            ViewBag.Message = result.Message;
+            return View();
+        }
+        [HttpGet]
+        [Route("ResetPassword")]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest("Liên kết không hợp lệ");
+
+            var model = new ResetPasswordViewModel { UserId = userId, Token = token };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var result = await _accountRepository.ResetPasswordAsync(model);
+            if (result.Succeeded)
+                return RedirectToAction("ResetPasswordConfirmation");
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("ResetPasswordConfirmation")]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
     }
 }

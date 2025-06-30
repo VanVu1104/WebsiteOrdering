@@ -12,5 +12,6 @@ namespace WebsiteOrdering.Repositories
         Task<Chitietdonhang?> FindDetailAsync(string detailsId);
         Task UpdateOrderAsync(Donhang order);
 
+
     }
 }

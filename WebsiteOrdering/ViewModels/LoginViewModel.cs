@@ -11,7 +11,7 @@ namespace WebsiteOrdering.ViewModels
         [Required]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
-
         public bool RememberMe { get; set; }
+        public string? Idchinhanh { get; set; }
     }
 }

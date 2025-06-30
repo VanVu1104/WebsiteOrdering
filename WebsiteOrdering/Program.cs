@@ -1,5 +1,4 @@
-
-﻿using MediatR;
+using MediatR;
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +8,7 @@ using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
+//using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -89,7 +89,9 @@ builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<VNPayService>();
-
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -138,13 +140,16 @@ using (var scope = app.Services.CreateScope())
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseSession();
 app.UseRouting();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapControllerRoute(
+  name: "areas",
+  pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();
