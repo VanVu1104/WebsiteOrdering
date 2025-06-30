@@ -20,10 +20,8 @@ namespace WebsiteOrdering.Models
         [Column("GIOITINH")]
         [StringLength(10)]
         public string? Gender { get; set; }
-
         [Column("CHINHANH")]
         public string? Idchinhanh { get; set; }
-
         public virtual ICollection<Datban> Datbans { get; set; } = new List<Datban>();
 
         public virtual ICollection<Donhang> Donhangs { get; set; } = new List<Donhang>();

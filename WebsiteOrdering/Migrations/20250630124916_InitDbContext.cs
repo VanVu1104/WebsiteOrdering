@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteOrdering.Migrations
 {
     /// <inheritdoc />
-    public partial class NewCreate : Migration
+    public partial class InitDbContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -398,6 +398,7 @@ namespace WebsiteOrdering.Migrations
                     TONGTIEN = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PTTTOAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SONGUOI = table.Column<int>(type: "int", nullable: true),
+                    Magiaodich = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TENKH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Sdtkh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TIENSHIP = table.Column<int>(type: "int", nullable: true),

@@ -257,7 +257,8 @@ namespace WebsiteOrdering.Controllers
         public IActionResult CartEmpty()
         {
             HttpContext.Session.Remove("Cart");
-            return View("Index", new List<CartItem>());
+            TempData["SuccessMessage"] = "Đã xoá toàn bộ giỏ hàng.";
+            return RedirectToAction("Index");
         }
 
         //Hàm tính số sản phẩm trong icon giỏ hàng

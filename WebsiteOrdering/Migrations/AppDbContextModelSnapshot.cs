@@ -594,6 +594,9 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
+                    b.Property<string>("Magiaodich")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Ngaydat")
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAYDAT");

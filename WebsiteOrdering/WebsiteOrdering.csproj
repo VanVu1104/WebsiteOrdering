@@ -40,7 +40,6 @@
 	<ItemGroup>
 		<None Include="Views\Shared\_CartCount.cshtml" />
 	</ItemGroup>
-
   <ItemGroup>
     <Content Remove="wwwroot\js\IndexBooking.js" />
   </ItemGroup>
@@ -66,7 +65,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Migrations\" />
 		<Folder Include="Views\Cart\" />
 	</ItemGroup>
 

@@ -77,7 +77,6 @@
                 body: JSON.stringify({
                     latitude: lat,
                     longitude: lng,
-                    address: address
                 })
             });
 

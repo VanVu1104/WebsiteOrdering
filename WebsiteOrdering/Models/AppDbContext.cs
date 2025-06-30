@@ -27,11 +27,9 @@ namespace WebsiteOrdering.Models
         public DbSet<Ban> bans { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
 
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=.;Database=pizza6;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
-
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=True");
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -55,8 +53,10 @@ namespace WebsiteOrdering.Models
                     .HasMaxLength(50)
                     .HasColumnName("KHUVUC");
                 entity.Property(e => e.Songuoi).HasColumnName("SONGUOI");
+
                 entity.Property(e => e.X).HasColumnName("X");
                 entity.Property(e => e.Y).HasColumnName("Y");
+
                 entity.Property(e => e.Tenban)
                     .HasMaxLength(500)
                     .HasColumnName("TENBAN");
@@ -248,7 +248,6 @@ namespace WebsiteOrdering.Models
                     .HasColumnName("LYDO");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
                 entity.Property(e => e.Tenngdat).HasColumnName("TENNGDAT");
                 entity.Property(e => e.Sđtngdat).HasMaxLength(10).HasColumnName("SĐTNGDAT");
-
                 entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Datbans)
                     .HasForeignKey(d => d.Idchinhanh)
                     .OnDelete(DeleteBehavior.NoAction)

@@ -20,6 +20,7 @@ namespace WebsiteOrdering.Models
         public string Ptttoan { get; set; } = null!;
 
         public int? Songuoi { get; set; }
+        public string? Magiaodich { get; set; }
 
         public string? Tenkh { get; set; }
         public string? Sdtkh { get; set; }

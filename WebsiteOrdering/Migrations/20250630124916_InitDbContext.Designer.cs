@@ -12,8 +12,8 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250630030244_NewCreate")]
-    partial class NewCreate
+    [Migration("20250630124916_InitDbContext")]
+    partial class InitDbContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -596,6 +596,9 @@ namespace WebsiteOrdering.Migrations
                     b.Property<string>("Idngdung")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
+
+                    b.Property<string>("Magiaodich")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Ngaydat")
                         .HasColumnType("datetime2")

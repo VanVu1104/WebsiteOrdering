@@ -180,8 +180,6 @@
 
             // Gọi tính tổng ngay khi load trang lần đầu
             tinhTongTien();
-
-
             document.getElementById("btnAddToCart")?.addEventListener("click", function (e) {
                 const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower(); // true/false
                 const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower()); // true/false
@@ -202,11 +200,9 @@
                         return;
                     }
                 }
-
                 if (isPizzaLoai01) {
                     const btnGhep = document.getElementById("btnPizzaGhep");
                     const isGhepActive = btnGhep && btnGhep.classList.contains("active");
-
                     // Nếu là pizza ghép thì phải chọn phân nửa bên phải
                     if (isGhepActive) {
                         const selectedGhep = document.querySelector("input[name='SelectedPizzaGhepId']:checked");
@@ -227,7 +223,6 @@
                 }
             });
         });
-
         </script>
 }
 <div class="container mt-4">
@@ -428,10 +423,7 @@
 
                     </div>
                 </div>
-               
                 <button type="submit" class="btn btn-primary mt-2" id="btnAddToCart">Thêm vào giỏ hàng</button>
-
-
         </div>
     
     </div>
