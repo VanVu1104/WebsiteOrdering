@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+<h1>Chào mừng đến với Website Pizza!</h1>
+<p>Đây là trang Index của Controller.</p>
+@if (User.Identity.IsAuthenticated)
+{
+    <p>Xin chào, @User.Identity.Name</p>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit">Đăng xuất</button>
+    </form>
+}
+else{
+<a asp-controller="Account" asp-action="Login" class="btn btn-success">Đăng nhập</a>
+}
+

@@ -1,0 +1,44 @@
+﻿@model WebsiteOrdering.Models.Donhang
+
+<h2>Đặt hàng thành công!</h2>
+<p>Khách hàng: @Model.Tenkh</p>
+<p>Số điện thoại: @Model.Sdtkh</p>
+<p>Địa chỉ: @Model.Diachidh</p>
+<p>Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
+<p>Phương thức thanh toán: @Model.Ptttoan</p>
+<p><strong>Tổng tiền: @Model.Tongtien.ToString("N0") đ</strong></p>
+
+<hr />
+<h3>Chi tiết đơn hàng</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Tên size</th>
+            <th>Đế bánh</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Chitietdonhangs)
+        {
+            <tr>
+                @if(item.Kieupizza == "Ghép")
+                {
+                    <td>@item.IdmonanNavigation.Tenmonan + @item.Idmonan2Navigation?.Tenmonan</td>
+                }
+                else
+                {
+                    <td>@item.IdmonanNavigation.Tenmonan</td>
+                }
+                <td>@item.IdsizeNavigation?.Tensize</td>
+                <td>@item.IddebanhNavigation?.Tendebanh</td>
+                <td>@item.Soluong</td>
+                <td>@item.Dongia.ToString("N0") đ</td>
+                <td>@item.Tongtiendh.ToString("N0") đ</td>
+            </tr>
+        }
+    </tbody>
+</table>
