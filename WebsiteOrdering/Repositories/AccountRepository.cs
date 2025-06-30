@@ -59,6 +59,7 @@ namespace WebsiteOrdering.Repositories
 
             var user = new ApplicationUser
             {
+                FullName = model.FullName,
                 UserName = normalizedEmail,
                 Email = normalizedEmail,
                 EmailConfirmed = false,
@@ -149,11 +150,14 @@ namespace WebsiteOrdering.Repositories
             return (true, user, null);
         }
 
-        public async Task UpdateUserAsync(ApplicationUser user)
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
-            await _userManager.UpdateAsync(user);
+            return await _userManager.UpdateAsync(user);
         }
-
+        public async Task<ApplicationUser?> GetCurrentUserAsync(ClaimsPrincipal user)
+        {
+            return await _userManager.GetUserAsync(user);
+        }
         public AuthenticationProperties GooglelLoginAsync(string provider, string redirectUrl)
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);

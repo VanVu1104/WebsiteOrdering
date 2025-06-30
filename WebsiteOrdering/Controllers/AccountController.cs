@@ -5,6 +5,7 @@ using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebsiteOrdering.Controllers
 {
@@ -62,7 +63,14 @@ namespace WebsiteOrdering.Controllers
 
             var result = await _accountRepository.LoginAsync(model);
             if (result.Succeeded)
-                return Redirect(returnUrl ?? "/");
+            {
+                // Login successful - redirect to return URL or default location
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                return Redirect("/");
+            }
 
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
@@ -155,25 +163,95 @@ namespace WebsiteOrdering.Controllers
         }
         // Đăng nhập bằng Google
         [Route("login-google")]
-        public IActionResult LoginWithGoogle()
+        public IActionResult LoginWithGoogle(string returnUrl = null)
         {
+            // Store returnUrl in session to retrieve after Google callback
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                HttpContext.Session.SetString("GoogleLoginReturnUrl", returnUrl);
+            }
+
             var redirectUrl = Url.Action("GoogleResponse", "Account");
             var properties = _accountRepository.GooglelLoginAsync(GoogleDefaults.AuthenticationScheme, redirectUrl);
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
+
         [Route("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await _accountRepository.GoogleLoginCallbackAsync();
+
             if (result.Succeeded)
             {
+                // Retrieve returnUrl from session
+                var returnUrl = HttpContext.Session.GetString("GoogleLoginReturnUrl");
+                HttpContext.Session.Remove("GoogleLoginReturnUrl"); // Clean up
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
                 return RedirectToAction("Index", "Home");
             }
 
             TempData["Error"] = "Đăng nhập bằng Google thất bại.";
             return RedirectToAction("Login");
         }
+        [Authorize]
+        [HttpGet]
+        [Route("Profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _accountRepository.GetCurrentUserAsync(User);
+            if (user == null) return NotFound();
 
+            var model = new UpdateProfileViewModel
+            {
+                FullName = user.FullName,
+                BirthDate = user.BirthDate,
+                Gender = user.Gender,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("UpdateInfo")]
+        public async Task<IActionResult> Profile(UpdateProfileViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            try
+            {
+                var user = await _accountRepository.GetCurrentUserAsync(User);
+                if (user == null) return NotFound();
+
+                user.FullName = model.FullName;
+                user.BirthDate = model.BirthDate;
+                user.Gender = model.Gender;
+                user.PhoneNumber = model.PhoneNumber;
+
+                var result = await _accountRepository.UpdateUserAsync(user);
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Cập nhật thông tin thành công.";
+                    return RedirectToAction("Profile"); // PRG pattern
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật thông tin.");
+            }
+
+            return View(model);
+        }
     }
 }

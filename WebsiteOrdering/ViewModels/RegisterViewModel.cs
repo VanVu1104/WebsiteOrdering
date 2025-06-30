@@ -4,6 +4,10 @@ namespace WebsiteOrdering.ViewModels
 {
     public class RegisterViewModel
     {
+        [Required(ErrorMessage = "Tên là bắt buộc")]
+        [Display(Name = "Họ tên")]
+        [StringLength(256, ErrorMessage = "Email không được vượt quá 256 ký tự")]
+        public required string FullName { get; set; }
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Định dạng email không hợp lệ")]
         [Display(Name = "Email")]

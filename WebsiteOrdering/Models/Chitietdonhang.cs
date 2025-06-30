@@ -7,7 +7,7 @@ namespace WebsiteOrdering.Models
     public partial class Chitietdonhang
     {
         public string IdChitiet { get; set; } = null!;
-        public string Ghichu { get; set; } = null!;
+        public string Ghichu { get; set; } = ""!;
 
         public int Soluong { get; set; }
 

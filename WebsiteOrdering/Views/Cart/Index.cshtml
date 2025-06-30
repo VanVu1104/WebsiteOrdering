@@ -4,7 +4,10 @@
     ViewData["Title"] = "Giỏ hàng của bạn";
     var selectedIds = TempData["SelectedIds"] as List<string> ?? new List<string>();
 }
-
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -427,10 +430,23 @@ else
         </tbody>
     </table>
     @await Html.PartialAsync("_UserInfo", Model.UserInfo)
-    </form>
+    
     <hr />
     <button type="submit" class="btn btn-primary">Thanh toán các món đã chọn</button>
-
+    <div class="modal fade" id="loading-modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-3">Đang chuyển hướng đến trang thanh toán...</p>
+                    <p class="text-muted">Vui lòng không đóng trang này</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
     <!-- Modal Sửa Giỏ Hàng -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">

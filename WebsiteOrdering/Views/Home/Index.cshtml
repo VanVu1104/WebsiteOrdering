@@ -6,6 +6,10 @@
 @if (User.Identity.IsAuthenticated)
 {
     <p>Xin chào, @User.Identity.Name</p>
+    <a asp-controller="Account" asp-action="Profile" class="btn btn-info">Cập nhật thông tin cá nhân</a>
+    <hr />
+    <a asp-controller="Order" asp-action="MyOrders">Đơn hàng của tôi</a>
+    <hr />
     <form asp-controller="Account" asp-action="Logout" method="post">
         <button type="submit">Đăng xuất</button>
     </form>

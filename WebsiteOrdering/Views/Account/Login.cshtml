@@ -1,5 +1,9 @@
 ﻿@model WebsiteOrdering.ViewModels.LoginViewModel
 <form asp-action="Login" method="post">
+    @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+    {
+        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    }
     <div>
         <label asp-for="Email"></label>
         <input asp-for="Email" />
@@ -15,12 +19,17 @@
     </div>
     <button type="submit">Login</button>
 </form>
-<p>
-    Chưa có tài khoản? <a asp-action="Register">Đăng ký</a>
-</p>
-<p>
-    <a asp-controller="Account" asp-action="LoginWithGoogle" class="btn btn-danger">
-        Đăng nhập bằng Google
+<div class="text-center mt-3">
+    <p>
+        Chưa có tài khoản?
+        <a asp-action="Register" asp-controller="Account"
+           asp-route-returnUrl="@ViewBag.ReturnUrl">Đăng ký ngay</a>
+    </p>
+</div>
+<div class="d-grid">
+    <a href="@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })"
+       class="btn btn-danger">
+        <i class="fab fa-google me-2"></i>Đăng nhập bằng Google
     </a>
-</p>
+</div>
 <partial name="_ValidationScriptsPartial" />
