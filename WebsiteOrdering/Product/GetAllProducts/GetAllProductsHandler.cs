@@ -14,12 +14,13 @@ namespace WebsiteOrdering.Product.GetAllProducts
 
         public async Task<List<Monan>> Handle(GetAllProductQuery query, CancellationToken cancellationToken)
         {
+            
             return await _appDbContext.SanPhams
                 .Where(p => p.Trangthaiman == "Còn" )
                 .Select(p=>new Monan
                 {
                     Idmonan = p.Idmonan,
-                   
+                    Idloaimonan = p.Idloaimonan,
                     Tenmonan = p.Tenmonan,
                     Mota = p.Mota,
                     Giamonan = p.Giamonan,
