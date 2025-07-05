@@ -34,6 +34,7 @@ builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("SpeedS
 builder.Services.Configure<OpenRouteServiceSettings>(
     builder.Configuration.GetSection("OpenRouteService"));
 builder.Services.AddTransient<ISmsService, SmsService>();
+builder.Services.AddSingleton<LuceneProductIndexer>();
 
 //Cấu hình cookie
 builder.Services.ConfigureApplicationCookie(options =>
@@ -91,6 +92,7 @@ builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<VNPayService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddSession(options =>
 {
@@ -115,6 +117,13 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
+}
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>(); // thay bằng tên DbContext của bạn
+    var indexer = scope.ServiceProvider.GetRequiredService<LuceneProductIndexer>();
+    var products = db.SanPhams.ToList();
+    indexer.CreateIndex(products);
 }
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
