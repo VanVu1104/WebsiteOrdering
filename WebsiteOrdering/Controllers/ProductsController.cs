@@ -39,7 +39,6 @@ namespace WebsiteOrdering.Controllers
             // Có tìm kiếm
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                // Step 1: Try exact match first
                 var exactMatchProducts = await _mediator.Send(new GetProductsByExactNameQuery(searchTerm));
 
                 if (exactMatchProducts != null && exactMatchProducts.Any())
@@ -53,16 +52,7 @@ namespace WebsiteOrdering.Controllers
                     products = await _mediator.Send(new GetAllProductQuery());
                     products = products.Where(p => matchedIds.Contains(p.Idmonan)).ToList();
                 }
-
-                // Nếu có lọc loại, thì lọc tiếp
-                //if (!string.IsNullOrEmpty(categoryId))
-                //{
-                //    var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
-                //    allChildrenIds.Add(categoryId);
-                //    products = products.Where(p => allChildrenIds.Contains(p.Idloaimonan)).ToList();
-                //}
             }
-            // Không tìm kiếm, chỉ lọc loại (nếu có)
             else if (!string.IsNullOrEmpty(categoryId))
             {
                 var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
