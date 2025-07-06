@@ -399,7 +399,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-<<<<<<< HEAD
-=======
-appsettings.json 
->>>>>>> origin/ViNa
+.lucene_index/

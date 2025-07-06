@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using WebsiteOrdering.Areas.Repository;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
@@ -93,6 +94,8 @@ builder.Services.AddScoped<VNPayService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IMonanRepository, MonanRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddSession(options =>
 {
