@@ -17,6 +17,7 @@ namespace WebsiteOrdering.ViewModels
         public int GiaCoBan { get; set; }
         public int? GiaSize { get; set; }
         public int? GiaDeBanh { get; set; }
+        public string? IdDeBanh { get; set; }
         public string? TenSize { get; set; }
         public string? TenDeBanh { get; set; }
         public List<Topping>? Topping { get; set; } = new List<Topping>();
@@ -63,14 +64,17 @@ namespace WebsiteOrdering.ViewModels
                 var giaSize = listGiaSizes.FirstOrDefault(x => x.Idsize == idSize);
                 if (giaSize != null)
                 {
+                  // TenSize = giaSize.IdsizeNavigation?.Tensize;
                     Size = giaSize.IdsizeNavigation?.Tensize;
                     GiaSize = giaSize.Giasize;
                 }
             }
+         
 
             // Gán đế bánh
             if (debanh != null)
             {
+                IdDeBanh = debanh.Iddebanh;
                 DeBanh = debanh.Tendebanh;
                 GiaDeBanh = debanh.Giadebanh;
             }
@@ -80,6 +84,7 @@ namespace WebsiteOrdering.ViewModels
             {
                 Topping = topping;
             }
+
         }
 
 

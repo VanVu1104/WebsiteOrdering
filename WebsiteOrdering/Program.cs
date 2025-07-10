@@ -11,6 +11,7 @@ using WebsiteOrdering.ViewModels;
 //using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
 // Thêm dịch vụ Session
 builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)
@@ -19,6 +20,8 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = TimeSpan.FromDays(2);
+    options.Cookie.Name = ".WebsiteOrdering.Cart";
 });
 
 // Add services to the container.
@@ -90,6 +93,8 @@ builder.Services.AddScoped<ICheckoutService, CheckoutService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
+builder.Services.AddHostedService<DatBanBackgroundService>();
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
