@@ -288,6 +288,200 @@
                 modal.show();
             });
             }
-         
+    });
 
+// =======================
+// HIỆU ỨNG CHO INTRO
+// =======================
+document.addEventListener("DOMContentLoaded", function () {
+    const section = document.querySelector('.intro-section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                section.classList.add('show');
+                observer.unobserve(entry.target);
+            }
         });
+    }, { threshold: 0.2 });
+
+    if (section) observer.observe(section);
+});
+
+// =======================
+// HIỆU ỨNG PARALLAX SCROLL
+// =======================
+window.addEventListener("scroll", function () {
+    const leftImg = document.querySelector("#parallax-left img");
+    const rightImg = document.querySelector("#parallax-right img");
+
+    if (!leftImg || !rightImg) return;
+
+    const leftRect = leftImg.getBoundingClientRect();
+    const rightRect = rightImg.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // Kiểm tra xem có trong khung nhìn không
+    if (leftRect.bottom > 0 && leftRect.top < windowHeight) {
+        const offset = (leftRect.top + leftRect.height / 2 - windowHeight / 2);
+        const moveLeft = offset * -0.1; // Lên
+        const moveRight = offset * 0.1; // Xuống
+        leftImg.style.transform = `translateY(${moveLeft}px)`;
+        rightImg.style.transform = `translateY(${moveRight}px)`;
+    }
+});
+// =======================
+// HIỆU ỨNG XOAY CHO SHAPE
+// =======================
+document.addEventListener("DOMContentLoaded", function () {
+    const shape = document.getElementById("quote-shape");
+    const quoteText = document.getElementById("quote-text");
+
+    if (!shape || !quoteText) return;
+
+    const quotes = [
+        `"Mì tươi hấp dẫn, biến hóa muôn hình vạn vị."`,
+        `“Từ lửa, bột và đam mê.”`,
+        `"Một niềm vui để thưởng thức chậm rãi."`,
+    ];
+
+    const scales = [1.3, 1, 1];             // Scale mỗi bước
+    const rotationSteps = [-100, -180, -80]; // Các bước quay một chiều (âm)
+
+    let state = 0;
+    let rotationAngle = 0; // Tổng góc xoay cộng dồn
+
+    setInterval(() => {
+        // Cộng thêm góc theo bước (luôn âm)
+        rotationAngle += rotationSteps[state];
+
+        // Cập nhật transform
+        shape.style.transform = `rotate(${rotationAngle}deg) scale(${scales[state]})`;
+
+        // Cập nhật quote
+        quoteText.textContent = quotes[state];
+
+        // Sang bước tiếp theo
+        state = (state + 1) % quotes.length;
+    }, 5000);
+});
+
+// =======================
+// HIỆU ỨNG CHO AWARD
+// =======================
+document.addEventListener("DOMContentLoaded", function () {
+    const awardContainer = document.querySelector('.award-container');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                awardContainer.classList.add('show');
+                observer.unobserve(entry.target); // chỉ chạy một lần
+            }
+        });
+    }, {
+        threshold: 0.3
+    });
+
+    if (awardContainer) observer.observe(awardContainer);
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const awardContainer = document.querySelector('.award-container');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                awardContainer.classList.add('show');
+                observer.unobserve(entry.target); // chỉ chạy 1 lần
+            }
+        });
+    }, {
+        threshold: 0.3
+    });
+
+    if (awardContainer) observer.observe(awardContainer);
+});
+
+// =======================
+// HIỆU ỨNG CHO PARAGRAPH
+// =======================
+document.addEventListener("DOMContentLoaded", function () {
+    const paragraphSection = document.querySelector('.paragraph-section');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                paragraphSection.classList.add('show');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    if (paragraphSection) observer.observe(paragraphSection);
+});
+
+// =========================
+// HIỆU ỨNG CHO SPLIDE SLIDE
+// =========================
+document.addEventListener('DOMContentLoaded', function () {
+    const carousel = document.querySelector('#svg-carousel');
+    if (!carousel) return;
+
+    const splide = new Splide(carousel, {
+        type: 'loop',
+        autoplay: true,
+        interval: 5000,
+        speed: 800,
+        arrows: true,
+        pagination: true,
+        updateOnMove: true,
+        pauseOnHover: true,
+        resetProgress: false,
+        focus: 'center',
+        padding: '18%', // Desktop
+        gap: '1rem',
+        breakpoints: {
+            768: {
+                perPage: 1,
+                padding: 0,
+                gap: 0,
+                arrows: false, // optional: ẩn nút mũi tên nếu muốn
+            }
+        }
+    });
+
+    function updateOverlays() {
+        const slides = carousel.querySelectorAll('.splide__slide');
+
+        slides.forEach(slide => {
+            const overlay = slide.querySelector('.svg-overlay');
+            if (!overlay) return;
+
+            if (slide.classList.contains('is-active')) {
+                overlay.setAttribute('fill-opacity', '0');
+            } else {
+                overlay.setAttribute('fill-opacity', '0.5');
+            }
+        });
+    }
+
+    splide.on('mounted move moved updated', () => {
+        requestAnimationFrame(updateOverlays);
+    });
+
+    splide.mount();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
