@@ -1,11 +1,17 @@
 ﻿@model WebsiteOrdering.Models.Donhang
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
-}
-<h2>Chi tiết đơn hàng</h2>
-<p>Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy")</p>
-<p>Tổng tiền: @Model.Tongtien.ToString("N0") ₫</p>
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 
+}
+<h2>Chi tiết đơn hàng: @Model.Iddonhang</h2>
+
+<p><strong>Khách hàng:</strong> @Model.Tenkh</p>
+<p><strong>Địa chỉ:</strong> @Model.Diachidh</p>
+<p><strong>Ngày đặt:</strong> @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
+<p><strong>Trạng thái:</strong> @Model.Trangthai</p>
+
+<h3>Danh sách món ăn</h3>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -38,13 +44,13 @@
                         <ul class="mb-0">
                             @foreach (var tp in item.Chitiettoppings)
                             {
-                                <li>@tp.IdtoppingNavigation.Tentopping (@tp.IdtoppingNavigation.Giatopping₫)</li>
+                                <li>@tp.IdtoppingNavigation.Tentopping - @tp.IdtoppingNavigation.Giatopping.ToString("N0") đ</li>
                             }
                         </ul>
                     }
                     else
                     {
-                        <span>Không có</span>
+                        <span>-</span>
                     }
                 </td>
                 <td>@(item.Ghichu ?? "-")</td>
@@ -53,3 +59,21 @@
         }
     </tbody>
 </table>
+<h4>Cập nhật trạng thái</h4>
+<form asp-action="UpdateStatus" asp-route-id="@Model.Iddonhang" method="post" class="row g-2">
+    <div class="col-md-6">
+        <select name="newStatus" class="form-select">
+            @foreach (var option in (List<string>)ViewBag.AvailableStatuses)
+            {
+                <option value="@option" selected="@(option.Equals(Model.Trangthai, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">
+                    @option.Substring(0, 1).ToUpper()@option.Substring(1)
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-success" @(Model.Trangthai == "cancel" || Model.Trangthai == "delivered" ? "disabled" : "")>Cập nhật trạng thái</button>
+    </div>
+</form>
+<p><strong>Tiền ship:</strong> @(Model.Tienship?.ToString("N0") ?? "0") đ</p>
+<p><strong>Tổng tiền:</strong> @Model.Tongtien.ToString("N0") đ</p>

@@ -34,10 +34,7 @@ namespace WebsiteOrdering.Controllers
             }
 
             // Truy vấn đơn hàng theo Id người dùng
-            var orders = await _context.dhang
-                .Where(o => o.Idngdung == user.Id)
-                .OrderByDescending(o => o.Ngaydat)
-                .ToListAsync();
+            var orders = await _orderRepository.GetOrdersByUserIdAsync(user.Id);
             return View(orders);
         }
         [HttpGet]

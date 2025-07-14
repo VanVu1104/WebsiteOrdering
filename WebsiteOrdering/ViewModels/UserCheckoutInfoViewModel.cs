@@ -15,7 +15,10 @@ namespace WebsiteOrdering.ViewModels
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ")]
         public string? Address { get; set; }
-
+        public string? BranchId { get; set; }
+        public string? BranchName { get; set; }
+        public double? DistanceKm { get; set; }
+        public int? EstimatedMinutes { get; set; }
         public string? PaymentInfo { get; set; }
     }
 }

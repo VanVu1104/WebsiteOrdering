@@ -1,19 +1,41 @@
 ﻿@model WebsiteOrdering.Models.Donhang
-
+@{
+    ViewData["Title"] = "Đơn hàng";
+}
 <h2>Đặt hàng thành công!</h2>
+<p>Mã đơn hàng: @Model.Iddonhang</p>
 <p>Khách hàng: @Model.Tenkh</p>
 <p>Số điện thoại: @Model.Sdtkh</p>
-<p>Địa chỉ: @Model.Diachidh</p>
+<p>Địa chỉ giao hàng: @Model.Diachidh</p>
 <p>Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
 <p>Phương thức thanh toán: @Model.Ptttoan</p>
+@{
+    var tienship = Model.Tienship ?? 0;
+    var tongCong = Model.Tongtien - tienship;
+}
+<p>Tổng cộng : @tongCong.ToString("N0") đ</p>
+@if(Model.Tienship != null)
+{
+    <p>Tiền ship: @Model.Tienship?.ToString("N0") đ</p>
+}
 <p><strong>Tổng tiền: @Model.Tongtien.ToString("N0") đ</strong></p>
-
+<h2>ĐỊA CHỈ NHÀ HÀNG</h2>
+@if (Model.IdchinhanhNavigation != null)
+{
+    <p>@Model.IdchinhanhNavigation.Tencnhanh</p>
+    <p>@Model.IdchinhanhNavigation.Diachicn</p>
+}
+else
+{
+    <p class="text-danger">Không tìm thấy thông tin chi nhánh.</p>
+}
 <hr />
 <h3>Chi tiết đơn hàng</h3>
 <table class="table table-bordered">
     <thead>
         <tr>
             <th>Sản phẩm</th>
+            <th>Topping</th>
             <th>Tên size</th>
             <th>Đế bánh</th>
             <th>Số lượng</th>
@@ -33,6 +55,21 @@
                 {
                     <td>@item.IdmonanNavigation.Tenmonan</td>
                 }
+                <td>
+                    @if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
+                    {
+                        <ul class="mb-0 ps-3">
+                            @foreach (var topping in item.Chitiettoppings)
+                            {
+                                <li>@topping.IdtoppingNavigation?.Tentopping</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>Không có</span>
+                    }
+                </td>
                 <td>@item.IdsizeNavigation?.Tensize</td>
                 <td>@item.IddebanhNavigation?.Tendebanh</td>
                 <td>@item.Soluong</td>

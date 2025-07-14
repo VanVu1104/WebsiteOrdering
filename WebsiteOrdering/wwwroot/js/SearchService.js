@@ -161,7 +161,7 @@
         const address = place.display_name;
 
         // Cập nhật input
-        this.input.value = address.split(',')[0];
+        this.input.value = address;
         this.hideSuggestions();
 
         // Callback để xử lý place được chọn
@@ -177,8 +177,12 @@
 
     // Ẩn suggestions
     hideSuggestions() {
+        console.log('Đang ẩn suggestions', this.suggestionList?.classList);
         if (this.suggestionList) {
+            console.log('Ẩn suggestions');
             this.suggestionList.classList.remove('show');
+        } else {
+            console.warn('suggestionList không tồn tại!');
         }
         this.selectedIndex = -1;
     }

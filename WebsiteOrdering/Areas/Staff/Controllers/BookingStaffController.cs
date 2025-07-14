@@ -19,18 +19,16 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         }
         public async Task<IActionResult> Index(string trangThai = "", string idChiNhanh = "", string tuNgay = "")
         {
-            var staffChiNhanhId = HttpContext.Session.GetString("ChiNhanhId");
+            var staffChiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(staffChiNhanhId))
             {
                 return RedirectToAction("Login", "Account");
             }
-
             var query = _appDbContext.Datbans
                 .Include(d => d.Chitietdatbans)
                 .ThenInclude(ct => ct.IdbanNavigation)
                 .Include(d => d.IdchinhanhNavigation)
                 .Where(d => d.Idchinhanh == staffChiNhanhId);
-
             if (!string.IsNullOrEmpty(trangThai))
             {
                 query = query.Where(d => d.Trangthaidatban == trangThai);

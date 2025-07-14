@@ -33,11 +33,30 @@
             <strong>Địa chỉ giao hàng:</strong>
             <p id="userAddress" class="mb-1">@Model.Address</p>
             <input type="hidden" name="Address" value="@Model.Address" />
-            <button type="button" class="btn btn-sm btn-outline-primary"
+
+            <div>
+                <strong>Giao hàng từ:</strong>
+                @if (!string.IsNullOrEmpty(Model.BranchName))
+                {
+                    <p>@Model.BranchName</p>
+                    <input type="hidden" name="BranchName" value="@Model.BranchName" />
+                    <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                    <p class="mb-1"><strong>Số km:</strong> @Model.DistanceKm km</p>
+                    <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
+                    <p class="mb-1"><strong>Thời gian giao hàng dự kiến:</strong> @Model.EstimatedMinutes phút</p>
+                    <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
+                }
+                else
+                {
+                    <p class="text-muted mb-1">Không xác định được chi nhánh gần nhất.</p>
+                }
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                     onclick="location.href='@Url.Action("Index", "Location")'">
                 Thay đổi địa chỉ
             </button>
         </div>
+
         <div class="form-group mb-3">
             <label>Phương thức thanh toán *</label>
             <div class="mt-2">
