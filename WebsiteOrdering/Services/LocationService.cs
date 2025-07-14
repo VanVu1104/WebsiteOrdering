@@ -16,24 +16,24 @@ namespace WebsiteOrdering.Services
             _locationRepository = locationRepository;
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        public async Task<IEnumerable<Chinhanh>> GetAllLocationsAsync()
         {
             var locations = await _locationRepository.GetAllAsync();
             return locations.Select(MapToViewModel).ToList();
         }
 
-        public async Task<Location?> GetLocationByIdAsync(int id)
+        public async Task<Chinhanh?> GetLocationByIdAsync(string id)
         {
             var location = await _locationRepository.GetByIdAsync(id);
             return location != null ? MapToViewModel(location) : null;
         }
 
-        public async Task<Location> CreateLocationAsync(Location createDto)
+        public async Task<Chinhanh> CreateLocationAsync(Chinhanh createDto)
         {
-            var location = new Location
+            var location = new Chinhanh
             {
-                Name = createDto.Name,
-                Address = createDto.Address,
+                Tencnhanh = createDto.Tencnhanh,
+                Diachicn = createDto.Diachicn,
                 Latitude = createDto.Latitude,
                 Longitude = createDto.Longitude
             };
@@ -42,14 +42,14 @@ namespace WebsiteOrdering.Services
             return MapToViewModel(createdLocation);
         }
 
-        public async Task<Location> UpdateLocationAsync(int id, Location updateDto)
+        public async Task<Chinhanh> UpdateLocationAsync(string id, Chinhanh updateDto)
         {
             var existingLocation = await _locationRepository.GetByIdAsync(id);
             if (existingLocation == null)
                 throw new ArgumentException($"Location with ID {id} not found.");
 
-            existingLocation.Name = updateDto.Name;
-            existingLocation.Address = updateDto.Address;
+            existingLocation.Tencnhanh = updateDto.Tencnhanh;
+            existingLocation.Diachicn = updateDto.Diachicn;
             existingLocation.Latitude = updateDto.Latitude;
             existingLocation.Longitude = updateDto.Longitude;
 
@@ -57,35 +57,35 @@ namespace WebsiteOrdering.Services
             return MapToViewModel(updatedLocation);
         }
 
-        public async Task<bool> DeleteLocationAsync(int id)
+        public async Task<bool> DeleteLocationAsync(string id)
         {
             return await _locationRepository.DeleteAsync(id);
         }
 
-        public async Task<bool> LocationExistsAsync(int id)
+        public async Task<bool> LocationExistsAsync(string id)
         {
             return await _locationRepository.ExistsAsync(id);
         }
 
-        public async Task<IEnumerable<Location>> GetLocationsByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng)
+        public async Task<IEnumerable<Chinhanh>> GetLocationsByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng)
         {
             var locations = await _locationRepository.GetByAreaAsync(minLat, maxLat, minLng, maxLng);
             return locations.Select(MapToViewModel).ToList();
         }
 
-        public async Task<IEnumerable<Location>> SearchLocationsByNameAsync(string name)
+        public async Task<IEnumerable<Chinhanh>> SearchLocationsByNameAsync(string name)
         {
             var locations = await _locationRepository.SearchByNameAsync(name);
             return locations.Select(MapToViewModel).ToList();
         }
 
-        private static Location MapToViewModel(Location location)
+        private static Chinhanh MapToViewModel(Chinhanh location)
         {
-            return new Location
+            return new Chinhanh
             {
-                Id = location.Id,
-                Name = location.Name,
-                Address = location.Address,
+                Idchinhanh = location.Idchinhanh,
+                Tencnhanh = location.Tencnhanh,
+                Diachicn = location.Diachicn,
                 Latitude = location.Latitude,
                 Longitude = location.Longitude
             };
@@ -108,53 +108,24 @@ namespace WebsiteOrdering.Services
         {
             return degrees * Math.PI / 180;
         }
-        
-        // Create straight line route as fallback
-        private object CreateStraightLineRoute(RouteRequest request)
+        public async Task<Chinhanh?> FindNearestBranchAsync(double lat, double lng)
         {
-            var distance = GetDistance(request.StartLat, request.StartLng, request.EndLat, request.EndLng);
-            var estimatedDuration = (distance * 60) / 50; // Assume 50 km/h average speed
+            var branches = await _locationRepository.GetAllAsync();
 
-            return new
+            Chinhanh? nearest = null;
+            double minDist = double.MaxValue;
+
+            foreach (var b in branches)
             {
-                type = "FeatureCollection",
-                features = new[]
+                var dist = GetDistance(lat, lng, (double)b.Latitude, (double)b.Longitude);
+                if (dist < minDist)
                 {
-            new
-            {
-                type = "Feature",
-                geometry = new
-                {
-                    type = "LineString",
-                    coordinates = new[]
-                    {
-                        new[] { request.StartLng, request.StartLat },
-                        new[] { request.EndLng, request.EndLat }
-                    }
-                },
-                properties = new
-                {
-                    segments = new[]
-                    {
-                        new
-                        {
-                            distance = distance * 1000, // Convert to meters
-                            duration = estimatedDuration * 60, // Convert to seconds
-                            steps = new[]
-                            {
-                                new
-                                {
-                                    instruction = $"Đi thẳng {distance:F2} km đến đích",
-                                    distance = distance * 1000,
-                                    duration = estimatedDuration * 60
-                                }
-                            }
-                        }
-                    }
+                    minDist = dist;
+                    nearest = b;
                 }
             }
-        }
-            };
+
+            return nearest;
         }
     }
 }

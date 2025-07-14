@@ -1,4 +1,7 @@
 ﻿@model WebsiteOrdering.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
 <form asp-action="Login" method="post">
     @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
     {

@@ -22,7 +22,8 @@ namespace WebsiteOrdering.Repositories
 
         public async Task<Donhang?> GetOrderWithDetailsAsync(string orderId)
         {
-            return await _context.dhang.Include(o => o.Chitietdonhangs)
+            return await _context.dhang.Include(o => o.IdchinhanhNavigation)
+                .Include(o => o.Chitietdonhangs)
                     .ThenInclude(od => od.IdmonanNavigation)
                     .Include(o => o.Chitietdonhangs)
                         .ThenInclude(od => od.Idmonan2Navigation)
@@ -35,11 +36,16 @@ namespace WebsiteOrdering.Repositories
                             .ThenInclude(ct => ct.IdtoppingNavigation)
                             .FirstOrDefaultAsync(o => o.Iddonhang == orderId);
         }
-
+        public async Task<List<Donhang>> GetAllOrdersAsync()
+        {
+            return await _context.dhang
+                .OrderByDescending(d => d.Ngaydat)
+                .ToListAsync();
+        }
         public async Task<Donhang?> FindOrderAsync(string orderId)
         {
             return await _context.dhang.FindAsync(orderId);
-        } 
+        }
         public async Task<Chitietdonhang?> FindDetailAsync(string detailsId)
         {
             return await _context.ctdh.FindAsync(detailsId);
@@ -80,6 +86,36 @@ namespace WebsiteOrdering.Repositories
                 // Log error nếu cần
                 throw new Exception($"Không thể cập nhật đơn hàng {order.Iddonhang}: {ex.Message}");
             }
+        }
+        public async Task<List<Donhang>> GetOrdersByUserIdAsync(string userId)
+        {
+            return await _context.dhang
+                .Where(o => o.Idngdung == userId)
+                .Include(o => o.Chitietdonhangs)
+                .OrderByDescending(o => o.Ngaydat)
+                .ToListAsync();
+        }
+        public async Task<List<Donhang>> GetOrdersByStatusAsync(string status)
+        {
+            return await _context.dhang
+                .Where(d => d.Trangthai.ToLower() == status.ToLower().Trim())
+                .OrderByDescending(d => d.Ngaydat)
+                .ToListAsync();
+        }
+        public async Task<bool> UpdateOrderStatusAsync(string id, string newStatus)
+        {
+            var order = await _context.dhang.FindAsync(id);
+            if (order == null) return false;
+
+            if (order.Trangthai == "Cancel")
+                return false;
+
+            if ((order.Trangthai == "Delivering" || order.Trangthai == "Delivered") && newStatus == "Cancel")
+                return false;
+
+            order.Trangthai = newStatus;
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

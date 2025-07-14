@@ -14,7 +14,6 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/ProductsManagement")]
-    [Authorize(Roles = "Admin")]
     public class ProductsManagementController : Controller
     {
         private readonly IMonanRepository _monanRepository;
@@ -151,7 +150,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             }
             return BadRequest();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MonanFormViewModel viewModel, IFormFile? anhMoi)
@@ -199,7 +198,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
 
             return BadRequest();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, MonanFormViewModel viewModel, IFormFile? anhMoi)

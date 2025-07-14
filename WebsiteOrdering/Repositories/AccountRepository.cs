@@ -16,16 +16,19 @@ namespace WebsiteOrdering.Repositories
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _mailService;
         private readonly IWebHostEnvironment _env;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountRepository(UserManager<ApplicationUser> userManager,
                                  SignInManager<ApplicationUser> signInManager,
                                  IEmailService mailService,
-                                 IWebHostEnvironment env)
+                                 IWebHostEnvironment env,
+                                 IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mailService = mailService;
             _env = env;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterViewModel model, string confirmEmailUrl)
@@ -349,5 +352,32 @@ namespace WebsiteOrdering.Repositories
 
             return await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
         }
+        public async Task<bool> SignInStaffWithClaimsAsync(ApplicationUser user)
+        {
+            if (string.IsNullOrEmpty(user.Idchinhanh))
+                return false;
+
+            await _signInManager.SignOutAsync(); // Đảm bảo đăng nhập mới
+
+            var principal = await _signInManager.CreateUserPrincipalAsync(user);
+            var identity = (ClaimsIdentity)principal.Identity!;
+
+            // Thêm claim IdChiNhanh
+            identity.AddClaim(new Claim("ChiNhanhId", user.Idchinhanh));
+
+            // Thêm claim Role (lấy từ hệ thống Identity)
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
+
+            await _httpContextAccessor.HttpContext!.SignInAsync(
+                IdentityConstants.ApplicationScheme,
+                new ClaimsPrincipal(identity));
+
+            return true;
+        }
+
     }
 }

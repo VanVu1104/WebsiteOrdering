@@ -81,12 +81,23 @@ namespace WebsiteOrdering.Models
                     .IsUnicode(false)
                     .IsFixedLength()
                     .HasColumnName("IDCHINHANH");
+
                 entity.Property(e => e.Diachicn)
                     .HasMaxLength(500)
                     .HasColumnName("DIACHICN");
+
                 entity.Property(e => e.Tencnhanh)
                     .HasMaxLength(100)
                     .HasColumnName("TENCNHANH");
+
+                // Cấu hình chính xác cho tọa độ
+                entity.Property(e => e.Latitude)
+                    .HasPrecision(9, 6)
+                    .HasColumnName("LATITUDE");
+
+                entity.Property(e => e.Longitude)
+                    .HasPrecision(9, 6)
+                    .HasColumnName("LONGITUDE");
             });
 
             modelBuilder.Entity<Chitietdatban>(entity =>

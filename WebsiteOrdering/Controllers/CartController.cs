@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,15 @@ namespace WebsiteOrdering.Controllers
             _appDbContext = appDbContext;
             _accountRepository = accountRepository;
         }
-
+        public UserLocationSessionViewModel? GetUserLocationFromSession()
+        {
+            var sessionData = HttpContext.Session.GetString("UserLocationInfo");
+            if (!string.IsNullOrEmpty(sessionData))
+            {
+                return JsonSerializer.Deserialize<UserLocationSessionViewModel>(sessionData);
+            }
+            return null;
+        }
         [HttpPost]
         public async Task<IActionResult> AddToCart(IFormCollection form)
         {
@@ -175,6 +184,18 @@ namespace WebsiteOrdering.Controllers
             else
             {
                 model.UserInfo.Address = "Chưa có vị trí";
+            }
+            var userLocation = GetUserLocationFromSession();
+            if (userLocation != null)
+            {
+                model.UserInfo.DistanceKm = userLocation.DistanceKm;
+                model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
+                var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
+                if (branch != null)
+                {
+                    model.UserInfo.BranchId = userLocation.NearestBranchId;
+                    model.UserInfo.BranchName = branch.Tencnhanh;
+                }
             }
             ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
             ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();

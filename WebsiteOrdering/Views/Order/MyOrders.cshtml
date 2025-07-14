@@ -1,6 +1,8 @@
 ﻿@model List<WebsiteOrdering.Models.Donhang>
-
-<h2>Đơn hàng của tôi</h2>
+@{
+    ViewData["Title"] = "Đơn hàng";
+}
+<h2>Đơn hàng</h2>
 
 @if (!User.Identity.IsAuthenticated)
 {

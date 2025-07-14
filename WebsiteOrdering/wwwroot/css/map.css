@@ -187,7 +187,7 @@
     margin: 0 auto;
 }
 
-#searchInput {
+.searchInput {
     width: 100%;
     padding: 15px 50px 15px 20px;
     font-size: 16px;
@@ -199,7 +199,7 @@
     box-sizing: border-box;
 }
 
-    #searchInput:focus {
+    .searchInput:focus {
         outline: none;
         border-color: #4facfe;
         box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
@@ -255,10 +255,18 @@
         .route-info-control button:hover {
             background: #d33828;
         }
+/*Suggestion*/
+.suggestions {
+    display: none;
+}
+    .suggestions.show {
+    display: block;
+    }
+
 
 /* Loading animation */
 .loading-spinner {
-    display: inline-block;
+    display: none;
     width: 20px;
     height: 20px;
     border: 3px solid #f3f3f3;

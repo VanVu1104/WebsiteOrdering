@@ -77,8 +77,8 @@
             const marker = L.marker([location.latitude, location.longitude])
                 .bindPopup(`
                     <div class="location-popup">
-                        <h4>🏪 ${location.name || 'Cửa hàng'}</h4>
-                        <p><strong>📍 Địa chỉ:</strong> ${location.address || 'Không có địa chỉ'}</p>
+                        <h4>🏪 ${location.tencnhanh || 'Cửa hàng'}</h4>
+                        <p><strong>📍 Địa chỉ:</strong> ${location.diachicn || 'Không có địa chỉ'}</p>
                         ${location.phone ? `<p><strong>📞 Điện thoại:</strong> ${location.phone}</p>` : ''}
                         <div class="popup-actions">
                             <button onclick="mapHandler.showRouteToLocation(${location.latitude}, ${location.longitude})" 
@@ -150,9 +150,9 @@
 
                 this.showNotification('✅ Đã lưu vị trí thành công!', 'success');
                 //Ẩn gợi ý
-                this.searchService.hideSuggestions();
+                //this.searchService.hideSuggestions();
                 //Clear search
-                this.searchService.clearSearch();
+                //this.searchService.clearSearch();
                 
             }
         } catch (error) {
@@ -285,7 +285,6 @@
     async saveCurrentLocationToSession() {
         try {
             const userLocation = this.userLocationView;
-            console.log(userLocation);
             if (!userLocation) {
                 this.showNotification('⚠️ Vui lòng chọn vị trí trước!', 'warning');
                 return;
@@ -348,8 +347,8 @@
             div.innerHTML = `
                 <div>
                     <h4>🏪 Cửa hàng gần nhất</h4>
-                    <p><strong>${store.name || 'Cửa hàng'}</strong></p>
-                    <p>📍 ${store.address || 'Không có địa chỉ'}</p>
+                    <p><strong>${store.tencnhanh || 'Cửa hàng'}</strong></p>
+                    <p>📍 ${store.diachicn || 'Không có địa chỉ'}</p>
                     <p>📏 Khoảng cách: ${store.distance ? store.distance.toFixed(2) + ' km' : 'Không xác định'}</p>
                 </div>
             `;

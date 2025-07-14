@@ -1,5 +1,5 @@
 ﻿@using WebsiteOrdering.Models
-@model List<Location>
+@model List<Chinhanh>
 @{
     ViewData["Title"] = "Vị trí";
 }
@@ -18,9 +18,9 @@
         <div class="map-controls">
             <div class="search-container">
                 <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Nhập địa chỉ, tên đường, quận/huyện..." autocomplete="off">
+                    <input class="searchInput" type="text" id="searchInput" placeholder="Nhập địa chỉ, tên đường, quận/huyện..." autocomplete="off">
                     <div class="loading-spinner" id="loadingSpinner"></div>
-                    <div id="suggestions">
+                    <div class="suggestions" id="suggestions">
                         <!-- Suggestions sẽ được hiển thị ở đây -->
                     </div>
                 </div>

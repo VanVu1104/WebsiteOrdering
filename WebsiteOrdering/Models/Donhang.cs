@@ -25,8 +25,8 @@ namespace WebsiteOrdering.Models
         public string? Tenkh { get; set; }
         public string? Sdtkh { get; set; }
 
-        public int? Tienship { get; set; }
-
+        public decimal? Tienship { get; set; }
+        public double? Khoangcachship { get; set; }
         public string? Idchinhanh { get; set; }
 
         public string? Iddatban { get; set; }

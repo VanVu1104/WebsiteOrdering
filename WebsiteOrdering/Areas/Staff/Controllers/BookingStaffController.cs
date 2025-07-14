@@ -30,7 +30,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
             var baseFilter = _appDbContext.Datbans.AsQueryable();
 
-            var idChiNhanhNhanVien = HttpContext.Session.GetString("ChiNhanhId");
+            var idChiNhanhNhanVien = User.FindFirst("ChiNhanhId")?.Value;
 
             // Bắt buộc phải lọc theo chi nhánh nhân viên nếu có
             if (!string.IsNullOrEmpty(idChiNhanhNhanVien))

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebsiteOrdering.Areas.Repository;
+using WebsiteOrdering.Areas.Services;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
@@ -20,12 +21,14 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = TimeSpan.FromDays(2);
+    options.Cookie.Name = ".WebsiteOrdering.Cart";
 });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthorization();
-
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddMemoryCache();
@@ -97,6 +100,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IMonanRepository, MonanRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
