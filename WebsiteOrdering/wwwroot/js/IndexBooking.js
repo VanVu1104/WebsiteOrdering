@@ -48,10 +48,10 @@ document.addEventListener("DOMContentLoaded", function () {
     //Hàm select giờ và ẩn giờ đã qua so với giờ thực
     function generateTimeOptions(currentTotalMins = null) {
         const start = 9 * 60; // 9:00
-        const end = 22 * 60; // 22:00
+        const end = 21 * 60; // 21:00
         const step = 30;
 
-        timeSelect.innerHTML = ""; // clear
+        timeSelect.innerHTML = "";
 
         for (let mins = start; mins <= end; mins += step) {
             if (currentTotalMins !== null && mins <= currentTotalMins) continue;
@@ -67,7 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
             option.textContent = timeStr;
             timeSelect.appendChild(option);
         }
+
     }
+
 
     // Tự động set ngày hôm nay nếu chưa có
     if (ngayDatInput && (!ngayDatInput.value || ngayDatInput.value === "0001-01-01")) {
@@ -385,16 +387,20 @@ function timeToMinutes(timeStr) {
     return h * 60 + m;
 }
 
+
 function addHoursToTime(timeStr, hoursToAdd) {
     const [h, m] = timeStr.split(":").map(Number);
     let totalMinutes = h * 60 + m + hoursToAdd * 60;
-    totalMinutes = totalMinutes % (24 * 60); // nếu > 1440 phút thì quay lại 0h
+
+    const maxMinutes = 23 * 60 + 59; // 23:59
+    if (totalMinutes > maxMinutes) {
+        totalMinutes = maxMinutes;
+    }
 
     const newH = Math.floor(totalMinutes / 60);
     const newM = totalMinutes % 60;
     return `${newH.toString().padStart(2, "0")}:${newM.toString().padStart(2, "0")}`;
 }
-
 
 let countdownInterval;
 let countdownTime = 5 * 60; // 5 phút = 300 giây

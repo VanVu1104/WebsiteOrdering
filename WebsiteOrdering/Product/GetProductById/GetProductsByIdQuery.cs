@@ -7,6 +7,7 @@ namespace WebsiteOrdering.Product.GetProductById
     public class GetProductsByIdQuery :IRequest<Monan>
     {
         public string Id { get;  }
+
    
         public GetProductsByIdQuery(string id)
         {

@@ -13,6 +13,7 @@ using WebsiteOrdering.ViewModels;
 //using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
 // Thêm dịch vụ Session
 builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)
@@ -101,6 +102,7 @@ builder.Services.AddScoped<IMonanRepository, MonanRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddHostedService<DatBanBackgroundService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);

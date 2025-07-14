@@ -193,10 +193,10 @@ namespace WebsiteOrdering.Controllers
             };
             _appDbContext.chitietdatbans.Add(chitiet);
 
-            if (ban != null)
-            {
-                ban.Trangthaiban = "Đã đặt";
-            }
+            //if (ban != null)
+            //{
+            //    ban.Trangthaiban = "Đã đặt";
+            //}
 
             await _appDbContext.SaveChangesAsync();
 
