@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Models;
@@ -7,6 +8,8 @@ using WebsiteOrdering.Product.GetAllCategoryById;
 using WebsiteOrdering.Product.GetAllProducts;
 using WebsiteOrdering.Product.GetProductById;
 using WebsiteOrdering.Services;
+using WebsiteOrdering.Helper;
+using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Controllers
 {
@@ -26,68 +29,68 @@ namespace WebsiteOrdering.Controllers
         }
 
 
-        [HttpGet("")]
-        public async Task<IActionResult> Index(int page = 1, string categoryId = null, string searchTerm = "")
-        {
-            var categories = await _mediator.Send(new GetAllCategoriesQuery());
-            ViewBag.Categories = categories;
-            ViewBag.SelectedCategory = categoryId;
-            ViewBag.SearchTerm = searchTerm;
+        //[HttpGet("")]
+        //public async Task<IActionResult> Index(int page = 1, string categoryId = null, string searchTerm = "")
+        //{
+        //    var categories = await _mediator.Send(new GetAllCategoriesQuery());
+        //    ViewBag.Categories = categories;
+        //    ViewBag.SelectedCategory = categoryId;
+        //    ViewBag.SearchTerm = searchTerm;
 
-            List<Monan> products;
+        //    List<Monan> products;
 
-            // Có tìm kiếm
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                var exactMatchProducts = await _mediator.Send(new GetProductsByExactNameQuery(searchTerm));
+        //    // Có tìm kiếm
+        //    if (!string.IsNullOrEmpty(searchTerm))
+        //    {
+        //        var exactMatchProducts = await _mediator.Send(new GetProductsByExactNameQuery(searchTerm));
 
-                if (exactMatchProducts != null && exactMatchProducts.Any())
-                {
-                    products = exactMatchProducts.ToList();
-                }
-                else
-                {
-                    var luceneResults = _luceneIndexer.SearchWithScore(searchTerm, 100);
-                    var matchedIds = luceneResults.Select(r => r.Id).ToList();
-                    products = await _mediator.Send(new GetAllProductQuery());
-                    products = products.Where(p => matchedIds.Contains(p.Idmonan)).ToList();
-                }
-            }
-            else if (!string.IsNullOrEmpty(categoryId))
-            {
-                var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
-                allChildrenIds.Add(categoryId);
+        //        if (exactMatchProducts != null && exactMatchProducts.Any())
+        //        {
+        //            products = exactMatchProducts.ToList();
+        //        }
+        //        else
+        //        {
+        //            var luceneResults = _luceneIndexer.SearchWithScore(searchTerm, 100);
+        //            var matchedIds = luceneResults.Select(r => r.Id).ToList();
+        //            products = await _mediator.Send(new GetAllProductQuery());
+        //            products = products.Where(p => matchedIds.Contains(p.Idmonan)).ToList();
+        //        }
+        //    }
+        //    else if (!string.IsNullOrEmpty(categoryId))
+        //    {
+        //        var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
+        //        allChildrenIds.Add(categoryId);
 
-                products = new List<Monan>();
-                foreach (var catId in allChildrenIds)
-                {
-                    var prods = await _mediator.Send(new GetProductsByCategoiesQuery(catId));
-                    if (prods != null) products.AddRange(prods);
-                }
-                if (products.Count == 0)
-                {
-                    TempData["Message"] = "Không tìm thấy sản phẩm thuộc loại đã chọn.";
-                }
-            }
-            // Không tìm kiếm, không lọc
-            else
-            {
-                products = await _mediator.Send(new GetAllProductQuery());
-            }
+        //        products = new List<Monan>();
+        //        foreach (var catId in allChildrenIds)
+        //        {
+        //            var prods = await _mediator.Send(new GetProductsByCategoiesQuery(catId));
+        //            if (prods != null) products.AddRange(prods);
+        //        }
+        //        if (products.Count == 0)
+        //        {
+        //            TempData["Message"] = "Không tìm thấy sản phẩm thuộc loại đã chọn.";
+        //        }
+        //    }
+        //    // Không tìm kiếm, không lọc
+        //    else
+        //    {
+        //        products = await _mediator.Send(new GetAllProductQuery());
+        //    }
 
-            // Phân trang
-            int pageSize = 9;
-            var totalProducts = products.Count();
-            var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
-            var paginatedProducts = products
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+        //    // Phân trang
+        //    int pageSize = 9;
+        //    var totalProducts = products.Count();
+        //    var totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+        //    var paginatedProducts = products
+        //        .Skip((page - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToList();
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            return View(paginatedProducts);
-        }
+        //    ViewBag.CurrentPage = page;
+        //    ViewBag.TotalPages = totalPages;
+        //    return View(paginatedProducts);
+        //}
 
         // Hàm đệ quy lấy tất cả category con của một category cha
         private List<string> GetAllChildCategoryIds(List<Loaimonan> categories, string parentId)
@@ -106,6 +109,55 @@ namespace WebsiteOrdering.Controllers
             }
 
             return result;
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Index(int page = 1, string categoryId = null)
+        {
+
+            var categories = await _mediator.Send(new GetAllCategoriesQuery());
+            ViewBag.Categories = categories;
+
+            List<Monan> products;
+
+            if (!string.IsNullOrEmpty(categoryId))
+            {
+                var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
+                allChildrenIds.Add(categoryId); // Thêm chính nó
+
+                products = new List<Monan>();
+
+                foreach (var catId in allChildrenIds)
+                {
+                    var prods = await _mediator.Send(new GetProductsByCategoiesQuery(catId));
+                    if (prods != null && prods.Count > 0)
+                    {
+                        products.AddRange(prods);
+                    }
+                }
+
+                ViewBag.SelectedCategory = categoryId;
+
+                if (products.Count == 0)
+                {
+                    TempData["Message"] = "Không tìm thấy sản phẩm thuộc loại đã chọn.";
+                }
+            }
+            else
+            {
+                products = await _mediator.Send(new GetAllProductQuery());
+                ViewBag.SelectedCategory = null;
+            }
+
+            // ✅ KHÔNG PHÂN TRANG – hiện tất cả
+            ViewBag.CurrentPage = 1;
+            ViewBag.TotalPages = 1;
+
+            // ✅ LẤY GIỎ HÀNG TỪ SESSION
+            var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+            ViewBag.CartItems = cart;
+
+            return View(products);
         }
 
         //Hiển thị chi tiết sản phẩm

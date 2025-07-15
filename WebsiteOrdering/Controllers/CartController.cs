@@ -161,7 +161,7 @@ namespace WebsiteOrdering.Controllers
             // Lưu giỏ hàng vào session
             HttpContext.Session.Set("Cart", cart);
 
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Products");
         }
 
 
@@ -269,8 +269,9 @@ namespace WebsiteOrdering.Controllers
                 cart.Remove(itemToRemove);
                 HttpContext.Session.Set("Cart", cart);
             }
+            return RedirectToAction("Index", "Products");
+            //return View("Index", cart);
 
-            return View("Index", cart);
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng
@@ -468,7 +469,7 @@ namespace WebsiteOrdering.Controllers
                 toppings
             });
         }
-
+ 
 
     }
 }

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
+using WebsiteOrdering.Services;
 
 namespace WebsiteOrdering.Controllers
 {
@@ -12,8 +14,10 @@ namespace WebsiteOrdering.Controllers
     {
         private readonly IAccountRepository _accountRepository;
         private readonly AppDbContext _appDbContext;
-        public BookingController(AppDbContext context, IAccountRepository accountRepository)
+        private readonly IEmailService _emailService;
+        public BookingController(AppDbContext context, IAccountRepository accountRepository, IEmailService emailService)
         {
+            _emailService = emailService;
             _accountRepository = accountRepository;
             _appDbContext = context;
         }
@@ -193,6 +197,8 @@ namespace WebsiteOrdering.Controllers
             };
             _appDbContext.chitietdatbans.Add(chitiet);
 
+
+
             //if (ban != null)
             //{
             //    ban.Trangthaiban = "Đã đặt";
@@ -200,7 +206,7 @@ namespace WebsiteOrdering.Controllers
 
             await _appDbContext.SaveChangesAsync();
 
-            TempData["Success"] = "Đặt bàn thành công!";
+            //TempData["Success"] = "Đặt bàn thành công!";
             return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
         }
         //Lấy danh sách bàn đã đặt theo ngày và giờ vào, giờ ra theo chi nhánh , khu vực
@@ -263,7 +269,7 @@ namespace WebsiteOrdering.Controllers
                 return Content("Lỗi hiển thị view: " + ex.Message);
             }
         }
-
+        
 
         [HttpGet]
         public async Task<IActionResult> SearchDonDatBan(string maDon, string sdt, string tenNguoiDat,string emailNguoiDat)
@@ -311,6 +317,287 @@ namespace WebsiteOrdering.Controllers
             var result = await query.OrderByDescending(d => d.Ngaydat).ToListAsync();
 
             return View(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LichSuDatBan()
+        {
+            // Kiểm tra đăng nhập
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account"); // Hoặc trả về view thông báo đăng nhập
+            }
+
+            // Lấy Id người dùng
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return NotFound("Không tìm thấy thông tin người dùng.");
+            }
+
+            // Lấy danh sách đặt bàn của người dùng đó
+            var datBans = await _appDbContext.Datbans
+                .Include(d => d.IdchinhanhNavigation)
+                .Include(d => d.Chitietdatbans)
+                    .ThenInclude(ct => ct.IdbanNavigation)
+                .Where(d => d.Idngdung == userId)
+                .OrderByDescending(d => d.Ngaydat)
+                .ToListAsync();
+
+            return View("LichSuDatBan",datBans);
+        }
+        [HttpGet]
+        public async Task<IActionResult> CapNhatDatBan(string id)
+        {
+            var datBan = await _appDbContext.Datbans
+                .Include(d => d.Chitietdatbans)
+                    .ThenInclude(ct => ct.IdbanNavigation)
+                .Include(d => d.Nguoidung) // Thêm để lấy email, phone, fullname
+                .FirstOrDefaultAsync(d => d.Iddatban == id);
+
+            if (datBan == null)
+                return NotFound("Không tìm thấy đơn đặt bàn.");
+
+            if (datBan.Trangthaidatban != "Chờ xác nhận")
+                return BadRequest("Chỉ có thể cập nhật đơn đang chờ xác nhận.");
+
+            // Lấy danh sách chi nhánh
+            ViewBag.ChiNhanh = _appDbContext.chinhanh.ToList();
+
+            var idKhuvuc = datBan.Chitietdatbans.FirstOrDefault()?.IdbanNavigation.Khuvuc;
+            var idChiNhanh = datBan.Idchinhanh;
+
+            // Lấy danh sách bàn theo chi nhánh và khu vực hiện tại
+            ViewBag.Ban = _appDbContext.bans
+                .Where(b => b.Idchinhanh == idChiNhanh && b.Khuvuc == idKhuvuc)
+                .ToList();
+
+            // Truyền thêm thông tin người đặt
+            ViewBag.UserInfo = datBan.Nguoidung;
+
+            // Truyền khu vực hiện tại
+            ViewBag.KhuvucHienTai = idKhuvuc;
+            ViewBag.IdBanHienTai = datBan.Chitietdatbans.FirstOrDefault()?.Idban;
+
+            return View("Index",datBan);
+        }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> CapNhatDatBan(Datban datban, string selectedIdban)
+        //{
+        //    var datBan = await _appDbContext.Datbans
+        //        .Include(d => d.Chitietdatbans)
+        //        .FirstOrDefaultAsync(d => d.Iddatban == datban.Iddatban);
+
+        //    if (datBan == null)
+        //        return NotFound("Không tìm thấy đơn.");
+
+        //    if (datBan.Trangthaidatban != "Chờ xác nhận")
+        //        return BadRequest("Chỉ cập nhật đơn đang chờ xác nhận.");
+
+        //    var gioKetThuc = datban.Giobatdau.Add(TimeSpan.FromHours(2));
+
+        //    // Check bàn đã được đặt chưa
+        //    var isBanDaDat = await _appDbContext.chitietdatbans
+        //        .Include(c => c.IddatbanNavigation)
+        //        .AnyAsync(c => c.Idban == selectedIdban
+        //            && c.IddatbanNavigation.Ngaydat == datban.Ngaydat
+        //            && c.IddatbanNavigation.Trangthaidatban != "Đã hủy"
+        //            && c.Iddatban != datBan.Iddatban
+        //            && (
+        //                (datban.Giobatdau >= c.Giovao && datban.Giobatdau < c.Giora) ||
+        //                (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora) ||
+        //                (datban.Giobatdau <= c.Giovao && gioKetThuc >= c.Giora)
+        //            )
+        //        );
+
+        //    if (isBanDaDat)
+        //    {
+        //        TempData["Error"] = "Bàn đã được đặt trong khung giờ này!";
+        //        ViewBag.ChiNhanh = _appDbContext.chinhanh.ToList();
+        //        return View("Index", datban);
+        //    }
+
+        //    // Update thông tin đơn
+        //    datBan.Ngaydat = datban.Ngaydat;
+        //    datBan.Giobatdau = datban.Giobatdau;
+        //    datBan.Gioketthuc = gioKetThuc;
+        //    datBan.Songuoidat = datban.Songuoidat;
+        //    datBan.Ghichu = datban.Ghichu ?? "";
+        //    datBan.Idchinhanh = datban.Idchinhanh;
+        //    datBan.Tenngdat = datban.Tenngdat;
+        //    datBan.Sđtngdat= datban.Sđtngdat;
+        //    // Xử lý chi tiết
+        //    var chiTiet = datBan.Chitietdatbans.FirstOrDefault();
+        //    if (chiTiet != null)
+        //    {
+        //        // Remove chi tiết cũ
+        //        _appDbContext.chitietdatbans.Remove(chiTiet);
+        //        await _appDbContext.SaveChangesAsync();
+
+        //        // Add chi tiết mới
+        //        var newChiTiet = new Chitietdatban
+        //        {
+        //            Iddatban = datBan.Iddatban,
+        //            Idban = selectedIdban,
+        //            Giovao = datban.Giobatdau,
+        //            Giora = gioKetThuc
+        //        };
+        //        _appDbContext.chitietdatbans.Add(newChiTiet);
+        //        await _appDbContext.SaveChangesAsync();
+        //    }
+
+        //    TempData["Success"] = "Cập nhật thành công!";
+        //    return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> CapNhatDatBan(Datban datban, string selectedIdban)
+        {
+            var datBan = await _appDbContext.Datbans
+                .Include(d => d.Chitietdatbans)
+                .FirstOrDefaultAsync(d => d.Iddatban == datban.Iddatban);
+
+            if (datBan == null)
+                return NotFound("Không tìm thấy đơn.");
+
+            if (datBan.Trangthaidatban != "Chờ xác nhận")
+                return BadRequest("Chỉ cập nhật đơn đang chờ xác nhận.");
+
+            var chiTiet = datBan.Chitietdatbans.FirstOrDefault();
+            if (chiTiet == null)
+            {
+                TempData["Error"] = "Không tìm thấy chi tiết bàn.";
+                return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
+            }
+
+            if (string.IsNullOrEmpty(selectedIdban))
+            {
+                TempData["Error"] = "Vui lòng chọn bàn.";
+                return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
+            }
+
+            var gioKetThuc = datban.Giobatdau.Add(TimeSpan.FromHours(2));
+
+            bool isChangeBan = selectedIdban != chiTiet.Idban;
+            bool isChangeNgay = datban.Ngaydat != datBan.Ngaydat;
+            bool isChangeGio = datban.Giobatdau != datBan.Giobatdau;
+
+            if (isChangeBan)
+            {
+                // Check trùng bàn
+                var isBanDaDat = await _appDbContext.chitietdatbans
+                    .Include(c => c.IddatbanNavigation)
+                    .AnyAsync(c => c.Idban == selectedIdban
+                        && c.IddatbanNavigation.Ngaydat == datban.Ngaydat
+                        && c.IddatbanNavigation.Trangthaidatban != "Đã hủy"
+                        && c.Iddatban != datBan.Iddatban
+                        && (
+                            (datban.Giobatdau >= c.Giovao && datban.Giobatdau < c.Giora) ||
+                            (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora) ||
+                            (datban.Giobatdau <= c.Giovao && gioKetThuc >= c.Giora)
+                        )
+                    );
+
+                if (isBanDaDat)
+                {
+                    TempData["Error"] = "Bàn mới đã được đặt trong khung giờ này!";
+                    return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
+                }
+
+                // Xóa chi tiết cũ
+                _appDbContext.chitietdatbans.Remove(chiTiet);
+                await _appDbContext.SaveChangesAsync();
+
+                // Tạo chi tiết mới
+                var newChiTiet = new Chitietdatban
+                {
+                    Iddatban = datBan.Iddatban,
+                    Idban = selectedIdban,
+                    Giovao = datban.Giobatdau,
+                    Giora = gioKetThuc
+                };
+                _appDbContext.chitietdatbans.Add(newChiTiet);
+            }
+            else
+            {
+                // Chỉ đổi ngày hoặc giờ => update chi tiết
+                chiTiet.Giovao = datban.Giobatdau;
+                chiTiet.Giora = gioKetThuc;
+            }
+
+            // Update các thông tin khác
+            datBan.Ngaydat = datban.Ngaydat;
+            datBan.Giobatdau = datban.Giobatdau;
+            datBan.Gioketthuc = gioKetThuc;
+            datBan.Songuoidat = datban.Songuoidat;
+            datBan.Ghichu = datban.Ghichu ?? "";
+            datBan.Idchinhanh = datban.Idchinhanh;
+            datBan.Tenngdat = datban.Tenngdat;
+            datBan.Sđtngdat = datban.Sđtngdat;
+
+            await _appDbContext.SaveChangesAsync();
+
+            TempData["Success"] = "Cập nhật thành công!";
+            return RedirectToAction("ChitietDatBan", new { id = datBan.Iddatban });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HuyDatBan(string id, string lyDo, string lyDoChiTiet)
+        {
+            var datban = await _appDbContext.Datbans
+                .Include(d => d.Nguoidung)
+                .Include(d => d.IdchinhanhNavigation)
+                .FirstOrDefaultAsync(d => d.Iddatban == id);
+
+            if (datban == null)
+                return NotFound("Không tìm thấy đơn đặt bàn.");
+
+            // Chỉ cho phép hủy nếu trạng thái là Đã xác nhận
+            if (datban.Trangthaidatban != "Đã xác nhận")
+                return BadRequest("Chỉ có thể hủy đơn ở trạng thái Đã xác nhận.");
+
+            // Cập nhật trạng thái
+            datban.Trangthaidatban = "Đã hủy";
+
+            // Lưu lý do
+            if (lyDo == "Khác" && !string.IsNullOrWhiteSpace(lyDoChiTiet))
+            {
+                datban.Lydo = lyDoChiTiet;
+            }
+            else
+            {
+                datban.Lydo = lyDo;
+            }
+
+            _appDbContext.Entry(datban).State = EntityState.Modified;
+            await _appDbContext.SaveChangesAsync();
+
+            // Gửi email thông báo nếu có
+            var email = datban.Nguoidung?.Email;
+            if (!string.IsNullOrEmpty(email))
+            {
+                var placeholders = new Dictionary<string, string>
+                {
+                    ["MaDonDatBan"] = datban.Iddatban,
+                    ["TenNguoiDat"] = datban.Tenngdat ?? datban.Nguoidung?.FullName ?? "Khách hàng",
+                    ["TenChiNhanh"] = datban.IdchinhanhNavigation.Tencnhanh,
+                    ["NgayDat"] = datban.Ngaydat.ToString("dd/MM/yyyy"),
+                    ["GioBatDau"] = datban.Giobatdau.ToString(),
+                    ["GioKetThuc"] = datban.Gioketthuc.ToString(),
+                    ["LyDo"] = datban.Lydo
+                };
+
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "EmailHuyDatBan.html");
+                var body = EmailTemplateHelper.PopulateTemplate(templatePath, placeholders);
+
+                await _emailService.SendEmailAsync(email, $"Xác nhận hủy đặt bàn thành công - Mã đơn: {datban.Iddatban}", body);
+            }
+
+            TempData["Success"] = "Hủy đơn đặt bàn thành công!";
+            return RedirectToAction("LichSuDatBan");
         }
 
 
