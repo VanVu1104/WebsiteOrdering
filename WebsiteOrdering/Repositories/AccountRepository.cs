@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Models;
+using WebsiteOrdering.Models.Results;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
 
@@ -83,8 +84,6 @@ namespace WebsiteOrdering.Repositories
             }
             return result;
         }
-
-
         private async Task SendEmailConfirmationAsync(ApplicationUser user, string confirmEmailUrl)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -106,6 +105,7 @@ namespace WebsiteOrdering.Repositories
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
           //  var normalizedEmail = model.Email.Trim().ToLowerInvariant();
+
             return await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
         }
 
@@ -152,12 +152,14 @@ namespace WebsiteOrdering.Repositories
             }
             return (true, user, null);
         }
-
-        public async Task UpdateUserAsync(ApplicationUser user)
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
-            await _userManager.UpdateAsync(user);
+            return await _userManager.UpdateAsync(user);
         }
-
+        public async Task<ApplicationUser?> GetCurrentUserAsync(ClaimsPrincipal user)
+        {
+            return await _userManager.GetUserAsync(user);
+        }
         public AuthenticationProperties GooglelLoginAsync(string provider, string redirectUrl)
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
@@ -271,7 +273,6 @@ namespace WebsiteOrdering.Repositories
                 }
             }
         }
-
         public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
             // return await _userManager.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -287,6 +288,66 @@ namespace WebsiteOrdering.Repositories
         {
             return await _userManager.GetRolesAsync(user);
         }
+        public async Task<ForgotPasswordResult> SendForgotPasswordEmailAsync(string email, string resetPasswordUrlTemplate)
+        {
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            var user = await _userManager.FindByEmailAsync(normalizedEmail);
 
+            if (user == null)
+            {
+                return new ForgotPasswordResult
+                {
+                    Success = false,
+                    ErrorCode = "UserNotFound",
+                    Message = "Không tìm thấy tài khoản với email đã nhập."
+                };
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return new ForgotPasswordResult
+                {
+                    Success = false,
+                    ErrorCode = "EmailNotConfirmed",
+                    Message = "Email chưa được xác nhận. Vui lòng xác nhận trước khi đặt lại mật khẩu."
+                };
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = System.Net.WebUtility.UrlEncode(token);
+            var callbackUrl = string.Format(resetPasswordUrlTemplate, user.Id, encodedToken);
+
+            var templatePath = Path.Combine(_env.ContentRootPath, "Templates", "ResetPasswordTemplate.html");
+            if (!File.Exists(templatePath))
+            {
+                return new ForgotPasswordResult
+                {
+                    Success = false,
+                    ErrorCode = "TemplateNotFound",
+                    Message = "Không tìm thấy mẫu email đặt lại mật khẩu."
+                };
+            }
+            var body = await File.ReadAllTextAsync(templatePath);
+            body = body.Replace("{{RESET_LINK}}", callbackUrl);
+
+            await _mailService.SendEmailAsync(user.Email, "Đặt lại mật khẩu", body);
+            return new ForgotPasswordResult
+            {
+                Success = true,
+                Message = "Liên kết đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email."
+            };
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(ResetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+            if (user == null) return IdentityResult.Failed(new IdentityError
+            {
+                Code = "UserNotFound",
+                Description = "Người dùng không tồn tại."
+            });
+
+            return await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+        }
     }
 }

@@ -8,7 +8,6 @@ namespace WebsiteOrdering.Models
     {
         public string IdChitiet { get; set; } = null!;
         public string Ghichu { get; set; } = null!;
-
         public int Soluong { get; set; }
 
         public int Dongia { get; set; }

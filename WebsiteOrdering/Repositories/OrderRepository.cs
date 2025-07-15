@@ -25,14 +25,15 @@ namespace WebsiteOrdering.Repositories
             return await _context.dhang.Include(o => o.Chitietdonhangs)
                     .ThenInclude(od => od.IdmonanNavigation)
                     .Include(o => o.Chitietdonhangs)
-                    .ThenInclude(od => od.Idmonan2Navigation)
+                        .ThenInclude(od => od.Idmonan2Navigation)
                     .Include(o => o.Chitietdonhangs)
-                    .ThenInclude(od => od.IdsizeNavigation)
-                    .Include(o => o.Chitietdonhangs).ThenInclude(od => od.IddebanhNavigation)
-                .Include(o => o.Chitietdonhangs)
-                    .ThenInclude(od => od.Chitiettoppings)
-                        .ThenInclude(ct => ct.IdtoppingNavigation)
-                .FirstOrDefaultAsync(o => o.Iddonhang == orderId);
+                        .ThenInclude(od => od.IdsizeNavigation)
+                    .Include(o => o.Chitietdonhangs)
+                        .ThenInclude(od => od.IddebanhNavigation)
+                    .Include(o => o.Chitietdonhangs)
+                        .ThenInclude(od => od.Chitiettoppings)
+                            .ThenInclude(ct => ct.IdtoppingNavigation)
+                            .FirstOrDefaultAsync(o => o.Iddonhang == orderId);
         }
 
         public async Task<Donhang?> FindOrderAsync(string orderId)
@@ -66,6 +67,19 @@ namespace WebsiteOrdering.Repositories
                 return null;
             }
             return idSize;
+        }
+        public async Task UpdateOrderAsync(Donhang order)
+        {
+            try
+            {
+                _context.dhang.Update(order);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log error nếu cần
+                throw new Exception($"Không thể cập nhật đơn hàng {order.Iddonhang}: {ex.Message}");
+            }
         }
     }
 }

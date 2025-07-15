@@ -7,6 +7,9 @@
     <UserSecretsId>0290016e-dd86-453e-861e-1ff458fc1944</UserSecretsId>
   </PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
+		<PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00016" />
+		<PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00016" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
 		<PackageReference Include="MailKit" Version="4.12.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.16" />
@@ -40,7 +43,6 @@
 	<ItemGroup>
 		<None Include="Views\Shared\_CartCount.cshtml" />
 	</ItemGroup>
-
   <ItemGroup>
     <Content Remove="wwwroot\js\IndexBooking.js" />
   </ItemGroup>
@@ -66,7 +68,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Migrations\" />
 		<Folder Include="Views\Cart\" />
 	</ItemGroup>
 

@@ -165,7 +165,6 @@
     async handleMapClick(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
-
         try {
             // Reverse geocoding để lấy địa chỉ
             const address = await this.locationService.reverseGeocode(lat, lng);
@@ -188,8 +187,6 @@
 
     // Xác nhận chọn vị trí từ map click
     async confirmLocationSelection(lat, lng, address) {
-        // Cập nhật userLocation vào service
-    this.locationService.setUserLocation(lat, lng);
         try {
             const result = await this.locationService.saveSelectedLocationToSession(lat, lng, address);
 
@@ -293,8 +290,6 @@
                 this.showNotification('⚠️ Vui lòng chọn vị trí trước!', 'warning');
                 return;
             }
-
-            const address = this.tempAddress || await this.locationService.reverseGeocode(userLocation.lat, userLocation.lng);
             const result = await this.locationService.saveSelectedLocationToSession(
                 userLocation.lat,
                 userLocation.lng,
