@@ -37,6 +37,21 @@ namespace WebsiteOrdering.Services
         {
             return selectedItems.Sum(i => i.TongTien);
         }
+        public decimal CalculateShipFee(decimal km)
+        {
+            const decimal baseDistance = 2m;
+            const decimal baseFee = 15000m;
+            const decimal perKmRate = 5000m;
+
+            if (km <= baseDistance)
+            {
+                return baseFee;
+            }
+            else
+            {
+                return baseFee + Math.Ceiling(km - baseDistance) * perKmRate;
+            }
+        }
         public async Task<string> CreateOrderAsync(List<CartItem> items, UserCheckoutInfoViewModel info, string? userId)
         {
             string orderId;
@@ -44,18 +59,26 @@ namespace WebsiteOrdering.Services
             {
                 orderId = GenerateOrderId(5);
             } while (await _orderRepo.FindOrderAsync(orderId) != null);
-
+            decimal shipFee = 0;
+            decimal distance = (decimal)info.DistanceKm;
+            if (distance > 0)
+            {
+                shipFee = CalculateShipFee(distance);
+            }
             var order = new Donhang
             {
                 Iddonhang = orderId,
                 Tenkh = info.FullName,
                 Sdtkh = info.PhoneNumber,
                 Diachidh = info.Address,
-                Tongtien = CalculateTotalAmount(items),
+                Tongtien = CalculateTotalAmount(items) + shipFee,
                 Ngaydat = DateTime.Now,
                 Trangthai = "Pending",
                 Ptttoan = info.PaymentInfo ?? "COD",
-                Idngdung = userId
+                Idngdung = userId,
+                Idchinhanh = info.BranchId,
+                Khoangcachship = info.DistanceKm,
+                Tienship = shipFee
             };
 
             var details = new List<Chitietdonhang>();

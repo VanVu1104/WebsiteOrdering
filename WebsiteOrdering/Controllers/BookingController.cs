@@ -197,6 +197,13 @@ namespace WebsiteOrdering.Controllers
             };
             _appDbContext.chitietdatbans.Add(chitiet);
 
+
+
+            //if (ban != null)
+            //{
+            //    ban.Trangthaiban = "Đã đặt";
+            //}
+
             await _appDbContext.SaveChangesAsync();
 
             //TempData["Success"] = "Đặt bàn thành công!";

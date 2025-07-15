@@ -12,6 +12,11 @@ namespace WebsiteOrdering.Models
         public string Tencnhanh { get; set; } = null!;
 
         public string Diachicn { get; set; } = null!;
+        [Precision(9, 6)]
+        public decimal Latitude { get; set; }
+
+        [Precision(9, 6)]
+        public decimal Longitude { get; set; }
 
         public virtual ICollection<Ban> Bans { get; set; } = new List<Ban>();
 

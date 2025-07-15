@@ -34,7 +34,7 @@ namespace WebsiteOrdering.Controllers
             var locations = await _locationService.GetAllLocationsAsync();
             return View(locations);
         }
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(string id)
         {
             var location = await _locationService.GetLocationByIdAsync(id);
             if (location == null)
@@ -52,7 +52,7 @@ namespace WebsiteOrdering.Controllers
         // Lưu vị trí mới
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Location createDto)
+        public async Task<IActionResult> Create(Chinhanh createDto)
         {
             if (!ModelState.IsValid)
             {
@@ -71,7 +71,7 @@ namespace WebsiteOrdering.Controllers
                 return View(createDto);
             }
         }
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string id)
         {
             var location = await _locationService.GetLocationByIdAsync(id);
             if (location == null)
@@ -79,10 +79,10 @@ namespace WebsiteOrdering.Controllers
                 return NotFound();
             }
 
-            var updateDto = new Location
+            var updateDto = new Chinhanh
             {
-                Name = location.Name,
-                Address = location.Address,
+                Tencnhanh = location.Tencnhanh,
+                Diachicn = location.Diachicn,
                 Latitude = location.Latitude,
                 Longitude = location.Longitude
             };
@@ -91,7 +91,7 @@ namespace WebsiteOrdering.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Location updateDto)
+        public async Task<IActionResult> Edit(string id, Chinhanh updateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +114,7 @@ namespace WebsiteOrdering.Controllers
                 return View(updateDto);
             }
         }
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var location = await _locationService.GetLocationByIdAsync(id);
             if (location == null)
@@ -126,7 +126,7 @@ namespace WebsiteOrdering.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace WebsiteOrdering.Controllers
             return RedirectToAction(nameof(Index));
         }
         [HttpPost]
-        public async Task<IActionResult> SaveLocation([FromBody] Location createDto)
+        public async Task<IActionResult> SaveLocation([FromBody] Chinhanh createDto)
         {
             try
             {
@@ -167,7 +167,7 @@ namespace WebsiteOrdering.Controllers
                 {
                     success = true,
                     message = "Vị trí đã được lưu thành công!",
-                    id = location.Id,
+                    id = location.Idchinhanh,
                     location = location
                 });
             }
@@ -215,11 +215,27 @@ namespace WebsiteOrdering.Controllers
             }
         }
         [HttpPost]
-        public IActionResult SaveUserSessionLocation([FromBody] Location userLoc)
+        public async Task<IActionResult> SaveUserSessionLocation([FromBody] LatLngViewModel userLoc)
         {
             HttpContext.Session.SetString("UserLat", userLoc.Latitude.ToString());
             HttpContext.Session.SetString("UserLng", userLoc.Longitude.ToString());
             HttpContext.Session.SetString("UserAddress", userLoc.Address ?? "");
+            // Tìm chi nhánh gần nhất và lưu vào session
+            var nearest = await _locationService.FindNearestBranchAsync((double)userLoc.Latitude, (double)userLoc.Longitude);
+            if (nearest != null)
+            {
+                const double minutesPerKm = 1.5; // 40 km/h = 1.5 phút/km
+                double distance = _locationService.GetDistance(userLoc.Latitude, userLoc.Longitude, (double)nearest.Latitude, (double)nearest.Longitude);
+                int estimatedMinutes = (int)Math.Ceiling(distance * minutesPerKm);
+                var sessionData = new UserLocationSessionViewModel
+                {
+                    NearestBranchId = nearest.Idchinhanh,
+                    DistanceKm = Math.Round(distance, 2),
+                    EstimatedMinutes = estimatedMinutes
+                };
+                //HttpContext.Session.SetString("NearestBranchId", nearest.Idchinhanh);
+                HttpContext.Session.SetString("UserLocationInfo", JsonSerializer.Serialize(sessionData));
+            }
             return Ok(new { success = true, message = "Lưu địa chỉ vào session thành công", });
         }
         [HttpGet]
@@ -247,53 +263,69 @@ namespace WebsiteOrdering.Controllers
             HttpContext.Session.SetString("UserLat", model.Latitude.ToString());
             HttpContext.Session.SetString("UserLng", model.Longitude.ToString());
             HttpContext.Session.SetString("UserAddress", address);
-
-                return Ok(new
+            // Tìm chi nhánh gần nhất và lưu vào session
+            // Tìm chi nhánh gần nhất và lưu vào session
+            var nearest = await _locationService.FindNearestBranchAsync(model.Latitude, model.Longitude);
+            if (nearest != null)
+            {
+                const double minutesPerKm = 1.5; // 40 km/h = 1.5 phút/km
+                double distance = _locationService.GetDistance(model.Latitude, model.Longitude, (double)nearest.Latitude, (double)nearest.Longitude);
+                int estimatedMinutes = (int)Math.Ceiling(distance * minutesPerKm);
+                var sessionData = new UserLocationSessionViewModel
                 {
+                    NearestBranchId = nearest.Idchinhanh,
+                    DistanceKm = Math.Round(distance, 2),
+                    EstimatedMinutes = estimatedMinutes
+                };
+                //HttpContext.Session.SetString("NearestBranchId", nearest.Idchinhanh);
+                HttpContext.Session.SetString("UserLocationInfo", JsonSerializer.Serialize(sessionData));
+            }
+            return Ok(new
+            {
                 success = true,
                 lat = model.Latitude,
                 lng = model.Longitude,
                 address
-                });
+            });
         }
         // Enhanced Location Controller with routing support
-            [HttpGet]
-            public async Task<IActionResult> GetNearestStore()
+        [HttpGet]
+        public async Task<IActionResult> GetNearestStore()
+        {
+            var allLocations = await _locationService.GetAllLocationsAsync();
+            if (!HttpContext.Session.TryGetValue("UserLat", out var latBytes) ||
+                !HttpContext.Session.TryGetValue("UserLng", out var lngBytes))
             {
-                var allLocations = await _locationService.GetAllLocationsAsync();
-                if (!HttpContext.Session.TryGetValue("UserLat", out var latBytes) ||
-                    !HttpContext.Session.TryGetValue("UserLng", out var lngBytes))
-                {
-                    return BadRequest(new { success = false, message = "Vị trí người dùng chưa được lưu." });
-                }
-
-                double userLat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes));
-                double userLng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes));
-
-                Location? nearest = null;
-                double minDist = double.MaxValue;
-
-                foreach (var store in allLocations)
-                {
-                    var dist = _locationService.GetDistance(userLat, userLng, (double)store.Latitude, (double)store.Longitude);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        nearest = store;
-                    }
-                }
-
-                if (nearest == null)
-                    return NotFound(new { success = false, message = "Không tìm thấy cửa hàng nào." });
-
-                return Ok(new
-                {
-                    success = true,
-                    store = nearest,
-                    distance = minDist,
-                    userLocation = new { latitude = userLat, longitude = userLng }
-                });
+                return BadRequest(new { success = false, message = "Vị trí người dùng chưa được lưu." });
             }
+
+            double userLat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes));
+            double userLng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes));
+
+            Chinhanh? nearest = null;
+            double minDist = double.MaxValue;
+
+            foreach (var store in allLocations)
+            {
+                var dist = _locationService.GetDistance(userLat, userLng, (double)store.Latitude, (double)store.Longitude);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearest = store;
+                }
+            }
+
+            if (nearest == null)
+                return NotFound(new { success = false, message = "Không tìm thấy cửa hàng nào." });
+
+            return Ok(new
+            {
+                success = true,
+                store = nearest,
+                distance = minDist,
+                userLocation = new { latitude = userLat, longitude = userLng }
+            });
+        }
         // Get route between two points using external routing service
         [HttpPost]
         public async Task<IActionResult> GetRoute([FromBody] RouteRequest request)

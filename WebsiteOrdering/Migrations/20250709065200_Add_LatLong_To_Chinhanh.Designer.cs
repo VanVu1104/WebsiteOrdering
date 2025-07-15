@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebsiteOrdering.Models;
 
@@ -11,9 +12,11 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250709065200_Add_LatLong_To_Chinhanh")]
+    partial class Add_LatLong_To_Chinhanh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -604,9 +607,6 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
-                    b.Property<double?>("Khoangcachship")
-                        .HasColumnType("float");
-
                     b.Property<string>("Magiaodich")
                         .HasColumnType("nvarchar(max)");
 
@@ -632,8 +632,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENKH");
 
-                    b.Property<decimal?>("Tienship")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<int?>("Tienship")
+                        .HasColumnType("int")
                         .HasColumnName("TIENSHIP");
 
                     b.Property<decimal>("Tongtien")

@@ -29,5 +29,6 @@ namespace WebsiteOrdering.Repositories
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
         Task<ForgotPasswordResult> SendForgotPasswordEmailAsync(string email, string resetPasswordUrlTemplate);
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordViewModel model);
+        Task<bool> SignInStaffWithClaimsAsync(ApplicationUser user);
     }
 }

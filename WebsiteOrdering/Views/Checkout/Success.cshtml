@@ -1,6 +1,7 @@
 ﻿@model WebsiteOrdering.Models.Donhang
 @{
     ViewData["Title"] = "Đơn hàng";
+
     <link rel="stylesheet" href="~/css/hoadon.css" />
 }
 <div class="hoa-don-container-tong">
@@ -36,6 +37,8 @@
             <div class="hoa-don-address">
                 <h2>ĐỊA CHỈ NHÀ HÀNG</h2>
                 @if (Model.IdchinhanhNavigation != null)
+
+
                 {
                     <p>@Model.IdchinhanhNavigation.Tencnhanh</p>
                     <p>@Model.IdchinhanhNavigation.Diachicn</p>
@@ -96,6 +99,7 @@
                         <td>@item.Tongtiendh.ToString("N0") đ</td>
                     </tr>
                 }
+
             </tbody>
         </table>
 
@@ -105,6 +109,8 @@
         @if (Model.Tienship != null)
         {
         <p>PHÍ GIAO HÀNG: @Model.Tienship?.ToString("N0") đ</p>
+
+              
         }
         <p>PHƯƠNG THỨC THANH TOÁN: @Model.Ptttoan</p>
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -96,7 +98,14 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
                 }
 
                 // Lưu ID chi nhánh vào session để xử lý sau này
-                HttpContext.Session.SetString("ChiNhanhId", user.IdchinhanhNavigation.Idchinhanh.ToString());
+                //HttpContext.Session.SetString("ChiNhanhId", user.IdchinhanhNavigation.Idchinhanh.ToString());
+
+                var signInSuccess = await _accountRepository.SignInStaffWithClaimsAsync(user);
+                if (!signInSuccess)
+                {
+                    ModelState.AddModelError("", "Đăng nhập không thành công.");
+                    return View(model);
+                }
 
                 return RedirectToAction("Index", "Staff", new { area = "Staff" });
             }
@@ -105,7 +114,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
                 ModelState.AddModelError("", "Tài khoản không có quyền truy cập vào khu vực này.");
                 return View(model);
             }
-         }
+        }
 
 
       //Logout admin chưa được

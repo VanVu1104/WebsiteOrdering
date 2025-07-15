@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
     // Tự động set ngày hôm nay nếu chưa có
     if (ngayDatInput && (!ngayDatInput.value || ngayDatInput.value === "0001-01-01")) {
         const today = new Date().toISOString().split('T')[0];
