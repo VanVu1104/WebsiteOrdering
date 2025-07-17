@@ -190,6 +190,7 @@ namespace WebsiteOrdering.Controllers
             {
                 model.UserInfo.DistanceKm = userLocation.DistanceKm;
                 model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
+                model.UserInfo.DeliveryMethod = userLocation.DeliveryMethod;
                 var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
                 if (branch != null)
                 {
@@ -250,9 +251,8 @@ namespace WebsiteOrdering.Controllers
         }
 
 
-        //Xóa sản phẩm ra giỏ hàng
         [HttpPost]
-        public IActionResult DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
+        public async Task<IActionResult> DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
@@ -270,7 +270,50 @@ namespace WebsiteOrdering.Controllers
                 HttpContext.Session.Set("Cart", cart);
             }
 
-            return View("Index", cart);
+            var model = new CartPageViewModel
+            {
+                CartItems = cart,
+                UserInfo = new UserCheckoutInfoViewModel()
+            };
+
+            await _accountRepository.FillUserInfoIfAuthenticated(model.UserInfo, User);
+
+            // Lấy địa chỉ từ session
+            if (HttpContext.Session.TryGetValue("UserAddress", out var addrBytes))
+            {
+                model.UserInfo.Address = Encoding.UTF8.GetString(addrBytes);
+            }
+            else
+            {
+                model.UserInfo.Address = "Chưa có vị trí";
+            }
+
+            var userLocation = GetUserLocationFromSession();
+            if (userLocation != null)
+            {
+                model.UserInfo.DistanceKm = userLocation.DistanceKm;
+                model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
+
+                var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
+                if (branch != null)
+                {
+                    model.UserInfo.BranchId = userLocation.NearestBranchId;
+                    model.UserInfo.BranchName = branch.Tencnhanh;
+                }
+            }
+
+            ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
+            ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();
+            ViewBag.AllToppings = await _appDbContext.Topping
+                .Select(t => new Topping
+                {
+                    Idtopping = t.Idtopping,
+                    Tentopping = t.Tentopping,
+                    Giatopping = t.Giatopping,
+                    Idloaimonan = t.Idloaimonan
+                }).ToListAsync();
+
+            return View("Index", model);
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng

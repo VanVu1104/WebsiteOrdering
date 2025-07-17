@@ -6,7 +6,14 @@
 <p>Mã đơn hàng: @Model.Iddonhang</p>
 <p>Khách hàng: @Model.Tenkh</p>
 <p>Số điện thoại: @Model.Sdtkh</p>
-<p>Địa chỉ giao hàng: @Model.Diachidh</p>
+@if(Model.DeliveryMethod == "delivery")
+{
+    <p>Địa chỉ giao hàng: @Model.Diachidh</p>
+}
+else
+{
+    <p>Nhận hàng tại địa chỉ: @Model.Diachidh</p>
+}
 <p>Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
 <p>Phương thức thanh toán: @Model.Ptttoan</p>
 @{

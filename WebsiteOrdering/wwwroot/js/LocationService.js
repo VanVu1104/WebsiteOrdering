@@ -96,7 +96,7 @@
     }
 
     // Lưu vị trí đã chọn từ map click hoặc search
-    async saveSelectedLocationToSession(lat, lng, address) {
+    async saveSelectedLocationToSession(lat, lng, address, deliveryMethod) {
         try {
             const response = await fetch('/Location/SaveUserSessionLocation', {
                 method: 'POST',
@@ -104,7 +104,8 @@
                 body: JSON.stringify({
                     latitude: parseFloat(lat),
                     longitude: parseFloat(lng),
-                    address: address
+                    address: address,
+                    deliveryMethod: deliveryMethod
                 })
             });
 

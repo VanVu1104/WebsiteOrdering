@@ -8,7 +8,7 @@
             @if (!string.IsNullOrEmpty(Model.FullName))
             {
                 <input type="text" name="FullName" class="form-control form-control-sm"
-                       placeholder="Nhập họ tên" value="@Model.FullName" />
+                placeholder="Nhập họ tên" value="@Model.FullName" />
             }
             else
             {
@@ -21,7 +21,7 @@
             @if (!string.IsNullOrEmpty(Model.PhoneNumber))
             {
                 <input type="text" name="PhoneNumber" class="form-control form-control-sm"
-                       placeholder="Nhập số điện thoại" value="@Model.PhoneNumber" />
+                placeholder="Nhập số điện thoại" value="@Model.PhoneNumber" />
             }
             else
             {
@@ -30,27 +30,43 @@
         </div>
 
         <div class="mb-2">
-            <strong>Địa chỉ giao hàng:</strong>
-            <p id="userAddress" class="mb-1">@Model.Address</p>
-            <input type="hidden" name="Address" value="@Model.Address" />
+            @if(Model.DeliveryMethod == "delivery")
+            {
+                <input type="hidden" name="DeliveryMethod" value="@Model.DeliveryMethod"/>
+                <strong>Địa chỉ giao hàng:</strong>
+                <p id="userAddress" class="mb-1">@Model.Address</p>
+                <input type="hidden" name="Address" value="@Model.Address" />
 
-            <div>
-                <strong>Giao hàng từ:</strong>
-                @if (!string.IsNullOrEmpty(Model.BranchName))
-                {
-                    <p>@Model.BranchName</p>
-                    <input type="hidden" name="BranchName" value="@Model.BranchName" />
-                    <input type="hidden" name="BranchId" value="@Model.BranchId" />
-                    <p class="mb-1"><strong>Số km:</strong> @Model.DistanceKm km</p>
-                    <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
-                    <p class="mb-1"><strong>Thời gian giao hàng dự kiến:</strong> @Model.EstimatedMinutes phút</p>
-                    <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
-                }
-                else
-                {
-                    <p class="text-muted mb-1">Không xác định được chi nhánh gần nhất.</p>
-                }
-            </div>
+                <div>
+                    <strong>Giao hàng từ:</strong>
+                    @if (!string.IsNullOrEmpty(Model.BranchName))
+                    {
+                        <p>@Model.BranchName</p>
+                        <input type="hidden" name="BranchName" value="@Model.BranchName" />
+                        <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                        <p class="mb-1"><strong>Số km:</strong> @Model.DistanceKm km</p>
+                        <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
+                        <p class="mb-1"><strong>Thời gian giao hàng dự kiến:</strong> @Model.EstimatedMinutes phút</p>
+                        <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-1">Không xác định được chi nhánh gần nhất.</p>
+                    }
+                </div>
+            }
+            else
+            {
+                <input type="hidden" name="DeliveryMethod" value="@Model.DeliveryMethod" />
+                <strong>Nhận hàng tại cửa hàng: </strong>
+                <input type="hidden" name="BranchName" value="@Model.BranchName" />
+                <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                <p>@Model.BranchName</p>
+                <p class="mb-1"><strong>Khoảng cách:</strong> @Model.DistanceKm km</p>
+                <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
+                <p class="mb-1"><strong>Thời gian đi đến dự kiến:</strong> @Model.EstimatedMinutes phút</p>
+                <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
+            }
             <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                     onclick="location.href='@Url.Action("Index", "Location")'">
                 Thay đổi địa chỉ

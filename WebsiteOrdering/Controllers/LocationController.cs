@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Globalization;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
@@ -231,7 +232,8 @@ namespace WebsiteOrdering.Controllers
                 {
                     NearestBranchId = nearest.Idchinhanh,
                     DistanceKm = Math.Round(distance, 2),
-                    EstimatedMinutes = estimatedMinutes
+                    EstimatedMinutes = estimatedMinutes,
+                    DeliveryMethod = userLoc.DeliveryMethod
                 };
                 //HttpContext.Session.SetString("NearestBranchId", nearest.Idchinhanh);
                 HttpContext.Session.SetString("UserLocationInfo", JsonSerializer.Serialize(sessionData));
@@ -400,6 +402,75 @@ namespace WebsiteOrdering.Controllers
                 _logger.LogError(ex, "Error calling OpenRouteService");
                 return null;
             }
+        }
+        //PickUpMode
+        [HttpGet]
+        public async Task<IActionResult> GetAllBranchesWithDistance()
+        {
+            if (!HttpContext.Session.TryGetValue("UserLat", out var latBytes) ||
+                !HttpContext.Session.TryGetValue("UserLng", out var lngBytes))
+            {
+                return BadRequest(new { success = false, message = "Chưa có vị trí người dùng." });
+            }
+
+            double userLat = double.Parse(System.Text.Encoding.UTF8.GetString(latBytes));
+            double userLng = double.Parse(System.Text.Encoding.UTF8.GetString(lngBytes));
+            var address = await _geoService.ReverseGeocodeAsync(userLat, userLng);
+
+            var branches = await _locationService.GetAllLocationsAsync();
+            const double minutesPerKm = 1.5;
+
+            var results = branches.Select(store =>
+            {
+                double dist = _locationService.GetDistance(userLat, userLng, (double)store.Latitude, (double)store.Longitude);
+                int estimate = (int)Math.Ceiling(dist * minutesPerKm);
+                return new
+                {
+                    store.Idchinhanh,
+                    store.Tencnhanh,
+                    store.Diachicn,
+                    Latitude = store.Latitude,
+                    Longitude = store.Longitude,
+                    DistanceKm = Math.Round(dist, 2),
+                    EstimatedMinutes = estimate,
+                    EstimatedTime = DateTime.Now.AddMinutes(estimate).ToString("HH:mm")
+                };
+            }).OrderBy(x => x.DistanceKm).ToList();
+
+            return Ok(results);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllBranches()
+        {
+            var branches = await _locationService.GetAllLocationsAsync();
+
+            var results = branches.Select(store => new
+            {
+                store.Idchinhanh,
+                store.Tencnhanh,
+                store.Diachicn
+            }).ToList();
+
+            return Ok(results);
+        }
+        //Lưu Info PickUp Method
+        [HttpPost]
+        public IActionResult SaveSelectedStore([FromBody] SelectedStoreViewModel model)
+        {
+            if (model == null || string.IsNullOrEmpty(model.BranchId))
+                return BadRequest(new { success = false, message = "Thiếu dữ liệu" });
+
+            var sessionData = new UserLocationSessionViewModel
+            {
+                NearestBranchId = model.BranchId,
+                DistanceKm = Math.Round(model.DistanceKm, 2),
+                EstimatedMinutes = model.EstimatedMinutes,
+                DeliveryMethod = model.DeliveryMethod,
+            };
+
+            HttpContext.Session.SetString("UserLocationInfo", JsonSerializer.Serialize(sessionData));
+
+            return Ok(new { success = true });
         }
     }
 }

@@ -60,10 +60,20 @@ namespace WebsiteOrdering.Services
                 orderId = GenerateOrderId(5);
             } while (await _orderRepo.FindOrderAsync(orderId) != null);
             decimal shipFee = 0;
-            decimal distance = (decimal)info.DistanceKm;
-            if (distance > 0)
+            decimal distance = 0;
+
+            // Nếu là giao hàng thì tính khoảng cách và phí
+            if (info.DeliveryMethod == "delivery")
             {
-                shipFee = CalculateShipFee(distance);
+                distance = (decimal)info.DistanceKm;
+                if (distance > 0)
+                {
+                    shipFee = CalculateShipFee(distance);
+                }
+            }
+            else
+            {
+                info.Address = info.BranchName;
             }
             var order = new Donhang
             {
@@ -78,7 +88,8 @@ namespace WebsiteOrdering.Services
                 Idngdung = userId,
                 Idchinhanh = info.BranchId,
                 Khoangcachship = info.DistanceKm,
-                Tienship = shipFee
+                Tienship = shipFee,
+                DeliveryMethod = info.DeliveryMethod,
             };
 
             var details = new List<Chitietdonhang>();
