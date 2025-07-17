@@ -1,10 +1,11 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@* 
-@using WebsiteOrdering.Models.Entities
-@model List<Monan> *@
+﻿@* @using WebsiteOrdering.Models
+@model Monan
 
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "_Layout";
+    var isPizzaLoai01 = Model.Idloaimonan == "LMA01";
+} *@
 @using WebsiteOrdering.Models
 @model Monan
 
@@ -12,29 +13,219 @@
     ViewData["Title"] = "Chi tiết sản phẩm";
     Layout = "_Layout";
     var isPizzaLoai01 = Model.Idloaimonan == "LMA01";
+    var isMonPhu = Model.Idloaimonan == "LMA05" || Model.Idloaimonan == "LMA06" || Model.Idloaimonan == "LMA07";
 }
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-@* Đoạn Script để xử lý đổi ảnh khi chọn pizza ghép *@
+<div class="product-detail-container">
+    <form method="post" asp-action="AddToCart" asp-controller="Cart">
+        <input type="hidden" name="IDMONAN" value="@Model.Idmonan" />
 
+        <div class="product-detail-wrapper @(isMonPhu ? "single-column" : "")">
+            @if (!isMonPhu)
+            {
+                <div class="product-detail-options">
+                    <a href="/Products" class="back-to-menu @(isMonPhu ? "back-to-menu-monphu" : "back-to-menu-daydu")">
+                        Quay lại thực đơn
+                        <svg viewBox="0 0 512 512" width="20" height="20" fill="none">
+                            <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    @* Tab Pizza *@
+                    @if (isPizzaLoai01)
+                    {
+                        <div class="product-detail-tab-wrapper">
+                            <div class="product-detail-btn-group">
+                                <button type="button" class="btn active" id="btnPizzaNguyen">PIZZA NGUYÊN</button>
+                                <button type="button" class="btn" id="btnPizzaGhep">PIZZA GHÉP</button>
+                            </div>
+                        </div>
+                    }
+
+                    @* Pizza Ghép *@
+                    @if (isPizzaLoai01 && Model.PizzaGhep != null && Model.PizzaGhep.Any())
+                    {
+                        <div id="pizzaGhepHalf" style="display: none;">
+                            <div class="form-title">Chọn bánh</div>
+                            <div class="ghep-half-wrapper">
+                                <div class="half-select">
+                                    <label for="nuaThuNhat">Nửa thứ nhất</label>
+                                    <input type="text" id="nuaThuNhat" value="@Model.Tenmonan" readonly />
+                                </div>
+                                <div class="half-select select-wrapper">
+                                    <label for="nuaThuHai">Nửa thứ hai</label>
+                                    <div class="custom-select">
+                                        <select id="nuaThuHai" name="SelectedPizzaGhepId" required>
+                                            <option value="">Chọn nửa thứ hai</option>
+                                            @foreach (var pizza in Model.PizzaGhep)
+                                            {
+                                                <option value="@pizza.IDMONAN2" data-anh="@pizza.ANHMONAN2" data-gia="@pizza.GIACOBAN2">
+                                                    @pizza.TENMONAN2
+                                                </option>
+                                            }
+                                        </select>
+                                        <img src="~/css/svg/icon_dropdown.svg" class="dropdown-icon" alt="Dropdown Icon" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @* Size *@
+                    @if (Model.ListGiaSizes != null && Model.ListGiaSizes.Any())
+                    {
+                        <div class="form-title">Chọn kích thước</div>
+                        <div class="size-radio-list product-detail-radio-list" name="idsize">
+                            @foreach (var size in Model.ListGiaSizes)
+                            {
+                                <div class="product-detail-form-check">
+                                    <input type="radio" name="SelectedSizeId" value="@size.Idsize" id="size_@size.Idsize" required>
+                                    <label for="size_@size.Idsize">
+                                        @size.IdsizeNavigation.Tensize - @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", size.Giasize).Trim() VNĐ
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @* Đế Bánh *@
+                    @if (isPizzaLoai01)
+                    {
+                        <div class="form-title">Chọn đế bánh</div>
+                        <div class="debanh-radio-list product-detail-radio-list" name="iddebanh">
+                            @foreach (var debanh in Model.DeBanh)
+                            {
+                                <div class="product-detail-form-check">
+                                    <input type="radio" name="SelectedDeBanhId" value="@debanh.Iddebanh" id="debanh_@debanh.Iddebanh" required>
+                                    <label for="debanh_@debanh.Iddebanh">
+                                        @debanh.Tendebanh - @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", debanh.Giadebanh).Trim() VNĐ
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @* Topping *@
+                    @if (Model.Toppings != null && Model.Toppings.Any())
+                    {
+                        <div class="form-title">Thêm món</div>
+                        <div class="topping-radio-list product-detail-radio-list">
+                            @foreach (var topping in Model.Toppings)
+                            {
+                                <div class="product-detail-form-check">
+                                    <input type="checkbox" name="SelectedToppingIds" value="@topping.Idtopping" data-gia="@topping.Giatopping" id="topping_@topping.Idtopping">
+                                    <label for="topping_@topping.Idtopping">
+                                        @topping.Tentopping
+                                        <span class="price">- @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", topping.Giatopping).Trim() VNĐ</span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    @* 👉 Ghi chú nếu không phải món phụ *@
+                    <div class="form-title">Ghi chú</div>
+                    <div class="form-group">
+                        <textarea id="ghichu" name="ghichu" rows="3"></textarea>
+                    </div>
+                </div>
+            }
+
+            <div class="product-detail-info square-style @(isMonPhu ? "full-width" : "")">
+                <div class="product-detail-image">
+                    <img id="imgPizzaNguyen" src="~/css/img/@Model.Anhmonan" alt="@Model.Tenmonan" />
+                    @if (isPizzaLoai01)
+                    {
+                        <div id="pizzaGhepImages" style="display: none;">
+                            <img id="imgPizzaGhepLeft" src="~/css/img/@Model.Anhmonan" alt="Half Pizza Left" />
+                            <img id="imgPizzaGhepRight" src="" alt="Half Pizza Right" />
+                        </div>
+                    }
+                </div>
+
+                <div class="product-detail-info-container">
+                    @* 👉 THÊM nút Quay lại thực đơn cho Món Phụ *@
+                    @if (isMonPhu)
+                    {
+                        <a href="/Products" class="back-to-menu back-to-menu-monphu">
+                            Quay lại thực đơn
+                            <svg viewBox="0 0 512 512" width="20" height="20" fill="none">
+                                <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </a>
+                    }
+
+                    <div class="product-text-group">
+                        <h4 class="product-detail-title">@Model.Tenmonan</h4>
+                        <p class="product-detail-description">@Model.Mota</p>
+                    </div>
+
+                    @* 👉 Ghi chú riêng cho Món Phụ *@
+                    @if (isMonPhu)
+                    {
+                        <div class="form-title-note-phu">Ghi chú</div>
+                        <div class="form-group-note-phu">
+                            <textarea id="ghichu" name="ghichu" rows="3"></textarea>
+                        </div>
+                    }
+
+                    <div class="product-action-row">
+                        <div class="product-detail-quantity">
+                            <button type="button" id="btnDecrease" class="product-detail-quantity-btn">
+                                <img src="~/css/svg/icon_minus.svg" alt="minus">
+                            </button>
+                            <div class="product-detail-quantity-wrapper">
+                                <input type="text" id="soluong" name="soluong" value="1" min="1" class="product-detail-quantity-input" readonly />
+                            </div>
+                            <button type="button" id="btnIncrease" class="product-detail-quantity-btn">
+                                <img src="~/css/svg/icon_plus.svg" alt="plus">
+                            </button>
+                        </div>
+
+                        <div class="add-to-cart-container">
+                            <button type="submit" class="add-to-cart-btn" id="btnAddToCart">
+                                <span class="add-to-cart-svg-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 485 60" fill="none" width="363" height="60">
+                                        <path class="add-to-cart-bg-fill" d="M466.604 0C466.604 5.52285 474.093 10 483.329 10C483.893 9.99999 484.45 9.98183 485 9.94922V50.0498C484.45 50.0172 483.893 50 483.329 50C474.093 50 466.604 54.4772 466.604 60H16.7236C16.7236 54.4772 9.23627 50.0002 0 50V10C9.23627 9.99985 16.7236 5.52275 16.7236 0H466.604Z" fill="#203F25" />
+                                        <path class="add-to-cart-border-fill" d="M466.604 0H467.604V-1H466.604V0ZM483.329 10V11H483.329L483.329 10ZM485 9.94922H486V8.88813L484.941 8.95097L485 9.94922ZM485 50.0498L484.941 51.048L486 51.1109V50.0498H485ZM483.329 50L483.329 49H483.329V50ZM466.604 60V61H467.604V60H466.604ZM16.7236 60H15.7236V61H16.7236V60ZM0 50H-1V51L-1.64826e-05 51L0 50ZM0 10L-1.64836e-05 9L-1 9.00002V10H0ZM16.7236 0V-1H15.7236V0H16.7236ZM466.604 0H465.604C465.604 3.25242 467.804 6.02437 470.99 7.92935C474.196 9.84656 478.561 11 483.329 11V10V9C478.86 9 474.863 7.91487 472.016 6.21279C469.149 4.49848 467.604 2.27043 467.604 0H466.604ZM483.329 10L483.329 11C483.914 11 484.492 10.9811 485.059 10.9475L485 9.94922L484.941 8.95097C484.409 8.98252 483.872 8.99999 483.329 9L483.329 10ZM485 9.94922H484V50.0498H485H486V9.94922H485ZM485 50.0498L485.059 49.0516C484.49 49.0178 483.913 49 483.329 49L483.329 50L483.329 51C483.873 51 484.41 51.0166 484.941 51.048L485 50.0498ZM483.329 50V49C478.561 49 474.196 50.1534 470.99 52.0707C467.804 53.9756 465.604 56.7476 465.604 60H466.604H467.604C467.604 57.7296 469.149 55.5015 472.016 53.7872C474.863 52.0851 478.86 51 483.329 51V50ZM466.604 60V59H16.7236V60V61H466.604V60ZM16.7236 60H17.7236C17.7236 56.7477 15.5245 53.9757 12.3386 52.0708C9.13234 50.1535 4.76763 49.0001 1.64826e-05 49L0 50L-1.64826e-05 51C4.46864 51.0001 8.46574 52.0852 11.3122 53.7873C14.1791 55.5016 15.7236 57.7296 15.7236 60H16.7236ZM0 50H1V10H0H-1V50H0ZM0 10L1.64836e-05 11C4.76763 10.9999 9.13234 9.84645 12.3386 7.92924C15.5245 6.02425 17.7236 3.25234 17.7236 0H16.7236H15.7236C15.7236 2.27042 14.1791 4.49842 11.3122 6.21271C8.46574 7.91477 4.46864 8.99993 -1.64836e-05 9L0 10ZM16.7236 0V1H466.604V0V-1H16.7236V0Z" fill="#E0B37F" />
+                                    </svg>
+                                    <span class="add-to-cart-btn-text">
+                                        Thêm vào giỏ &nbsp;&nbsp;
+                                        <span id="giaHienTai">
+                                            @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", Model.Giamonan).Trim() VNĐ
+                                        </span>
+
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
 @section Scripts {
-    <script >
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const btnNguyen = document.getElementById("btnPizzaNguyen");//Khai báo nút pizza nguyên
-            const btnGhep = document.getElementById("btnPizzaGhep");// Khai báo nút pizza ghép
-            const imgNguyen = document.getElementById("imgPizzaNguyen"); // Khai báo ảnh pizza nguyên
-            const ghepWrapper = document.getElementById("pizzaGhepImages");//Khai báo ảnh pizza ghép
-            const ghepOptions = document.getElementById("pizzaGhepOptions");// Khai báo ảnh pizza cần ghép
-            const imgRight = document.getElementById("imgPizzaGhepRight");// Khai báo ảnh bên phải
-            const giaTienEl = document.getElementById("giaHienTai");//Thay đổi giá
-
+            const btnNguyen = document.getElementById("btnPizzaNguyen");
+            const btnGhep = document.getElementById("btnPizzaGhep");
+            const imgNguyen = document.getElementById("imgPizzaNguyen");
+            const ghepWrapper = document.getElementById("pizzaGhepImages");
+            const ghepOptions = document.getElementById("pizzaGhepOptions");
+            const imgRight = document.getElementById("imgPizzaGhepRight");
+            const giaTienEl = document.getElementById("giaHienTai");
             const giaPizzaNguyen = parseFloat('@Model.Giamonan');
             const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower();
             const btnDecrease = document.getElementById("btnDecrease");
             const btnIncrease = document.getElementById("btnIncrease");
             const inputQuantity = document.getElementById("soluong");
+            const pizzaGhepHalf = document.getElementById("pizzaGhepHalf");
+            const nuaThuHai = document.getElementById("nuaThuHai");
 
-
-            btnDecrease.addEventListener("click", function () {
+            // Tăng giảm số lượng
+            btnDecrease?.addEventListener("click", () => {
                 let currentValue = parseInt(inputQuantity.value);
                 if (currentValue > 1) {
                     inputQuantity.value = currentValue - 1;
@@ -42,72 +233,120 @@
                 }
             });
 
-            btnIncrease.addEventListener("click", function () {
+            btnIncrease?.addEventListener("click", () => {
                 let currentValue = parseInt(inputQuantity.value);
                 inputQuantity.value = currentValue + 1;
                 tinhTongTien();
             });
-            // Chỉ thực hiện logic pizza nếu là pizza (LMA01)
+
             if (isPizzaLoai01) {
                 imgNguyen.style.display = "block";
                 ghepWrapper.style.display = "none";
-                if (ghepOptions) ghepOptions.style.display = "none";
-
+                ghepOptions?.style.setProperty("display", "none");
+                pizzaGhepHalf?.style.setProperty("display", "none");
                 btnNguyen?.classList.add("active");
                 btnGhep?.classList.remove("active");
 
-                // Sự kiện khi chọn pizza nguyên
+                // Chuyển sang Pizza Nguyên
                 btnNguyen?.addEventListener("click", () => {
                     btnNguyen.classList.add("active");
                     btnGhep.classList.remove("active");
 
                     imgNguyen.style.display = "block";
                     ghepWrapper.style.display = "none";
-                    if (ghepOptions) ghepOptions.style.display = "none";
-                    giaTienEl.textContent = formatCurrency(giaPizzaNguyen) + " VNĐ";
+                    ghepOptions?.style.setProperty("display", "none");
+                    pizzaGhepHalf?.style.setProperty("display", "none");
 
+                    // ✅ Thêm mới: disable select nửa thứ hai khi chọn pizza nguyên
+                    if (nuaThuHai) {
+                        nuaThuHai.disabled = true;
+                        nuaThuHai.required = false;
+                    }
+
+                    giaTienEl.textContent = formatCurrency(giaPizzaNguyen) + " VNĐ";
                     tinhTongTien();
                 });
 
-                // Sự kiện khi chọn pizza ghép
+                // ✅ Chuyển sang Pizza Ghép - có xử lý hiển thị giá ảo
                 btnGhep?.addEventListener("click", () => {
                     btnNguyen.classList.remove("active");
                     btnGhep.classList.add("active");
 
                     imgNguyen.style.display = "none";
                     ghepWrapper.style.display = "flex";
-                    if (ghepOptions) ghepOptions.style.display = "block";
+                    ghepOptions?.style.setProperty("display", "block");
+                    pizzaGhepHalf?.style.setProperty("display", "block");
+
+                    // 👉 Giá ảo mặc định nếu chưa chọn nửa thứ hai
+                    const selected = nuaThuHai?.options[nuaThuHai.selectedIndex];
+                    const giaGhep = parseFloat(selected?.getAttribute("data-gia"));
+                    if (!selected || isNaN(giaGhep) || giaGhep === 0) {
+                        giaTienEl.textContent = formatCurrency(giaPizzaNguyen / 2) + " VNĐ";
+                    }
+
+                    // ✅ Thêm mới: enable lại select nửa thứ hai khi chọn pizza ghép
+                    if (nuaThuHai) {
+                        nuaThuHai.disabled = false;
+                        nuaThuHai.required = true;
+                    }
 
                     tinhTongTien();
                 });
 
-                // Cập nhật ảnh và giá khi chọn pizza ghép
-                document.querySelectorAll("input[name='SelectedPizzaGhepId']").forEach(radio => {
-                    radio.addEventListener("change", (e) => {
-                        const img = e.target.getAttribute("data-anh");
-                        const gia = parseFloat(e.target.getAttribute("data-gia"));
+                // ✅ Khi chọn nửa thứ hai
+                nuaThuHai?.addEventListener("change", () => {
+                    const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
+                    const img = selected.getAttribute("data-anh");
+                    const gia = parseFloat(selected.getAttribute("data-gia"));
+
+                    if (imgRight && img) {
                         imgRight.src = "/css/img/" + img;
+                    }
 
-                        if (!isNaN(gia)) {
-                            giaTienEl.textContent = formatCurrency(gia) + " VNĐ";
-                        }
+                    if (!isNaN(gia) && gia > 0) {
+                        giaTienEl.textContent = formatCurrency(gia / 2) + " VNĐ";
+                    }
 
-                        tinhTongTien();
-                    });
+                    tinhTongTien();
                 });
+
+                // Hiệu ứng xoay icon dropdown
+                const customSelect = document.querySelector('.custom-select');
+                const selectElement = document.getElementById('nuaThuHai');
+                if (customSelect && selectElement) {
+                    selectElement.addEventListener('mousedown', () => {
+                        customSelect.classList.add('open');
+                    });
+                    selectElement.addEventListener('blur', () => {
+                        setTimeout(() => {
+                            customSelect.classList.remove('open');
+                        }, 150);
+                    });
+                    selectElement.addEventListener('change', () => {
+                        customSelect.classList.remove('open');
+                    });
+                }
             }
 
-            // Gọi lại khi chọn size, đế bánh, topping, hoặc nhập số lượng
+            // Tính giá khi thay đổi size, đế bánh, topping, số lượng
             document.querySelectorAll("input[name='SelectedSizeId'], input[name='SelectedDeBanhId']").forEach(el => {
                 el.addEventListener("change", tinhTongTien);
             });
-
-            // Xử lý topping (checkbox)
             document.querySelectorAll("input[name='SelectedToppingIds']").forEach(checkbox => {
-                checkbox.addEventListener('change', tinhTongTien);
+                checkbox.addEventListener("change", tinhTongTien);
             });
-
-            document.getElementById("soluong")?.addEventListener("input", tinhTongTien);
+            inputQuantity?.addEventListener("input", tinhTongTien);
+            const optionsContainer = document.querySelector(".product-detail-options");
+            optionsContainer?.addEventListener("change", function (e) {
+                const target = e.target;
+                if (
+                    target.matches("input[name='SelectedSizeId']") ||
+                    target.matches("input[name='SelectedDeBanhId']") ||
+                    target.matches("input[name='SelectedToppingIds']")
+                ) {
+                    tinhTongTien();
+                }
+            });
 
             function formatCurrency(value) {
                 return new Intl.NumberFormat('vi-VN', {
@@ -117,49 +356,45 @@
                 }).format(value).replace("₫", "").trim();
             }
 
-            //Tính tổng tiền - Đã sửa để hoạt động với tất cả loại món ăn
             function tinhTongTien() {
                 let giaGoc = 0;
 
-                // Xử lý giá gốc dựa trên loại món ăn
                 if (isPizzaLoai01) {
-                    // Nếu là pizza, kiểm tra pizza nguyên hay ghép
-                    if (btnNguyen && btnNguyen.classList.contains("active")) {
+                    if (btnNguyen.classList.contains("active")) {
                         giaGoc = giaPizzaNguyen;
                     } else {
-                        const radioGhep = document.querySelector("input[name='SelectedPizzaGhepId']:checked");
-                        giaGoc = radioGhep ? parseFloat(radioGhep.getAttribute("data-gia")) || 0 : 0;
+                        const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
+                        const gia = parseFloat(selected?.getAttribute("data-gia")) || 0;
+                        giaGoc = gia;
                     }
                 } else {
-                    // Nếu không phải pizza, lấy giá gốc từ Model
-                    giaGoc = giaPizzaNguyen; // Giá gốc của món ăn
+                    giaGoc = giaPizzaNguyen;
                 }
 
-                // Tính giá size
                 const sizeChecked = document.querySelector("input[name='SelectedSizeId']:checked");
                 if (sizeChecked) {
-                    const sizeContainer = sizeChecked.closest(".d-flex");
-                    const sizeGiaText = sizeContainer?.querySelector(".text-danger")?.textContent;
-                    if (sizeGiaText) {
-                        const sizeGia = parseFloat(sizeGiaText.replace(/[^\d]/g, "")) || 0;
+                    const sizeLabel = sizeChecked.nextElementSibling;
+                    const text = sizeLabel?.textContent || "";
+                    const match = text.match(/(\d[\d\.]*)\s*VNĐ/);
+                    if (match) {
+                        const sizeGia = parseFloat(match[1].replace(/\./g, '')) || 0;
                         giaGoc += sizeGia;
                     }
                 }
 
-                // Tính giá đế bánh (chỉ cho pizza)
                 if (isPizzaLoai01) {
                     const deBanhChecked = document.querySelector("input[name='SelectedDeBanhId']:checked");
                     if (deBanhChecked) {
-                        const deBanhContainer = deBanhChecked.closest(".d-flex");
-                        const deBanhGiaText = deBanhContainer?.querySelector(".text-danger")?.textContent;
-                        if (deBanhGiaText) {
-                            const deBanhGia = parseFloat(deBanhGiaText.replace(/[^\d]/g, "")) || 0;
-                            giaGoc += deBanhGia;
+                        const deLabel = deBanhChecked.nextElementSibling;
+                        const text = deLabel?.textContent || "";
+                        const match = text.match(/(\d[\d\.]*)\s*VNĐ/);
+                        if (match) {
+                            const deGia = parseFloat(match[1].replace(/\./g, '')) || 0;
+                            giaGoc += deGia;
                         }
                     }
                 }
 
-                // Tính tổng giá topping
                 let giaTopping = 0;
                 document.querySelectorAll("input[name='SelectedToppingIds']:checked").forEach(el => {
                     const toppingGia = parseFloat(el.getAttribute("data-gia")) || 0;
@@ -167,31 +402,49 @@
                 });
                 giaGoc += giaTopping;
 
-                // Tính theo số lượng
-                const soLuong = parseInt(document.getElementById("soluong")?.value || "1");
+                const soLuong = parseInt(inputQuantity?.value || "1");
                 const tongTien = giaGoc * soLuong;
 
-                // Cập nhật hiển thị
                 const tongTienEl = document.getElementById("tongTien");
                 if (tongTienEl) {
                     tongTienEl.textContent = "Tổng tiền: " + formatCurrency(tongTien) + " VNĐ";
                 }
+
+                // if (giaTienEl) {
+                //     giaTienEl.textContent = formatCurrency(tongTien) + " VNĐ";
+                // }
+
+                if (giaTienEl) {
+                    if (isPizzaLoai01 && btnGhep.classList.contains("active")) {
+                        const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
+                        const gia = parseFloat(selected?.getAttribute("data-gia"));
+
+                        // Nếu chưa chọn nửa thứ hai hoặc không có giá -> giá/2
+                        if (!selected || isNaN(gia) || gia === 0) {
+                            giaTienEl.textContent = formatCurrency(giaPizzaNguyen / 2) + " VNĐ";
+                        } else {
+                            giaTienEl.textContent = formatCurrency(tongTien) + " VNĐ";
+                        }
+                    } else {
+                        giaTienEl.textContent = formatCurrency(tongTien) + " VNĐ";
+                    }
+                }
             }
 
-            // Gọi tính tổng ngay khi load trang lần đầu
             tinhTongTien();
+
+            // Validate khi thêm vào giỏ
             document.getElementById("btnAddToCart")?.addEventListener("click", function (e) {
-                const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower(); // true/false
-                const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower()); // true/false
-                // Kiểm tra số lượng
-                const soLuong = parseInt(document.getElementById("soluong")?.value || "0");
+                // const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower();
+                const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower());
+                const soLuong = parseInt(inputQuantity?.value || "0");
+
                 if (soLuong <= 0) {
                     alert("Vui lòng nhập số lượng hợp lệ.");
                     e.preventDefault();
                     return;
                 }
 
-                // Chỉ kiểm tra size nếu sản phẩm có size
                 if (hasSize === "true") {
                     const sizeChecked = document.querySelector("input[name='SelectedSizeId']:checked");
                     if (!sizeChecked) {
@@ -200,20 +453,17 @@
                         return;
                     }
                 }
+
                 if (isPizzaLoai01) {
-                    const btnGhep = document.getElementById("btnPizzaGhep");
                     const isGhepActive = btnGhep && btnGhep.classList.contains("active");
-                    // Nếu là pizza ghép thì phải chọn phân nửa bên phải
                     if (isGhepActive) {
-                        const selectedGhep = document.querySelector("input[name='SelectedPizzaGhepId']:checked");
-                        if (!selectedGhep) {
+                        if (!nuaThuHai || !nuaThuHai.value) {
                             alert("Vui lòng chọn phần pizza ghép.");
                             e.preventDefault();
                             return;
                         }
                     }
 
-                    // Kiểm tra đế bánh (nếu có)
                     const deBanhChecked = document.querySelector("input[name='SelectedDeBanhId']:checked");
                     if (!deBanhChecked) {
                         alert("Vui lòng chọn đế bánh cho pizza.");
@@ -222,213 +472,7 @@
                     }
                 }
             });
+            btnNguyen?.click();
         });
-        </script>
+    </script>
 }
-<div class="container mt-4">
-    <form  method="post" asp-action="AddToCart" asp-controller="Cart">
-    <div class="row">
-            <input type="hidden" name="IDMONAN" value="@Model.Idmonan" />
-           @*  <input type="hidden" name="IDMONAN2" value="@Model.IDMONAN2" /> *@
-        <div class="col-md-6">
-           @*  <img src="~/css/img/@Model.ANHMONAN" class="img-fluid rounded shadow" alt="@Model.TENMONAN" /> *@
-            <div id="pizzaImageWrapper" class="mt-3">           
-                <!-- Ảnh pizza nguyên -->
-                <img id="imgPizzaNguyen" src="~/css/img/@Model.Anhmonan"
-                     class="img-fluid rounded-circle shadow"
-                     alt="@Model.Tenmonan"
-                     style="width: 300px; height: 300px; object-fit: cover;">
-
-                <!-- Ảnh pizza ghép (ẩn mặc định) -->
-                <div id="pizzaGhepImages"  style="display: none;">
-                    <img src="~/css/img/@Model.Anhmonan"
-                         class="shadow"
-                         style="width: 150px; height: 300px; object-fit: cover; border-top-left-radius: 150px; border-bottom-left-radius: 150px;">
-                    <img id="imgPizzaGhepRight"
-                         src=""
-                         class="shadow"
-                         style="width: 150px; height: 300px; object-fit: cover; border-top-right-radius: 150px; border-bottom-right-radius: 150px;">
-                </div>
-
-            </div>
-
-        </div>
-
-       
-        <div class="col-md-6" >
-            <h2 class="text-primary" name="idmonan">@Model.Tenmonan</h2>
-            <p>@Model.Mota</p>
-            @{
-                var culture = new System.Globalization.CultureInfo("vi-VN");
-                culture.NumberFormat.CurrencySymbol = ""; // bỏ ký hiệu ₫
-                var giaTien = string.Format(culture, "{0:C0}", @Model.Giamonan).Trim(); // bỏ khoảng trắng đầu
-            }
-            <p class="card-text fw-bold text-danger" id="giaHienTai" name="giacoban">@giaTien VNĐ</p>
-            @* <span class="badge bg-success">@Model.TRANGTHAI</span> *@
-        
-            <div class="mt-4">
-                <label for="soluong" >Số lượng:</label>
-                <div class="input-group" style="width: 140px;">
-                    <button type="button" class="btn btn-outline-secondary" id="btnDecrease">-</button>
-                    <input  class="form-control text-center" id="soluong" name="soluong" value="1" min="1" />
-                    <button type="button" class="btn btn-outline-secondary" id="btnIncrease">+</button>
-                </div>
-            </div>
-
-
-            @* Nút chọn pizza ghép hoặc pizza nguyên *@
-            @if (isPizzaLoai01)
-            {
-                <div class="btn-group mt-3" role="group">
-                    <button type="button" class="btn btn-outline-primary active" id="btnPizzaNguyen">Pizza nguyên</button>
-                    <button type="button" class="btn btn-outline-primary" id="btnPizzaGhep">Pizza ghép</button>
-                </div>
-            }
-           @*  Xử lý khi chọn pizza ghép sẽ hiện list danh sách pizza ghép *@
-            @if (isPizzaLoai01 && Model.PizzaGhep != null && Model.PizzaGhep.Any())
-            {
-                <div id="pizzaGhepOptions" style="display: none;">
-                    <h4 class="mt-4">Chọn pizza ghép</h4>
-                    <div class="d-flex flex-column gap-3">
-                        @foreach (var pizza in Model.PizzaGhep)
-                        {
-                            <div name="idmonan2" class="d-flex align-items-center border rounded p-2" style="max-width: 400px;">
-                                <img src="~/css/img/@pizza.ANHMONAN2"
-                                     alt="@pizza.TENMONAN2"
-                                     class="img-thumbnail me-3"
-                                     style="width: 80px; height: 80px; object-fit: cover;">
-
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio"
-                                           name="SelectedPizzaGhepId"
-                                           value="@pizza.IDMONAN2"
-                                           id="pizza_@pizza.IDMONAN2"
-                                           data-anh="@pizza.ANHMONAN2"
-                                           data-gia="@pizza.GIACOBAN2">
-                                    <label class="form-check-label" name="tenmonan2" for="pizza_@pizza.IDMONAN2">
-                                        @pizza.TENMONAN2
-                                    </label>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-
-            @*  Hiển thị size *@
-            @if (Model.ListGiaSizes != null && Model.ListGiaSizes.Any())
-            {
-                <label>Chọn size:</label>
-                    <div class="d-flex flex-column gap-2 mt-2" name="idsize">
-                    @foreach (var size in Model.ListGiaSizes)
-                    {
-                        <div class="d-flex justify-content-between align-items-center border p-2 rounded">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio"
-                                       name="SelectedSizeId"
-                                       value="@size.Idsize"
-                                       id="size_@size.Idsize" required>
-                                <label class="form-check-label" for="size_@size.Idsize" >
-                                        @size.IdsizeNavigation.Tensize
-                                </label>
-                            </div>
-                            <div class="text-end">
-                            
-                                @{
-                                    var cultures = new System.Globalization.CultureInfo("vi-VN");
-                                    cultures.NumberFormat.CurrencySymbol = ""; // bỏ ký hiệu ₫
-                                    var giasize = string.Format(cultures, "{0:C0}", @size.Giasize).Trim(); // bỏ khoảng trắng đầu
-                                }
-                                <p class="card-text fw-bold text-danger" >@giasize VNĐ</p>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-
-
-            @* Hiển thị danh sách đế bánh khi là pizza (IDLoaiMonAn == "LMA01") *@
-            @if (Model.Idloaimonan == "LMA01" && Model.DeBanh != null && Model.DeBanh.Any())
-            {
-                <label class="mt-4">Chọn đế bánh:</label>
-                    <div class="d-flex flex-column gap-2 mt-2" name="iddebanh">
-                    @foreach (var debanh in Model.DeBanh)
-                    {
-                        <div class="d-flex justify-content-between align-items-center border p-2 rounded">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio"
-                                       name="SelectedDeBanhId"
-                                       value="@debanh.Iddebanh"
-                                       id="debanh_@debanh.Iddebanh" required>
-                                <label class="form-check-label" for="debanh_@debanh.Iddebanh" >
-                                    @debanh.Tendebanh
-                                </label>
-                            </div>
-                            <div class="text-end">
-                                @{
-                                    var cultureDebanh = new System.Globalization.CultureInfo("vi-VN");
-                                    cultureDebanh.NumberFormat.CurrencySymbol = "";
-                                    var giaDeBanh = string.Format(cultureDebanh, "{0:C0}", debanh.Giadebanh).Trim();
-                                }
-                                    <p class="card-text fw-bold text-danger" >@giaDeBanh VNĐ</p>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-
-            @* Hiển thị Topping nếu có *@
-            @if (Model.Toppings != null && Model.Toppings.Any())
-            {
-                <div class="mt-4">
-                    <h4>Chọn topping</h4>
-                        <div class="d-flex flex-column gap-2 mt-2" >
-                        @foreach (var topping in Model.Toppings)
-                        {
-                            <div class="d-flex justify-content-between align-items-center border p-2 rounded">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="SelectedToppingIds"
-                                           value="@topping.Idtopping"
-                                           data-gia="@topping.Giatopping"
-                                           id="topping_@topping.Idtopping" />
-                                    <label class="form-check-label" for="topping_@topping.Idtopping">
-                                        @topping.Tentopping
-                                    </label>
-                                </div>
-                                <div class="text-end">
-                                    @{
-                                        var culture2 = new System.Globalization.CultureInfo("vi-VN");
-                                        culture2.NumberFormat.CurrencySymbol = "";
-                                        var giaTopping = string.Format(culture2, "{0:C0}", topping.Giatopping).Trim();
-                                    }
-                                    <span class="card-text fw-bold text-danger">@giaTopping VNĐ</span>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-
-                <div class="form-group mt-3">
-                    <label for="ghichu">Ghi chú:</label>
-                    <textarea id="ghichu" name="ghichu" class="form-control" rows="2"></textarea>
-                </div>
-
-                <div id="priceDisplay">
-                    <div class="mt-3 alert alert-success">
-                     
-                    <p id="tongTien" class="fw-bold mt-3">Tổng tiền: @Model.Giamonan VNĐ</p>
-
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary mt-2" id="btnAddToCart">Thêm vào giỏ hàng</button>
-        </div>
-    
-    </div>
-    
-    </form>
-</div>
-
-

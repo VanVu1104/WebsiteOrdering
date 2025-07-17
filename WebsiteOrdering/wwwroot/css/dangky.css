@@ -1,0 +1,162 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Baloo 2', cursive;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.total_dangky {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-family: 'Baloo 2', cursive;
+}
+
+.anh_login {
+    width: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+    .anh_login img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.form_dangky {
+    width: 50%;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+    .form_dangky h2 {
+        text-align: center;
+        font-size: 45px;
+        color: #203F25;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+form {
+    width: 100%;
+    max-width: 568px;
+    margin: 30px auto 0 auto;
+}
+
+#dk_tendn, #dk_email, #dk_mk, #dk_cfmk {
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+    #dk_tendn span,
+    #dk_email span,
+    #dk_mk span,
+    #dk_cfmk span {
+        position: absolute;
+        top: 55%;
+        left: 10px;
+        transform: translateY(-50%);
+        /*        width: 30px;
+        height: 30px;*/
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+
+    #dk_tendn input,
+    #dk_email input,
+    #dk_mk input,
+    #dk_cfmk input {
+          margin-top:15px;
+        width: 100%;
+        height: 65px;
+        padding: 0 15px 0 55px;
+        font-size: 24px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background-color: transparent;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+        font-family: 'Baloo 2', cursive;
+    }
+
+        #dk_tendn input:focus,
+        #dk_email input:focus,
+        #dk_mk input:focus,
+        #dk_cfmk input:focus {
+            outline: none;
+            border-bottom: 2px solid #203F25;
+            border: 2px solid #203F25;
+            border-radius: 15px;
+            background-color: white;
+        }
+
+    #dk_tendn:focus-within > span:first-of-type,
+    #dk_email:focus-within > span:first-of-type,
+    #dk_mk:focus-within > span:first-of-type,
+    #dk_cfmk:focus-within > span:first-of-type {
+        display: none;
+    }
+
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 24px;
+}
+
+.checkbox_login {
+    font-size: 24px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    color: #858585;
+}
+
+    .checkbox_login input[type="checkbox"] {
+        margin-right: 8px;
+        height: 16px;
+        width: 16px;
+        color: #203F25;
+        background: #203F25;
+    }
+
+.btn_dangky {
+    background-color: #203F25;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    border: none;
+    padding: 9px;
+    width: 100%;
+    height: 65px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Baloo 2', cursive;
+}
+
+    .btn_dangky:hover {
+        background-color: #152B18;
+    }
+
+.dn_login {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #CCCCCC;
+    text-align: center;
+}
+
+    .dn_login a {
+        color: #203F25;
+        font-weight: bold;
+        text-decoration: none;
+        margin-left: 5px;
+    }

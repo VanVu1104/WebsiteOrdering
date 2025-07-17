@@ -593,7 +593,8 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 Trangthai = "Hoàn thành",
                 Tongtien = tongTien,
                 Ptttoan = phuongThucThanhToan,
-                Idchinhanh = datban.Idchinhanh
+                Idchinhanh = datban.Idchinhanh,
+                Idngdung = datban.Idngdung
             };
 
             _appDbContext.dhang.Add(donhang);
@@ -652,10 +653,10 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
         public async Task<IActionResult> DanhSachHoaDon()
         {
-            var staffChiNhanhId = HttpContext.Session.GetString("ChiNhanhId");
+            var staffChiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(staffChiNhanhId))
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("LoginStaff", "Admin");
             }
 
             var danhSach = await _appDbContext.dhang

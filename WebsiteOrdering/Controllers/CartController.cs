@@ -161,7 +161,7 @@ namespace WebsiteOrdering.Controllers
             // Lưu giỏ hàng vào session
             HttpContext.Session.Set("Cart", cart);
 
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Products");
         }
 
 
@@ -252,7 +252,7 @@ namespace WebsiteOrdering.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
+        public IActionResult DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
@@ -269,51 +269,8 @@ namespace WebsiteOrdering.Controllers
                 cart.Remove(itemToRemove);
                 HttpContext.Session.Set("Cart", cart);
             }
-
-            var model = new CartPageViewModel
-            {
-                CartItems = cart,
-                UserInfo = new UserCheckoutInfoViewModel()
-            };
-
-            await _accountRepository.FillUserInfoIfAuthenticated(model.UserInfo, User);
-
-            // Lấy địa chỉ từ session
-            if (HttpContext.Session.TryGetValue("UserAddress", out var addrBytes))
-            {
-                model.UserInfo.Address = Encoding.UTF8.GetString(addrBytes);
-            }
-            else
-            {
-                model.UserInfo.Address = "Chưa có vị trí";
-            }
-
-            var userLocation = GetUserLocationFromSession();
-            if (userLocation != null)
-            {
-                model.UserInfo.DistanceKm = userLocation.DistanceKm;
-                model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
-
-                var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
-                if (branch != null)
-                {
-                    model.UserInfo.BranchId = userLocation.NearestBranchId;
-                    model.UserInfo.BranchName = branch.Tencnhanh;
-                }
-            }
-
-            ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
-            ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();
-            ViewBag.AllToppings = await _appDbContext.Topping
-                .Select(t => new Topping
-                {
-                    Idtopping = t.Idtopping,
-                    Tentopping = t.Tentopping,
-                    Giatopping = t.Giatopping,
-                    Idloaimonan = t.Idloaimonan
-                }).ToListAsync();
-
-            return View("Index", model);
+            return RedirectToAction("Index", "Products");
+            //return View("Index", cart);
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng
@@ -511,7 +468,7 @@ namespace WebsiteOrdering.Controllers
                 toppings
             });
         }
-
+ 
 
     }
 }

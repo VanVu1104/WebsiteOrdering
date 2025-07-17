@@ -32,11 +32,11 @@
     </tr>
     <tr>
         <th>Giờ bắt đầu</th>
-        <td>@Model.Giobatdau.ToString(@"hh\:mm")</td>
+        <td>@Model.Giobatdau.ToString(@"HH:mm")</td>
     </tr>
     <tr>
         <th>Giờ kết thúc</th>
-        <td>@Model.Gioketthuc.ToString(@"hh\:mm")</td>
+        <td>@Model.Gioketthuc.ToString(@"HH:mm")</td>
     </tr>
     <tr>
         <th>Số người</th>
@@ -68,8 +68,8 @@
             <tr>
                 <td>@ct.IdbanNavigation?.Tenban</td>
                 <td>@ct.IdbanNavigation?.Khuvuc</td>
-                <td>@ct.Giovao.ToString(@"hh\:mm")</td>
-                <td>@ct.Giora.ToString(@"hh\:mm")</td>
+                <td>@ct.Giovao.ToString(@"HH:mm")</td>
+                <td>@ct.Giora.ToString(@"HH:mm")</td>
             </tr>
         }
     </tbody>
