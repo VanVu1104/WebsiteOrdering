@@ -12,13 +12,12 @@ namespace WebsiteOrdering.ViewModels
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải gồm đúng 10 chữ số")]
         public string? PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "Vui lòng nhập địa chỉ")]
         public string? Address { get; set; }
         public string? BranchId { get; set; }
         public string? BranchName { get; set; }
         public double? DistanceKm { get; set; }
         public int? EstimatedMinutes { get; set; }
         public string? PaymentInfo { get; set; }
+        public string? DeliveryMethod { get; set; }
     }
 }

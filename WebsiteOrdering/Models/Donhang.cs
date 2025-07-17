@@ -26,6 +26,7 @@ namespace WebsiteOrdering.Models
         public string? Sdtkh { get; set; }
 
         public decimal? Tienship { get; set; }
+        public string? DeliveryMethod { get; set; }
         public double? Khoangcachship { get; set; }
         public string? Idchinhanh { get; set; }
 

@@ -29,7 +29,7 @@ namespace WebsiteOrdering.Controllers
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-       
+
         public IActionResult Index()
         {
             ViewBag.ChiNhanh = _appDbContext.chinhanh.ToList();
@@ -61,7 +61,7 @@ namespace WebsiteOrdering.Controllers
         {
             var bans = _appDbContext.bans
                 .Where(b => b.Idchinhanh == idChinhanh && b.Khuvuc == khuvuc)
-                .Select(b => new { b.Idban, b.Tenban,b.Songuoi,b.X,b.Y })
+                .Select(b => new { b.Idban, b.Tenban, b.Songuoi, b.X, b.Y })
                 .ToList();
 
             return Json(bans);
@@ -71,7 +71,7 @@ namespace WebsiteOrdering.Controllers
         [HttpPost]
         public async Task<IActionResult> DatBan(Datban datban, ApplicationUser user, string selectedIdban)
         {
-           
+
             string? idNguoiDung = null;
             string tenNguoiDat = datban.Tenngdat;
             string sdtNguoiDat = datban.Sđtngdat;
@@ -249,8 +249,8 @@ namespace WebsiteOrdering.Controllers
         public async Task<IActionResult> ChitietDatBan(string id)
         {
             var datBan = await _appDbContext.Datbans
-                .Include(d=>d.Nguoidung)
-                .Include(d =>d.IdchinhanhNavigation)
+                .Include(d => d.Nguoidung)
+                .Include(d => d.IdchinhanhNavigation)
                 .Include(d => d.Chitietdatbans)
                    .ThenInclude(ct => ct.IdbanNavigation)
         .FirstOrDefaultAsync(d => d.Iddatban == id);
@@ -269,13 +269,13 @@ namespace WebsiteOrdering.Controllers
                 return Content("Lỗi hiển thị view: " + ex.Message);
             }
         }
-        
+
 
         [HttpGet]
-        public async Task<IActionResult> SearchDonDatBan(string maDon, string sdt, string tenNguoiDat,string emailNguoiDat)
+        public async Task<IActionResult> SearchDonDatBan(string maDon, string sdt, string tenNguoiDat, string emailNguoiDat)
         {
             // Check nếu không nhập gì hết thì báo lỗi
-            if (string.IsNullOrWhiteSpace(maDon) && string.IsNullOrWhiteSpace(sdt) && string.IsNullOrWhiteSpace(tenNguoiDat) &&string.IsNullOrWhiteSpace(emailNguoiDat))
+            if (string.IsNullOrWhiteSpace(maDon) && string.IsNullOrWhiteSpace(sdt) && string.IsNullOrWhiteSpace(tenNguoiDat) && string.IsNullOrWhiteSpace(emailNguoiDat))
             {
                 ViewBag.Message = "Vui lòng nhập ít nhất 1 trường để tìm kiếm.";
                 return View(new List<Datban>());
@@ -345,7 +345,7 @@ namespace WebsiteOrdering.Controllers
                 .OrderByDescending(d => d.Ngaydat)
                 .ToListAsync();
 
-            return View("LichSuDatBan",datBans);
+            return View("LichSuDatBan", datBans);
         }
         [HttpGet]
         public async Task<IActionResult> CapNhatDatBan(string id)
@@ -380,7 +380,7 @@ namespace WebsiteOrdering.Controllers
             ViewBag.KhuvucHienTai = idKhuvuc;
             ViewBag.IdBanHienTai = datBan.Chitietdatbans.FirstOrDefault()?.Idban;
 
-            return View("Index",datBan);
+            return View("Index", datBan);
         }
 
 

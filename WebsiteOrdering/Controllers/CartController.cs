@@ -190,6 +190,7 @@ namespace WebsiteOrdering.Controllers
             {
                 model.UserInfo.DistanceKm = userLocation.DistanceKm;
                 model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
+                model.UserInfo.DeliveryMethod = userLocation.DeliveryMethod;
                 var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
                 if (branch != null)
                 {
@@ -250,7 +251,6 @@ namespace WebsiteOrdering.Controllers
         }
 
 
-        //Xóa sản phẩm ra giỏ hàng
         [HttpPost]
         public IActionResult DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
         {
@@ -271,7 +271,6 @@ namespace WebsiteOrdering.Controllers
             }
             return RedirectToAction("Index", "Products");
             //return View("Index", cart);
-
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng

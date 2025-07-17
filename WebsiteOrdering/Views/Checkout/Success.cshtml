@@ -31,14 +31,19 @@
                 <h2>THÔNG TIN NGƯỜI ĐẶT</h2>
                 <p>Khách hàng: @Model.Tenkh</p>
                 <p>Số điện thoại: @Model.Sdtkh</p>
-                <p>Địa chỉ giao hàng: @Model.Diachidh</p>
+                @if(Model.DeliveryMethod == "delivery")
+                {
+                    <p>Địa chỉ giao hàng: @Model.Diachidh</p>
+                }
+                else
+                {
+                    <p>Nhận tại cửa hàng: @Model.Diachidh</p>
+                }
             </div>
 
             <div class="hoa-don-address">
                 <h2>ĐỊA CHỈ NHÀ HÀNG</h2>
                 @if (Model.IdchinhanhNavigation != null)
-
-
                 {
                     <p>@Model.IdchinhanhNavigation.Tencnhanh</p>
                     <p>@Model.IdchinhanhNavigation.Diachicn</p>
@@ -94,9 +99,9 @@
                                 </span>
                             }
                         </td>
-                        <td>@item.Dongia.ToString("N0") đ</td>
-                        <td>@item.Soluong</td>
                         <td>@item.Tongtiendh.ToString("N0") đ</td>
+                        <td>@item.Soluong</td>
+                        <td>@((item.Tongtiendh * item.Soluong).ToString("N0") + " đ")</td>
                     </tr>
                 }
 
