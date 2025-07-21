@@ -12,63 +12,63 @@ namespace WebsiteOrdering.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Location>> GetAllAsync()
+        public async Task<IEnumerable<Chinhanh>> GetAllAsync()
         {
-            return await _context.Locations
-                .OrderBy(l => l.Name)
+            return await _context.chinhanh
+                .OrderBy(l => l.Tencnhanh)
                 .ToListAsync();
         }
 
-        public async Task<Location?> GetByIdAsync(int id)
+        public async Task<Chinhanh?> GetByIdAsync(string id)
         {
-            return await _context.Locations
-                .FirstOrDefaultAsync(l => l.Id == id);
+            return await _context.chinhanh
+                .FirstOrDefaultAsync(l => l.Idchinhanh == id);
         }
 
-        public async Task<Location> CreateAsync(Location location)
+        public async Task<Chinhanh> CreateAsync(Chinhanh location)
         {
-            _context.Locations.Add(location);
+            _context.chinhanh.Add(location);
             await _context.SaveChangesAsync();
             return location;
         }
 
-        public async Task<Location> UpdateAsync(Location location)
+        public async Task<Chinhanh> UpdateAsync(Chinhanh location)
         {
-            _context.Locations.Update(location);
+            _context.chinhanh.Update(location);
             await _context.SaveChangesAsync();
             return location;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(string id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.chinhanh.FindAsync(id);
             if (location == null)
                 return false;
 
-            _context.Locations.Remove(location);
+            _context.chinhanh.Remove(location);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(string id)
         {
-            return await _context.Locations.AnyAsync(l => l.Id == id);
+            return await _context.chinhanh.AnyAsync(l => l.Idchinhanh == id);
         }
 
-        public async Task<IEnumerable<Location>> GetByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng)
+        public async Task<IEnumerable<Chinhanh>> GetByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng)
         {
-            return await _context.Locations
+            return await _context.chinhanh
                 .Where(l => l.Latitude >= minLat && l.Latitude <= maxLat &&
                            l.Longitude >= minLng && l.Longitude <= maxLng)
-                .OrderBy(l => l.Name)
+                .OrderBy(l => l.Tencnhanh)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Location>> SearchByNameAsync(string name)
+        public async Task<IEnumerable<Chinhanh>> SearchByNameAsync(string name)
         {
-            return await _context.Locations
-                .Where(l => l.Name.Contains(name) || l.Address.Contains(name))
-                .OrderBy(l => l.Name)
+            return await _context.chinhanh
+                .Where(l => l.Tencnhanh.Contains(name) || l.Diachicn.Contains(name))
+                .OrderBy(l => l.Tencnhanh)
                 .ToListAsync();
         }
     }

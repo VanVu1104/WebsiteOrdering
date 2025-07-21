@@ -10,6 +10,11 @@ namespace WebsiteOrdering.Repositories
         Task<string?> FindDeBanhAsync(string Tendebanh);
         Task<string?> FindIdSizeAsync(string tenSize);
         Task<Chitietdonhang?> FindDetailAsync(string detailsId);
+        Task UpdateOrderAsync(Donhang order);
+        Task<List<Donhang>> GetOrdersByUserIdAsync(string userId);
+        Task<List<Donhang>> GetAllOrdersAsync();
+        Task<List<Donhang>> GetOrdersByStatusAsync(string status);
+        Task<bool> UpdateOrderStatusAsync(string id, string newStatus);
 
     }
 }

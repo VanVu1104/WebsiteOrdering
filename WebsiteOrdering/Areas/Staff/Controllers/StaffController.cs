@@ -22,7 +22,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
        
         public async Task<IActionResult> Index(string maDon,string sđt,string tenNguoiDat)
         {
-            var chiNhanhId = HttpContext.Session.GetString("ChiNhanhId");
+            var chiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(chiNhanhId)) return Unauthorized();
             // Lấy chi nhánh
             var chiNhanh = _appDbContext.chinhanh.FirstOrDefault(c => c.Idchinhanh == chiNhanhId);
@@ -58,7 +58,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         {
             await _accountRepository.LogoutAsync();
             //return Redirect("/");
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("LoginStaff", "Admin", new { area = "Admin" });
         }
 
     }

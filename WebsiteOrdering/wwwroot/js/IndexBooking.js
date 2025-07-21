@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         soNguoiInput.value = 1;
     }
 
+    
 
     //Hiển thị khu vực theo chi nhánh
     document.getElementById("selectChinhanh").addEventListener("change", function () {
@@ -19,14 +20,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     khuVucSelect.innerHTML += `<option value="${kv}">${kv}</option>`;
                 });
 
+             
                 // reset bàn
                 document.getElementById("selectBan").innerHTML = `<option value="">-- Chọn bàn --</option>`;
             });
     });
 
 
-    //Hiển thị bàn theo khu vực
+    const selectedIdInput = document.getElementById("selectedIdban");
+    if (selectedIdInput && selectedIdInput.value) {
+        selectedBanId = selectedIdInput.value.trim();
+        console.log("⭐ Gán selectedBanId lúc load DOM:", selectedBanId);
+    }
+
+    // Gọi setup sự kiện khu vực trước khi dispatch change
     setupKhuvucChangeEvent();
+
+    // Nếu khu vực có giá trị => tự động gọi change để load bàn
+    const khuVucSelect = document.getElementById("selectKhuvuc");
+    if (khuVucSelect && khuVucSelect.value) {
+        setTimeout(() => {
+            khuVucSelect.dispatchEvent(new Event("change"));
+        }, 100);
+    }
+    
 
     //Hiển thị số người đặt
     document.getElementById("Songuoidat").addEventListener("input", function () {
@@ -48,10 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
     //Hàm select giờ và ẩn giờ đã qua so với giờ thực
     function generateTimeOptions(currentTotalMins = null) {
         const start = 9 * 60; // 9:00
-        const end = 22 * 60; // 22:00
+        const end = 21 * 60; // 21:00
         const step = 30;
 
-        timeSelect.innerHTML = ""; // clear
+        timeSelect.innerHTML = "";
 
         for (let mins = start; mins <= end; mins += step) {
             if (currentTotalMins !== null && mins <= currentTotalMins) continue;
@@ -67,7 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
             option.textContent = timeStr;
             timeSelect.appendChild(option);
         }
+
     }
+
 
     // Tự động set ngày hôm nay nếu chưa có
     if (ngayDatInput && (!ngayDatInput.value || ngayDatInput.value === "0001-01-01")) {
@@ -161,6 +180,25 @@ function setupKhuvucChangeEvent() {
                         });
 
                         initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
+                        // Gán lại selectedBanId từ hidden input
+                        const selectedIdInput = document.getElementById("selectedIdban");
+                        if (selectedIdInput && selectedIdInput.value) {
+                            selectedBanId = selectedIdInput.value.trim();
+                            console.log("⭐ Gán lại selectedBanId sau fetch:", selectedBanId);
+
+                            // 👉 Tìm bàn tương ứng và cập nhật text
+                            const selectedBan = banList.find(b => b.idban === selectedBanId);
+                            if (selectedBan) {
+                                document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+                            }
+                        }
+
+                        // ✅ Vẽ canvas lại
+                        if (backgroundImg.complete) {
+                            drawCanvas(banListGlobal, selectedBanId);
+                        } else {
+                            backgroundImg.onload = () => drawCanvas(banListGlobal, selectedBanId);
+                        }
                         document.getElementById("canvas").style.display = "block";
 
 
@@ -216,13 +254,21 @@ function drawBan(ban, hoveredBan = null) {
 
 
     // Màu bàn
-    if (isDisabled) {
-        ctx.fillStyle = "#a9a9a9"; // Xám
-    } else if (selectedBanId === idban) {
+    //if (isDisabled) {
+    //    ctx.fillStyle = "#a9a9a9"; // Xám
+    //} else if (String(selectedBanId) === String(ban.idban)) {
+    //    ctx.fillStyle = "#ffff99"; // Vàng nhạt
+    //} else {
+    //    ctx.fillStyle = "#ffffff"; // Trắng
+    //}
+    if (String(selectedBanId) === String(ban.idban)) {
         ctx.fillStyle = "#ffff99"; // Vàng nhạt
+    } else if (isDisabled) {
+        ctx.fillStyle = "#a9a9a9"; // Xám
     } else {
         ctx.fillStyle = "#ffffff"; // Trắng
     }
+
 
     // Vẽ bàn tròn
     ctx.beginPath();
@@ -271,6 +317,12 @@ canvas.addEventListener("click", function (evt) {
     const clickY = (evt.clientY - rect.top) * scaleY;
 
 
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const clickX = (evt.clientX - rect.left) * scaleX;
+    const clickY = (evt.clientY - rect.top) * scaleY;
+
     console.log("Bạn click tại:", clickX, clickY);
     console.log("Danh sách bàn hiện tại:", banListGlobal);
 
@@ -315,6 +367,12 @@ canvas.addEventListener("mousemove", function (evt) {
     const mouseX = (evt.clientX - rect.left) * scaleX;
     const mouseY = (evt.clientY - rect.top) * scaleY;
 
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const mouseX = (evt.clientX - rect.left) * scaleX;
+    const mouseY = (evt.clientY - rect.top) * scaleY;
+
     let hoveredBan = null;
 
     for (let ban of banListGlobal) {
@@ -351,12 +409,71 @@ function drawTooltip(ctx, x, y, text) {
     ctx.fill();
 }
 
+let iddatbanCurrent = null;
+
+const idInput = document.getElementById("iddatbanCurrent");
+if (idInput && idInput.value) {
+    iddatbanCurrent = idInput.value.trim();
+}
+let originalNgay = document.querySelector('input[name="Ngaydat"]').value;
+let originalGio = document.querySelector('select[name="Giobatdau"]').value;
+
+
 //Xử lý cách thông tin nhập vào so sánh với dữ liệu và để hiển thị màu của bàn cho đúng
 function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selectedKhuvuc, soNguoiDat, banDaDatList) {
     const selectedGioStart = selectedGio;
     const selectedGioEnd = addHoursToTime(selectedGioStart, 2);
     soNguoiDatGlobal = soNguoiDat;
+   
+
     banListGlobal = banList.map(ban => {
+        //const isDisabled = banDaDatList.some(dadat => {
+        //    const sameId = dadat.idban === ban.idban;
+        //    const sameDate = dadat.ngay === selectedNgay;
+        //    const sameBranch = dadat.idchinhanh === selectedChinhanh;
+        //    const sameArea = dadat.idkhuvuc === selectedKhuvuc;
+
+        //    const selectedStart = timeToMinutes(selectedGioStart);
+        //    const selectedEnd = timeToMinutes(selectedGioEnd);
+        //    const dadatStart = timeToMinutes(dadat.gio);
+        //    const dadatEnd = dadatStart + 120;
+
+        //    const isTimeOverlap =
+        //        (selectedStart >= dadatStart && selectedStart < dadatEnd) ||
+        //        (selectedEnd > dadatStart && selectedEnd <= dadatEnd) ||
+        //        (selectedStart <= dadatStart && selectedEnd >= dadatEnd);
+        //    const trangThaiHopLe = dadat.Trangthaidatban != "Đã hủy";
+        //    const result = sameId && sameDate && sameBranch && sameArea && isTimeOverlap && trangThaiHopLe;
+
+        //    if (result) {
+        //        console.log(`⛔ Bàn ${ban.idban} bị disable do trùng lịch:`, { selectedStart, selectedEnd, dadatStart, dadatEnd, trangThaiHopLe });
+        //    }
+
+        //    return result;
+        //});
+        const isChangedDateOrTime = (selectedNgay !== originalNgay) || (selectedGioStart !== originalGio);
+        //const isDisabled = banDaDatList.some(dadat => {
+        //    const sameId = dadat.idban === ban.idban;
+        //    const sameDate = dadat.ngay === selectedNgay;
+        //    const sameBranch = dadat.idchinhanh === selectedChinhanh;
+        //    const sameArea = dadat.idkhuvuc === selectedKhuvuc;
+
+        //    const selectedStart = timeToMinutes(selectedGioStart);
+        //    const selectedEnd = timeToMinutes(selectedGioEnd);
+        //    const dadatStart = timeToMinutes(dadat.gio);
+        //    const dadatEnd = dadatStart + 120;
+
+        //    const isTimeOverlap =
+        //        (selectedStart >= dadatStart && selectedStart < dadatEnd) ||
+        //        (selectedEnd > dadatStart && selectedEnd <= dadatEnd) ||
+        //        (selectedStart <= dadatStart && selectedEnd >= dadatEnd);
+
+        //    const trangThaiHopLe = dadat.Trangthaidatban !== "Đã hủy";
+        //    const isCurrentBooking = dadat.iddatban === iddatbanCurrent;
+        //    if (!isChangedDateOrTime && dadat.iddatban === iddatbanCurrent) return false;
+
+        //    return sameId && sameDate && sameBranch && sameArea && isTimeOverlap && trangThaiHopLe && !isCurrentBooking;
+        //});
         const isDisabled = banDaDatList.some(dadat => {
             const sameId = dadat.idban === ban.idban;
             const sameDate = dadat.ngay === selectedNgay;
@@ -372,15 +489,16 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
                 (selectedStart >= dadatStart && selectedStart < dadatEnd) ||
                 (selectedEnd > dadatStart && selectedEnd <= dadatEnd) ||
                 (selectedStart <= dadatStart && selectedEnd >= dadatEnd);
-            const trangThaiHopLe = dadat.Trangthaidatban != "Đã hủy";
-            const result = sameId && sameDate && sameBranch && sameArea && isTimeOverlap && trangThaiHopLe;
 
-            if (result) {
-                console.log(`⛔ Bàn ${ban.idban} bị disable do trùng lịch:`, { selectedStart, selectedEnd, dadatStart, dadatEnd, trangThaiHopLe });
-            }
+            const trangThaiHopLe = dadat.Trangthaidatban !== "Đã hủy";
+            const isCurrentBooking = dadat.iddatban === iddatbanCurrent;
 
-            return result;
+            // 🟢 Nếu ngày giờ chưa đổi → không disable bàn của mình
+            if (!isChangedDateOrTime && isCurrentBooking) return false;
+
+            return sameId && sameDate && sameBranch && sameArea && isTimeOverlap && trangThaiHopLe;
         });
+
 
         console.log("✅ Xử lý bàn:", ban.idban, "→ isDisabled:", isDisabled);
 
@@ -392,6 +510,67 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
             isDisabled: isDisabled
         };
     });
+   // selectedBanId = document.getElementById("selectedIdban").value.trim();
+
+    // Gán lại selectedBanId từ hidden input
+    //const selectedIdInput = document.getElementById("selectedIdban");
+    //if (selectedIdInput && selectedIdInput.value) {
+    //    selectedBanId = selectedIdInput.value.trim();
+    //    console.log("⭐ Gán lại selectedBanId sau fetch:", selectedBanId);
+
+    //    const selectedBan = banListGlobal.find(b => String(b.idban) === String(selectedBanId));
+
+    //    if (selectedBan) {
+    //        document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+    //    } else {
+    //        document.getElementById("banInfo").innerText = "Chưa chọn bàn";
+    //    }
+
+    //}
+    //const selectedIdInput = document.getElementById("selectedIdban");
+    //if (selectedIdInput && selectedIdInput.value) {
+    //    selectedBanId = selectedIdInput.value.trim();
+    //    console.log("⭐ Gán lại selectedBanId sau fetch:", selectedBanId);
+
+    //    // 🟢 Luôn lấy từ banList (đang truyền vào initBanList), không lấy từ banListGlobal
+    //    const selectedBan = banList.find(b => String(b.idban).trim() === String(selectedBanId).trim());
+
+    //    if (selectedBan && !selectedBan.isDisabled) {
+    //        document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+    //    } else {
+    //        selectedBanId = null;
+    //        selectedIdInput.value = "";
+    //        document.getElementById("banInfo").innerText = "Chưa chọn bàn";
+
+    //        if (selectedBan && selectedBan.isDisabled) {
+    //            alert("Bàn bạn đã chọn trước đó đã có người đặt vào khung giờ bạn chọn, vui lòng chọn bàn khác.");
+    //        }
+    //    }
+    //}
+    const selectedIdInput = document.getElementById("selectedIdban");
+    if (selectedIdInput && selectedIdInput.value) {
+        let tempSelectedId = selectedIdInput.value.trim();
+        console.log("⭐ Gán lại selectedBanId sau fetch:", tempSelectedId);
+
+        const selectedBan = banList.find(b => String(b.idban).trim() === String(tempSelectedId).trim());
+
+        if (selectedBan && !selectedBan.isDisabled) {
+            selectedBanId = tempSelectedId;
+            document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+        } else {
+            selectedBanId = null;
+            selectedIdInput.value = "";
+            document.getElementById("banInfo").innerText = "Chưa chọn bàn";
+
+            if (isChangedDateOrTime && selectedBan && selectedBan.isDisabled) {
+                alert("Bàn bạn đã chọn trước đó đã có người đặt vào khung giờ mới, vui lòng chọn bàn khác.");
+            }
+        }
+    }
+
+
+
+
     if (backgroundImg.complete) {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
@@ -410,16 +589,20 @@ function timeToMinutes(timeStr) {
     return h * 60 + m;
 }
 
+
 function addHoursToTime(timeStr, hoursToAdd) {
     const [h, m] = timeStr.split(":").map(Number);
     let totalMinutes = h * 60 + m + hoursToAdd * 60;
-    totalMinutes = totalMinutes % (24 * 60); // nếu > 1440 phút thì quay lại 0h
+
+    const maxMinutes = 23 * 60 + 59; // 23:59
+    if (totalMinutes > maxMinutes) {
+        totalMinutes = maxMinutes;
+    }
 
     const newH = Math.floor(totalMinutes / 60);
     const newM = totalMinutes % 60;
     return `${newH.toString().padStart(2, "0")}:${newM.toString().padStart(2, "0")}`;
 }
-
 
 let countdownInterval;
 let countdownTime = 5 * 60; // 5 phút = 300 giây
@@ -504,6 +687,10 @@ function openConfirmation() {
 }
 function checkFormAndStartCountdown() {
     if (isCountdownStarted) return;
+
+    // Kiểm tra xem có đang ở chế độ Đặt bàn mới không
+    const datbanBtn = document.querySelector('button[onclick="openConfirmation()"]');
+    if (!datbanBtn) return; // Nếu không tồn tại nút đặt bàn (tức đang ở chế độ cập nhật) thì không chạy
 
     const ten = document.querySelector('input[name="Tenngdat"]');
     const email = document.querySelector('input[name="user.Email"]');

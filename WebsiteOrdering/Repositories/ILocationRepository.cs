@@ -4,13 +4,13 @@ namespace WebsiteOrdering.Repositories
 {
     public interface ILocationRepository
     {
-        Task<IEnumerable<Location>> GetAllAsync();
-        Task<Location?> GetByIdAsync(int id);
-        Task<Location> CreateAsync(Location location);
-        Task<Location> UpdateAsync(Location location);
-        Task<bool> DeleteAsync(int id);
-        Task<bool> ExistsAsync(int id);
-        Task<IEnumerable<Location>> GetByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng);
-        Task<IEnumerable<Location>> SearchByNameAsync(string name);
+        Task<IEnumerable<Chinhanh>> GetAllAsync();
+        Task<Chinhanh?> GetByIdAsync(string id);
+        Task<Chinhanh> CreateAsync(Chinhanh location);
+        Task<Chinhanh> UpdateAsync(Chinhanh location);
+        Task<bool> DeleteAsync(string id);
+        Task<bool> ExistsAsync(string id);
+        Task<IEnumerable<Chinhanh>> GetByAreaAsync(decimal minLat, decimal maxLat, decimal minLng, decimal maxLng);
+        Task<IEnumerable<Chinhanh>> SearchByNameAsync(string name);
     }
 }

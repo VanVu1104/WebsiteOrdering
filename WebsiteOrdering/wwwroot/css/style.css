@@ -1,5 +1,18 @@
 ﻿@import url("../css/site.css");
 
+#searchSuggestions {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+    #searchSuggestions .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
 /* ---------------------------------------------------------HEADER------------------------------------------- */
 header {
     background-color: var(--green-color);

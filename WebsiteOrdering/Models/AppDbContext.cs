@@ -27,8 +27,6 @@ namespace WebsiteOrdering.Models
         public DbSet<Ban> bans { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
 
-
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=DESKTOP-H0FGQ82\\SQLEXPRESS;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
@@ -55,8 +53,10 @@ namespace WebsiteOrdering.Models
                     .HasMaxLength(50)
                     .HasColumnName("KHUVUC");
                 entity.Property(e => e.Songuoi).HasColumnName("SONGUOI");
+
                 entity.Property(e => e.X).HasColumnName("X");
                 entity.Property(e => e.Y).HasColumnName("Y");
+
                 entity.Property(e => e.Tenban)
                     .HasMaxLength(500)
                     .HasColumnName("TENBAN");
@@ -81,12 +81,23 @@ namespace WebsiteOrdering.Models
                     .IsUnicode(false)
                     .IsFixedLength()
                     .HasColumnName("IDCHINHANH");
+
                 entity.Property(e => e.Diachicn)
                     .HasMaxLength(500)
                     .HasColumnName("DIACHICN");
+
                 entity.Property(e => e.Tencnhanh)
                     .HasMaxLength(100)
                     .HasColumnName("TENCNHANH");
+
+                // Cấu hình chính xác cho tọa độ
+                entity.Property(e => e.Latitude)
+                    .HasPrecision(9, 6)
+                    .HasColumnName("LATITUDE");
+
+                entity.Property(e => e.Longitude)
+                    .HasPrecision(9, 6)
+                    .HasColumnName("LONGITUDE");
             });
 
             modelBuilder.Entity<Chitietdatban>(entity =>
@@ -248,7 +259,6 @@ namespace WebsiteOrdering.Models
                     .HasColumnName("LYDO");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
                 entity.Property(e => e.Tenngdat).HasColumnName("TENNGDAT");
                 entity.Property(e => e.Sđtngdat).HasMaxLength(10).HasColumnName("SĐTNGDAT");
-
                 entity.HasOne(d => d.IdchinhanhNavigation).WithMany(p => p.Datbans)
                     .HasForeignKey(d => d.Idchinhanh)
                     .OnDelete(DeleteBehavior.NoAction)

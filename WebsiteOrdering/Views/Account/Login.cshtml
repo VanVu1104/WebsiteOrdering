@@ -1,4 +1,16 @@
-﻿@* <form asp-action="Login" method="post">
+﻿@model WebsiteOrdering.ViewModels.LoginViewModel
+
+@* @model WebsiteOrdering.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<form asp-action="Login" method="post">
+    @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+    {
+        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    }
     <div>
         <label asp-for="Email"></label>
         <input asp-for="Email" />
@@ -12,21 +24,24 @@
     <div>
         <input asp-for="RememberMe" /> Remember me
     </div>
+    <div class="mt-2 mb-3">
+        <a asp-action="ForgotPassword">Quên mật khẩu?</a>
+    </div>
     <button type="submit">Login</button>
 </form>
 <p>
     Chưa có tài khoản? <a asp-action="Register">Đăng ký</a>
 </p>
+<a href="@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })">
+        <p>Đăng nhập bằng Google</p>
+</a>
+
 <p>
     <a asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff">Đăng nhập cho nhân viên</a>
 </p>
+<partial name="_ValidationScriptsPartial" /> *@
 
-<p>
-    <a asp-controller="Account" asp-action="LoginWithGoogle" class="btn btn-danger">
-        Đăng nhập bằng Google
-    </a>
-</p> *@
-@model WebsiteOrdering.ViewModels.LoginViewModel
+
 @{
     <link rel="stylesheet" href="~/css/login.css" />
     Layout = null;
@@ -39,8 +54,7 @@
  
 }
 
-<html>
-<body>
+
 
     <div class="total_login">
         <div class="anh_login">
@@ -57,14 +71,19 @@
  *@                        <path id="tabWavePath" d="M0,0 Q20,10 40,50 C60,90 80,100 100,100 L100,0 Z" fill="#203F25" />
                     </svg>
                 </div>
-                <a style="background:#203F25;color:white" id="tabStaff" class="nav-tab tab-right" asp-controller="Home" asp-action="nhanvien" onclick="switchTab('staff')"> NHÂN VIÊN</a>
+                <a style="background:#203F25;color:white" id="tabStaff" class="nav-tab tab-right" asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff" onclick="switchTab('staff')"> NHÂN VIÊN</a>
             </div>
             <div class="form_login">
 
                 <h2 style="color: #203F25;">ĐĂNG NHẬP</h2>
 
-                <form asp-controller="#" asp-action="#" method="post">
-                    <div id="dn_email">
+                <form  asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+                    {
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    }
+                    <div  id="dn_email">
                         <span>
                             <img style="width:30px;height:23px" src="~/css/img/icon_email.png" alt="Email icon" />
                         </span>
@@ -82,40 +101,43 @@
 
                     <div class="remmember_login">
                         <label class="checkbox_login">
-                            <input type="checkbox" />
+                            <input asp-for="RememberMe" type="checkbox" />
                             Ghi nhớ tài khoản
                         </label>
-                        <a class="forgot_pass" asp-controller="Home" asp-action="nhanvien">Quên mật khẩu?</a>
+                        <a class="forgot_pass" asp-action="ForgotPassword">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" class="btn_login">ĐĂNG NHẬP</button>
 
-                    <div class="signup_login">
-                        Bạn chưa có tài khoản?
-                        <a asp-action="Register" class="register_link">Đăng ký ngay</a>
-                    </div>
 
-                    <div class="line">
-                        <span>Hoặc</span>
-                    </div>
-
+                   
                 </form>
+
+                <div class="signup_login">
+                    Bạn chưa có tài khoản?
+                    <a asp-action="Register" class="register_link">Đăng ký ngay</a>
+                </div>
+
+                <div class="line">
+                    <span>Hoặc</span>
+                </div>
                 <button type="button" class="google-btn" onclick="location.href='@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })'">
                     <div class="google-icon"></div>
                     Đăng nhập bằng Google
                 </button>
+
             </div>
         </div>
     </div>
 
-
+    <partial name="_ValidationScriptsPartial" />
     <script>
         function switchTab(target) {
             const customerTab = document.getElementById("tabCustomer");
             const staffTab = document.getElementById("tabStaff");
-            const customerContent = document.getElementById("contentCustomer");
-            const staffContent = document.getElementById("contentStaff");
-            const wave = document.getElementById("tabWave");
+            // const customerContent = document.getElementById("contentCustomer");
+            // const staffContent = document.getElementById("contentStaff");
+            // const wave = document.getElementById("tabWave");
 
             if (target === "customer") {
                 customerTab.classList.add("active");
@@ -134,6 +156,4 @@
             }
         }
     </script>
-</body>
-</html>
-<partial name="_ValidationScriptsPartial" />
+

@@ -7,6 +7,8 @@
 @{
     ViewData["Title"] = "Quản lý đặt bàn";
     Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
+    var now = TimeOnly.FromDateTime(DateTime.Now);
+    var today = DateOnly.FromDateTime(DateTime.Now);
 
 }
 
@@ -172,17 +174,40 @@
                     }
                     else if (d.Trangthaidatban == "Đã xác nhận")
                     {
+
+                        var isToday = d.Ngaydat == today;
+                        var canCheckIn = false;
+
+                        if (isToday)
+                        {
+                            var gioBatDau = d.Giobatdau;
+                            var gioChoPhep = gioBatDau.AddMinutes(-30); // Giờ bắt đầu - 10 phút
+                            canCheckIn = now >= gioChoPhep;
+                        }
+
+                        if (canCheckIn)
+                        {
+                            <form asp-action="KhachDaDen" method="post" asp-area="Staff" asp-controller="BookingStaff">
+                                <input type="hidden" name="id" value="@d.Iddatban" />
+                                <button type="submit" class="btn btn-success">Khách đã đến</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary" disabled>
+                                Chưa thể check-in (chỉ cho phép sớm 30 phút)
+                            </button>
+                        }
+
                         <button type="button" class="btn btn-danger btn-sm" onclick="openCancelForm('@d.Iddatban')">
                             Hủy
                         </button>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="openEditForm('@d.Iddatban')">
+                            Cập nhật
+                        </button>
                     }
-                    <a asp-area="Staff"
-                       asp-controller="BookingStaff"
-                       asp-action="DetailDonDatBan"
-                       asp-route-id="@d.Iddatban"
-                       class="btn btn-info btn-sm">
-                        Xem chi tiết
-                    </a>
+                   
+
                 </td>
                 <td>
                     @(d.Trangthaidatban == "Đã hủy" ? d.Lydo : "")
@@ -193,6 +218,8 @@
     </tbody>
 </table>
 
+
+@*Form Hiển thị lý do hủy cho nhan viên chọn hủy*@
 @* Simple cancel form - NO MODAL *@
 @foreach (var d in Model)
 {
@@ -252,6 +279,59 @@
             </form>
         </div>
     </div>
+
+
+<div id="editForm-@d.Iddatban" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; width:600px; max-width:95%;">
+        <div style="border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
+            <h5 style="margin:0;">Cập nhật đặt bàn - Mã: @d.Iddatban</h5>
+            <button type="button" style="float:right; margin-top:-30px; border:none; background:none; font-size:20px; cursor:pointer;" onclick="closeEditForm('@d.Iddatban')">&times;</button>
+        </div>
+        <form asp-action="EditDatBan" method="post">
+            <input type="hidden" name="Iddatban" value="@d.Iddatban" />
+            <div class="form-group">
+                <label>Chi nhánh</label>
+                <input type="text" value="@d.IdchinhanhNavigation.Tencnhanh" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <label>Bàn</label>
+                    @if (ViewBag.BanList != null && ViewBag.BanList.Count > 0)
+                    {
+                        var currentBanId = d.Chitietdatbans.FirstOrDefault()?.Idban ?? "";
+
+                        <select name="Idban" class="form-control" required>
+                            @foreach (var b in ViewBag.BanList)
+                            {
+                                <option value="@b.Idban" selected="@(b.Idban == currentBanId ? "selected" : null)">
+                                    @b.Tenban - @b.Khuvuc (@b.Songuoi người)
+                                </option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Không có bàn nào trong chi nhánh này hoặc dữ liệu chưa được load.
+                        </div>
+                        <input type="hidden" name="Idban" value="@d.Chitietdatbans.FirstOrDefault()?.Idban" />
+                    }
+
+
+            </div>
+                <div class="form-group">
+                    <label>Giờ bắt đầu</label>
+                    <select name="Giobatdau" id="giobatdau-@d.Iddatban" class="form-control"
+                            data-default="@d.Giobatdau.ToString("HH\\:mm")" required></select>
+
+                </div>  
+            <div style="margin-top:20px; text-align:right;">
+                <button type="button" class="btn btn-secondary" onclick="closeEditForm('@d.Iddatban')">Đóng</button>
+                <button type="submit" class="btn btn-primary">Lưu cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 }
 
 <script>
@@ -264,7 +344,7 @@
             return false;
         }
 
-        if (selectedReason.value === "Khác") {
+        if (e.target.type === 'radio' && e.target.value === "Khác" && e.target.name === 'lyDo') {
             const detailText = document.getElementById(`lyDoKhacInput-${id}`).querySelector('textarea').value.trim();
             if (!detailText) {
                 alert('Vui lòng nhập lý do chi tiết khi chọn "Khác"!');
@@ -279,4 +359,75 @@
         }
         return confirmed;
     }
+
+    function openEditForm(id) {
+        const form = document.getElementById('editForm-' + id);
+        if (form) {
+            form.style.display = 'block';
+
+            const startSelect = document.getElementById(`giobatdau-${id}`);
+            const defaultStart = startSelect.getAttribute("data-default") || "";
+
+            // Gọi setup
+            setupTimeSelect(id, defaultStart);
+        }
+    }
+
+
+
+    function closeEditForm(id) {
+        const form = document.getElementById('editForm-' + id);
+        if (form) {
+            form.style.display = 'none';
+        }
+    }
+
+
+    function timeToMinutes(timeStr) {
+        const [h, m] = timeStr.split(":").map(Number);
+        return h * 60 + m;
+    }
+
+    function minutesToTimeStr(totalMinutes) {
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+    }
+
+    function generateTimeOptions(selectElement, startMinutes, endMinutes, stepMinutes, disableBeforeMinutes = null) {
+        selectElement.innerHTML = ""; // clear
+        for (let mins = startMinutes; mins <= endMinutes; mins += stepMinutes) {
+            if (disableBeforeMinutes !== null && mins <= disableBeforeMinutes) continue;
+
+            const timeStr = minutesToTimeStr(mins);
+            const option = document.createElement("option");
+            option.value = timeStr;
+            option.textContent = timeStr;
+            selectElement.appendChild(option);
+        }
+    }
+
+    function setupTimeSelect(datbanId, defaultStart) {
+        const startSelect = document.getElementById(`giobatdau-${datbanId}`);
+
+        const startMinutes = 9 * 60; // 9:00
+        const endMinutes = 21 * 60; // 21:00
+        const step = 30;
+
+        // Tạo options
+        generateTimeOptions(startSelect, startMinutes, endMinutes, step);
+
+        // Set giá trị mặc định nếu có
+        if (defaultStart) {
+            startSelect.value = defaultStart;
+        }
+    }
+
+    function addHoursToTime(timeStr, hoursToAdd) {
+        const [h, m] = timeStr.split(":").map(Number);
+        let totalMinutes = h * 60 + m + hoursToAdd * 60;
+        totalMinutes = totalMinutes % (24 * 60);
+        return minutesToTimeStr(totalMinutes);
+    }
+
 </script>

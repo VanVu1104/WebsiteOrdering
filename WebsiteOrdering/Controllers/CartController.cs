@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,15 @@ namespace WebsiteOrdering.Controllers
             _appDbContext = appDbContext;
             _accountRepository = accountRepository;
         }
-
+        public UserLocationSessionViewModel? GetUserLocationFromSession()
+        {
+            var sessionData = HttpContext.Session.GetString("UserLocationInfo");
+            if (!string.IsNullOrEmpty(sessionData))
+            {
+                return JsonSerializer.Deserialize<UserLocationSessionViewModel>(sessionData);
+            }
+            return null;
+        }
         [HttpPost]
         public async Task<IActionResult> AddToCart(IFormCollection form)
         {
@@ -176,6 +185,19 @@ namespace WebsiteOrdering.Controllers
             {
                 model.UserInfo.Address = "Chưa có vị trí";
             }
+            var userLocation = GetUserLocationFromSession();
+            if (userLocation != null)
+            {
+                model.UserInfo.DistanceKm = userLocation.DistanceKm;
+                model.UserInfo.EstimatedMinutes = userLocation.EstimatedMinutes;
+                model.UserInfo.DeliveryMethod = userLocation.DeliveryMethod;
+                var branch = await _appDbContext.chinhanh.FindAsync(userLocation.NearestBranchId);
+                if (branch != null)
+                {
+                    model.UserInfo.BranchId = userLocation.NearestBranchId;
+                    model.UserInfo.BranchName = branch.Tencnhanh;
+                }
+            }
             ViewBag.AllSizes = await _appDbContext.Sizes.ToListAsync();
             ViewBag.AllDeBanh = await _appDbContext.debanh.ToListAsync();
             ViewBag.AllToppings = await _appDbContext.Topping
@@ -230,7 +252,6 @@ namespace WebsiteOrdering.Controllers
         }
 
 
-        //Xóa sản phẩm ra giỏ hàng
         [HttpPost]
         public IActionResult DeleteItem(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings)
         {
@@ -250,6 +271,7 @@ namespace WebsiteOrdering.Controllers
                 HttpContext.Session.Set("Cart", cart);
             }
             return RedirectToAction("Index", "Products");
+            //return View("Index", cart);
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng
@@ -257,7 +279,8 @@ namespace WebsiteOrdering.Controllers
         public IActionResult CartEmpty()
         {
             HttpContext.Session.Remove("Cart");
-            return View("Index", new List<CartItem>());
+            TempData["SuccessMessage"] = "Đã xoá toàn bộ giỏ hàng.";
+            return RedirectToAction("Index");
         }
 
         //Hàm tính số sản phẩm trong icon giỏ hàng
@@ -446,5 +469,7 @@ namespace WebsiteOrdering.Controllers
                 toppings
             });
         }
+ 
+
     }
 }

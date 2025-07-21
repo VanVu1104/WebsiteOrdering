@@ -20,12 +20,14 @@ namespace WebsiteOrdering.Models
         public string Ptttoan { get; set; } = null!;
 
         public int? Songuoi { get; set; }
+        public string? Magiaodich { get; set; }
 
         public string? Tenkh { get; set; }
         public string? Sdtkh { get; set; }
 
-        public int? Tienship { get; set; }
-
+        public decimal? Tienship { get; set; }
+        public string? DeliveryMethod { get; set; }
+        public double? Khoangcachship { get; set; }
         public string? Idchinhanh { get; set; }
 
         public string? Iddatban { get; set; }

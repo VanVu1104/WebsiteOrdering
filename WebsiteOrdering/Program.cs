@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using WebsiteOrdering.Areas.Repository;
+using WebsiteOrdering.Areas.Services;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
@@ -11,6 +13,7 @@ using WebsiteOrdering.ViewModels;
 //using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
 
 // Thêm dịch vụ Session
 builder.Services.AddDistributedMemoryCache(); // Bộ nhớ tạm thời (RAM)
@@ -19,11 +22,14 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.MaxAge = TimeSpan.FromDays(2);
+    options.Cookie.Name = ".WebsiteOrdering.Cart";
 });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddMemoryCache();
@@ -33,6 +39,7 @@ builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("SpeedS
 builder.Services.Configure<OpenRouteServiceSettings>(
     builder.Configuration.GetSection("OpenRouteService"));
 builder.Services.AddTransient<ISmsService, SmsService>();
+builder.Services.AddSingleton<LuceneProductIndexer>();
 
 //Cấu hình cookie
 builder.Services.ConfigureApplicationCookie(options =>
@@ -87,17 +94,15 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<VNPayService>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IMonanRepository, MonanRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-builder.Services.AddHttpClient();
-
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddHostedService<DatBanBackgroundService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -107,7 +112,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
-
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -122,6 +126,13 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
+}
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>(); // thay bằng tên DbContext của bạn
+    var indexer = scope.ServiceProvider.GetRequiredService<LuceneProductIndexer>();
+    var products = db.SanPhams.ToList();
+    indexer.CreateIndex(products);
 }
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -151,13 +162,12 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.MapControllerRoute(
   name: "areas",
   pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Location}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

@@ -1,10 +1,10 @@
 ﻿@using WebsiteOrdering.Models
-@model List<Location>
+@model List<Chinhanh>
 @{
     ViewData["Title"] = "Vị trí";
 }
 
-<link href="~/css/map.css" rel="stylesheet" />
+<link href="~/css/map2.css" rel="stylesheet" />
 
 <div class="location-container">
     <div class="header-section">
@@ -12,58 +12,114 @@
             <span class="location-icon">📍</span>
             Danh sách địa điểm
         </h2>
-        <p class="subtitle">Khám phá các địa điểm trên bản đồ tương tác</p>
+        <p class="subtitle">Chọn cách thức nhận hàng và khám phá các địa điểm</p>
     </div>
+
     <div class="map-wrapper">
-        <div class="map-controls">
-            <div class="search-container">
-                <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="Nhập địa chỉ, tên đường, quận/huyện..." autocomplete="off">
-                    <div class="loading-spinner" id="loadingSpinner"></div>
-                    <div id="suggestions">
-                        <!-- Suggestions sẽ được hiển thị ở đây -->
-                    </div>
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <!-- Delivery Options -->
+            <div class="delivery-options active">
+                <div class="delivery-option active" data-type="pickup">
+                    <span class="icon">🏪</span>
+                    <span>Đến lấy</span>
+                </div>
+                <div class="delivery-option" data-type="delivery">
+                    <span class="icon">🚚</span>
+                    <span>Giao hàng</span>
                 </div>
             </div>
 
-            <button id="resetView" class="control-btn">
-                <span class="icon">🏠</span>
-                <span id="resetText">Về vị trí ban đầu</span>
-            </button>
-            <button id="toggleSatellite" class="control-btn">
-                <span class="icon">🛰️</span>
-                <span>Chế độ vệ tinh</span>
-            </button>
-            <button id="findLocation" class="control-btn">
-                <span class="icon"></span>
-                <span>Chọn vị trí của tôi</span>
-            </button>
-            <div class="location-counter">
-                <span id="locationCount">@Model.Count()</span> địa điểm
+            <!-- Store List -->
+            <div class="store-list-sidebar">
+                <div class="search-container">
+                    <div id="pickupSearchBlock">
+                        <div class="search-wrapper">
+                            <input class="searchInput" type="text" id="storeSearchInput" placeholder="Nhập địa chỉ của bạn để tìm cửa hàng gần nhất..." autocomplete="off">
+                            <span class="search-icon">🔍</span>
+                            <div class="loading-spinner" id="storeLoadingSpinner"></div>
+                            <div class="suggestions" id="storeSuggestions">
+                                <!-- Store suggestions sẽ được hiển thị ở đây -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="deliverySearchBlock" class="hidden">
+                        <div class="search-wrapper">
+                            <input class="searchInput" type="text" id="searchInput" placeholder="Nhập địa chỉ của bạn..." autocomplete="off">
+                            <span class="search-icon">🔍</span>
+                            <div class="loading-spinner" id="loadingSpinner"></div>
+                            <div class="suggestions" id="suggestions">
+                                <!-- Suggestions sẽ được hiển thị ở đây -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Store List Container - Chỉ hiển thị khi pickup -->
+                <div id="storeList" class="store-list-container">
+                    <!-- Danh sách cửa hàng sẽ được JS render vào đây -->
+                </div>
+
+                <!-- Pickup Actions - Chỉ hiển thị khi pickup -->
+                <div id="pickupActions" class="map-actions">
+                    <button id="btnSelectStore" class="control-btn highlight-btn">
+                        ✓ Chọn cửa hàng này
+                    </button>
+                    <button id="btnViewOnMap" class="control-btn">
+                        🗺️ Xem trên bản đồ
+                    </button>
+                </div>
             </div>
         </div>
-        <div id="map" class="interactive-map"></div>
-        <div class="map-legend">
-            <div class="legend-item">
-                <span class="legend-marker">🏪</span>
-                <span>Cửa hàng</span>
+
+        <!-- Map Mode (Default) -->
+        <div id="map-mode" class="map-mode active">
+            <div class="sidebar-search-container">
+               
             </div>
-            <div class="legend-item">
-                <span class="legend-marker">📍</span>
-                <span>Vị trí của bạn</span>
+            <div class="map-controls">
+                <button id="resetView" class="control-btn">
+                    <span class="icon">🏠</span>
+                    <span id="resetText">Về vị trí ban đầu</span>
+                </button>
+                <button id="toggleSatellite" class="control-btn">
+                    <span class="icon">🛰️</span>
+                    <span>Chế độ vệ tinh</span>
+                </button>
+                <button id="findLocation" class="control-btn">
+                    <span class="icon">📍</span>
+                    <span>Chọn vị trí của tôi</span>
+                </button>
+                <div class="location-counter">
+                    <span id="locationCount">@Model.Count()</span> địa điểm
+                </div>
             </div>
-            <div class="legend-item">
-                <span class="legend-marker">🔵</span>
-                <span>Đường đi</span>
+
+            <div id="map" class="interactive-map"></div>
+
+            <div class="map-legend">
+                <div class="legend-item">
+                    <span class="legend-marker">🏪</span>
+                    <span>Cửa hàng</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker">📍</span>
+                    <span>Vị trí của bạn</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker">🔵</span>
+                    <span>Đường đi</span>
+                </div>
             </div>
-        </div>
-        <div class="map-actions text-center mt-3">
-            <button id="btnSaveSessionLocation" class="control-btn highlight-btn">
-                💾 Lưu vị trí của tôi
-            </button>
-            <button id="btnClearRoute" class="control-btn danger-btn">
-                🗑️ Xóa đường đi
-            </button>
+
+            <!-- Delivery Actions - Chỉ hiển thị khi delivery -->
+            <div id="deliveryActions" class="map-actions hidden">
+                <button id="btnSaveSessionLocation" class="control-btn highlight-btn">
+                    💾 Lưu vị trí của tôi
+                </button>
+                <button id="btnClearRoute" class="control-btn danger-btn">
+                    🗑️ Xóa đường đi
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -75,9 +131,8 @@
         const locations = @Html.Raw(Json.Serialize(Model));
         const OPENROUTE_API_KEY = '@ViewBag.OpenRouteApiKey';
     </script>
-	@* <script src="~/js/map-handler.js"></script> *@
+    @* <script src="~/js/map-handler.js"></script> *@
     <script src="~/js/locationservice.js"></script>
     <script src="~/js/searchservice.js"></script>
     <script src="~/js/maphandler.js"></script>
-   
 }

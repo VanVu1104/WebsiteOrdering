@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using WebsiteOrdering.Models;
+using WebsiteOrdering.Models.Results;
 using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Repositories
@@ -15,7 +16,9 @@ namespace WebsiteOrdering.Repositories
         Task<ApplicationUser?> GetUserByPhoneNumberAsync(string phoneNumber);
         Task<(bool Success, ApplicationUser? User, IEnumerable<string>? Errors)> CreateUserWithPhone(string phoneNumber);
         Task SignInUserAsync(ApplicationUser user, bool isPersistent = false);
-        Task UpdateUserAsync(ApplicationUser user);
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
+        Task<ApplicationUser?> GetCurrentUserAsync(ClaimsPrincipal user);
+
         Task<IdentityResult> GoogleLoginCallbackAsync();
         Task<IdentityResult> LinkGoogleLoginToExistingUser(ApplicationUser user, ExternalLoginInfo info);
         Task<IdentityResult> CreateAndSignInGoogleUser(ExternalLoginInfo info, string email);
@@ -24,6 +27,8 @@ namespace WebsiteOrdering.Repositories
         Task<ApplicationUser?> GetUserByEmailAsync(string email);
         Task<ApplicationUser?> GetUserByIdAsync(string id);
         Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
-
+        Task<ForgotPasswordResult> SendForgotPasswordEmailAsync(string email, string resetPasswordUrlTemplate);
+        Task<IdentityResult> ResetPasswordAsync(ResetPasswordViewModel model);
+        Task<bool> SignInStaffWithClaimsAsync(ApplicationUser user);
     }
 }

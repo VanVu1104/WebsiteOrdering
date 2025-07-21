@@ -211,6 +211,7 @@
     flex-direction: column;
     gap: 10px;
     font-family: '1FTV VIP Mestika', serif;
+    font-size: 18px;
     letter-spacing: 1.2px;
     color: #203F25;
 }

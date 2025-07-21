@@ -312,6 +312,16 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("DIACHICN");
 
+                    b.Property<decimal>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)")
+                        .HasColumnName("LATITUDE");
+
+                    b.Property<decimal>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("decimal(9,6)")
+                        .HasColumnName("LONGITUDE");
+
                     b.Property<string>("Tencnhanh")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -570,6 +580,9 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnName("IDDONHANG")
                         .IsFixedLength();
 
+                    b.Property<string>("DeliveryMethod")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Diachidh")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -594,6 +607,12 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("IDNGDUNG");
 
+                    b.Property<double?>("Khoangcachship")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Magiaodich")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Ngaydat")
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAYDAT");
@@ -616,8 +635,8 @@ namespace WebsiteOrdering.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("TENKH");
 
-                    b.Property<int?>("Tienship")
-                        .HasColumnType("int")
+                    b.Property<decimal?>("Tienship")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("TIENSHIP");
 
                     b.Property<decimal>("Tongtien")
