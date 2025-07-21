@@ -24,29 +24,12 @@ html {
 }
 
 @font-face {
-    font-family: "Mestika", "VIP Mestika";
-    src: url(/fonts/1FTV-VIP-MESTIKA.OTF) format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: "Cakelan";
-    src: url(/fonts/1FTV-CAKELAN.OTF) format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: "SVN";
-    src: url('/fonts/SVN-Jane Austen.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
     font-family: "Mestika";
     src: url(/fonts/1FTV-VIP-MESTIKA.OTF) format('opentype');
     font-weight: normal;
     font-style: normal;
 }
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
@@ -82,12 +65,10 @@ body {
     overflow: visible;
 }
 
-
     .layout-guide > * {
-        /*    background-color: rgba(204, 204, 204, 0.1);  gi?ng m?u l??i trong Figma */
+        /*    background-color: rgba(204, 204, 204, 0.1);  gi?ng màu l??i trong Figma */
         min-height: 40px;
     }
-/* N?t switch Grid */
 
 /*#toggleGridBtn{
     position:fixed;
@@ -105,4 +86,4 @@ body {
 }
 #toggleGridBtn:hover{
     background-color:var(--yellow-color);
-
+}*/

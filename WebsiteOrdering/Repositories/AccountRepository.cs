@@ -67,6 +67,7 @@ namespace WebsiteOrdering.Repositories
                 UserName = normalizedName,
                 Email = normalizedEmail,
                 EmailConfirmed = false,
+                FullName = model.FullName,
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             var addRoleResult = await _userManager.AddToRoleAsync(user, "Customer");

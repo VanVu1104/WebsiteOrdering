@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Céleste Élysée - Thực đơn";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+
+<!--banner video section-->
+<div class="video-banner-homepage">
+    <video autoplay muted loop class="video-content">
+        <source src="/video/video_banner_menu.mp4" />
+        Trình duyệt của bạn không hỗ trợ phát video
+    </video>
+    <div class="video-overlay"></div>
+    <div class="video-text">
+        <h1>Khám phá</h1>
+        <h2>Tinh hoa việt trong</h2>
+        <h2>Từng trải nghiệm ẩm thực</h2>
+
+        <button class="btn-book-now">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="restaurant-cloche" class="icon-clonche">
+                <path d="M90,76H10a2,2,0,0,1-2-2,42,42,0,0,1,84,0A2,2,0,0,1,90,76ZM12.05,72H88a38,38,0,0,0-75.9,0Z"></path>
+                <path d="M22.28 60a2 2 0 01-1-.27A2 2 0 0120.55 57a34.23 34.23 0 0121-15.93 2 2 0 111 3.87A30.23 30.23 0 0024 59 2 2 0 0122.28 60zM98 84H2a2 2 0 010-4H98a2 2 0 010 4zM50 28a6 6 0 116-6A6 6 0 0150 28zm0-8a2 2 0 102 2A2 2 0 0050 20z"></path>
+                <path d="M50,36a2,2,0,0,1-2-2V26a2,2,0,0,1,4,0v8A2,2,0,0,1,50,36Z"></path>
+            </svg>
+            <span>Đặt bàn ngay</span>
+        </button>
+    </div>
+</div>
+<div class="layout-guide">
+    <div class="intro-menu-section">
+        <div class="intro-menu-wrapper">
+            <p>
+                Thực đơn tại Céleste Élysée được xây dựng từ sự tôn trọng nguyên liệu và kỹ thuật nấu ăn chuẩn mực.
+                Nguyên liệu theo mùa, cách nêm nếm vừa đủ, phần trình bày giữ lại nét cổ điển nhưng không gò bó. Mỗi món ăn là một lời mời nhẹ nhàng – để bạn thưởng thức chậm rãi, trong không gian tĩnh lặng và ấm áp.
+                Đây không chỉ là thực đơn. Đây là cách chúng tôi kể một câu chuyện – bằng vị giác.
+            </p>
+            <img src="~/images/home/banner/img_intro_menu.jpg" class="img-intro-1" />
+        </div>
+        <div class="img-menu-wrapper">
+            <div class="img-menu-left parallax-bg"></div>
+            @* <div class="img-frame-left">
+                <img src="/images/home/banner/menu.png" class="img-menu-left parallax-img-menu" />
+            </div> *@
+            <div class="img-menu-container">
+                <div class="img-frame-right">
+                    <div class="img-menu-overlay parallax-bg"></div>
+                </div>
+                <div class="img-frame-side-right">
+                    <div class="img-menu-side parallax-bg"></div>
+                </div>
+            </div>
+        </div>
+        <div class="intro-menu-wrapper-2">
+            <img src="~/images/home/banner/img_intro_menu_2.jpg"  class="img-intro-2"/>
+            <p>
+                Với tinh thần đó, từng món ăn tại Céleste Élysée đều được chế biến thủ công từ đầu – không sử dụng nguyên liệu đóng sẵn.
+                Đế bánh pizza được ủ chậm và nướng trên đá nóng để đạt độ giòn hoàn hảo. Mì Ý được nhào tay mỗi ngày, kết hợp cùng các loại sốt được nấu từ nước dùng cô đặc và rau củ tươi. Ngay cả dầu húng quế hay sốt cà chua cũng đều được làm tươi tại bếp mỗi sáng.
+            </p>
+        </div>
+    </div>
+    <div class="detail-menu">
+        <h1 class="text-detail-menu">"Măm Măm"</h1>
+        <p class="description-menu">Thực đơn này chỉ mang tính chất tham khảo và các món ăn có thể thay đổi theo mùa và tùy thuộc vào nguồn nguyên liệu có sẵn. Vui lòng thông báo với nhân viên phục vụ về bất kỳ nhu cầu dinh dưỡng hoặc hạn chế nào của bạn.</p>
+        <a class="animated-underline">liên hệ</a>
+    </div>
+</div>
+@* <script>
+    window.addEventListener("scroll", function () {
+      const scrollTop = window.scrollY;
+      const parallaxImages = document.querySelectorAll(".parallax-img-menu");
+
+      parallaxImages.forEach(img => {
+        img.style.transform = `translateY(${scrollTop * 0.05}px) scale(1.2)`;
+      });
+    });
+</script> *@
+<script>
+    const basePosition = -400; // phần trăm ảnh hiển thị ở giữa
+    const speed = 0.3;
+
+    window.addEventListener('scroll', () => {
+      const elements = document.querySelectorAll('.parallax-bg');
+      elements.forEach(el => {
+        const offset = window.scrollY;
+        const posY = basePosition + offset * speed;
+        el.style.backgroundPosition = `center ${posY}px`;
+      });
+    });
+
+</script>
+
+
+
+
