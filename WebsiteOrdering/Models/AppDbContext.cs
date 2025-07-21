@@ -30,7 +30,7 @@ namespace WebsiteOrdering.Models
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=.;Database=pizza6;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-H0FGQ82\\SQLEXPRESS;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

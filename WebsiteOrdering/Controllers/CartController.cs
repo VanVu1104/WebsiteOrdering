@@ -152,7 +152,7 @@ namespace WebsiteOrdering.Controllers
             // Lưu giỏ hàng vào session
             HttpContext.Session.Set("Cart", cart);
 
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Products");
         }
 
 
@@ -195,6 +195,7 @@ namespace WebsiteOrdering.Controllers
         [HttpPost]
         public IActionResult UpdateCart(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings, int soluong)
         {
+
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             var item = cart.FirstOrDefault(c =>
@@ -248,8 +249,7 @@ namespace WebsiteOrdering.Controllers
                 cart.Remove(itemToRemove);
                 HttpContext.Session.Set("Cart", cart);
             }
-
-            return View("Index", cart);
+            return RedirectToAction("Index", "Products");
         }
 
         // DELETE: Xoá toàn bộ giỏ hàng
@@ -270,9 +270,9 @@ namespace WebsiteOrdering.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UpdateCartItem(
-     string originalIdmonan, string originalIdmonan2, string originalSizeId, string originalDeBanhId, string originalToppings,
-     string idmonan, string idmonan2, string selectedSizeId, string selectedDeBanhId,
-     List<string> selectedToppingIds, string ghichu, int soluong)
+         string originalIdmonan, string originalIdmonan2, string originalSizeId, string originalDeBanhId, string originalToppings,
+         string idmonan, string idmonan2, string selectedSizeId, string selectedDeBanhId,
+         List<string> selectedToppingIds, string ghichu, int soluong)
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
@@ -446,7 +446,5 @@ namespace WebsiteOrdering.Controllers
                 toppings
             });
         }
-
-
     }
 }

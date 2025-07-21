@@ -134,6 +134,9 @@ function setupKhuvucChangeEvent() {
         if (bgSrc) {
             backgroundImg.src = bgSrc;
             backgroundImg.onload = () => {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
                 drawCanvas(banListGlobal); // vẽ nền mới
             };
         }
@@ -169,16 +172,16 @@ function setupKhuvucChangeEvent() {
 
 
 const backgroundImages = {
-    "Ngoài trời": "/css/img/anhsan.jpg",
-    "Trong nhà": "/css/img/anhsan2.jpg",
-    "Sân thượng": "/css/img/anhsan3.jpg"
+    "Ngoài trời": "/css/img/anhinh.jpg",
+    "Trong nhà": "/css/img/trongnha.jpg",
+    "Sân thượng": "/css/img/anhsanthuong.jpg"
 };
 //Hàm để hiển thị bàn 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const backgroundImg = new Image();  // Ảnh nền canvas (theo khu vực)
 const chairImg = new Image();       // Ảnh ghế
-chairImg.src = "/css/img/ghe.jpg";
+chairImg.src = "/css/img/ghe1.png";
 let soNguoiDatGlobal = 1;
 let banListGlobal = [];
 let selectedBanId = null;
@@ -223,27 +226,28 @@ function drawBan(ban, hoveredBan = null) {
 
     // Vẽ bàn tròn
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, Math.PI * 2);
+    ctx.arc(x, y, 30, 0, Math.PI * 2);//30
     ctx.fill();
     ctx.strokeStyle = "#333";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;//ban dau la 2
     ctx.stroke();
 
     // Tên bàn
     ctx.fillStyle = "#000";
-    ctx.font = "14px Arial";
+    ctx.font = "14px Arial";//14
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(tenban, x, y);
 
     // Vẽ ghế
-    const radius = 52;
+    const radius = 50; //ban đầu là 52
     for (let i = 0; i < songuoi; i++) {
         const angle = (2 * Math.PI / songuoi) * i;
         const gx = x + radius * Math.cos(angle);
         const gy = y + radius * Math.sin(angle);
-        const deg = angle + Math.PI;
-        drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);
+        //const deg = angle + Math.PI;
+        const deg = angle + Math.PI / 2;
+        drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);//40,40
     }
 
     // Tooltip khi hover
@@ -256,8 +260,16 @@ function drawBan(ban, hoveredBan = null) {
 //Hàm click chọn bàn đó
 canvas.addEventListener("click", function (evt) {
     const rect = canvas.getBoundingClientRect();
-    const clickX = evt.clientX - rect.left;
-    const clickY = evt.clientY - rect.top;
+
+    //const clickX = evt.clientX - rect.left;
+    //const clickY = evt.clientY - rect.top;
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const clickX = (evt.clientX - rect.left) * scaleX;
+    const clickY = (evt.clientY - rect.top) * scaleY;
+
 
     console.log("Bạn click tại:", clickX, clickY);
     console.log("Danh sách bàn hiện tại:", banListGlobal);
@@ -293,8 +305,15 @@ canvas.addEventListener("click", function (evt) {
 });
 canvas.addEventListener("mousemove", function (evt) {
     const rect = canvas.getBoundingClientRect();
-    const mouseX = evt.clientX - rect.left;
-    const mouseY = evt.clientY - rect.top;
+
+    //const mouseX = evt.clientX - rect.left;
+    //const mouseY = evt.clientY - rect.top;
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const mouseX = (evt.clientX - rect.left) * scaleX;
+    const mouseY = (evt.clientY - rect.top) * scaleY;
 
     let hoveredBan = null;
 
@@ -374,9 +393,15 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
         };
     });
     if (backgroundImg.complete) {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
         drawCanvas(banListGlobal);
     } else {
-        backgroundImg.onload = () => drawCanvas(banListGlobal);
+        backgroundImg.onload = () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawCanvas(banListGlobal)
+        };
     }
 }
 
@@ -566,6 +591,9 @@ function reloadBanList() {
                 .then(banDaDatList => {
                     banList.forEach(b => b.songuoi = parseInt(b.songuoi));
                     initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    drawCanvas(banListGlobal);
                 });
         });
 }

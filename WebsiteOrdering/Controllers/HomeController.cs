@@ -28,5 +28,30 @@ namespace WebsiteOrdering.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
+
+        public IActionResult ThucDonOnline()
+        {
+            return View();
+        }
+
+        public IActionResult NhanVien()
+        {
+            return View("nhanvien"); // => Tìm View tại: Views/Home/NhanVien.cshtml
+        }
+
+        public IActionResult MenuBook()
+        {
+            return View();
+        }
     }
 }

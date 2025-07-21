@@ -1,7 +1,7 @@
 ﻿@model WebsiteOrdering.ViewModels.CartPageViewModel
 
 @{
-    ViewData["Title"] = "Giỏ hàng của bạn";
+    ViewData["Title"] = "Thông tin thanh toán";
     var selectedIds = TempData["SelectedIds"] as List<string> ?? new List<string>();
 }
 
@@ -10,7 +10,7 @@
     
 }
 
-<h2>Giỏ hàng của bạn</h2>
+<h2>Thông tin thanh toán</h2>
 
 @if (Model.CartItems == null || !Model.CartItems.Any())
 {
