@@ -1,4 +1,5 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -152,14 +153,14 @@
                 <td>@ct?.IdbanNavigation?.Khuvuc</td>
                 <td>@ct?.IdbanNavigation?.Tenban</td>
                 <td>
-                    <span class="badge @(d.Trangthaidatban == "Chờ xác nhận" ? "bg-warning" :
-                                         d.Trangthaidatban == "Đã xác nhận" ? "bg-success" :
-                                         d.Trangthaidatban == "Đã hủy" ? "bg-danger" : "bg-secondary")">
+                    <span class="badge @(d.Trangthaidatban == TrangThai.Pending ? "bg-warning" :
+                                         d.Trangthaidatban == TrangThai.Confirmed ? "bg-success" :
+                                         d.Trangthaidatban == TrangThai.Cancelled ? "bg-danger" : "bg-secondary")">
                         @d.Trangthaidatban
                     </span>
                 </td>
                 <td style="white-space: nowrap;">
-                    @if (d.Trangthaidatban == "Chờ xác nhận")
+                    @if (d.Trangthaidatban == TrangThai.Pending)
                     {
                         <form method="post" asp-action="XacNhanDatBan" asp-route-id="@d.Iddatban" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận đặt bàn này?')">
@@ -169,7 +170,7 @@
                             Hủy
                         </button>
                     }
-                    else if (d.Trangthaidatban == "Đã xác nhận")
+                    else if (d.Trangthaidatban == TrangThai.Confirmed)
                     {
                         <button type="button" class="btn btn-danger btn-sm" onclick="openCancelForm('@d.Iddatban')">
                             Hủy
@@ -184,7 +185,7 @@
                     </a>
                 </td>
                 <td>
-                    @(d.Trangthaidatban == "Đã hủy" ? d.Lydo : "")
+                    @(d.Trangthaidatban == TrangThai.Cancelled ? d.Lydo : "")
                 </td>
 
             </tr>

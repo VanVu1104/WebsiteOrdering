@@ -177,7 +177,6 @@
 
     // Ẩn suggestions
     hideSuggestions() {
-        console.log('Đang ẩn suggestions', this.suggestionList?.classList);
         if (this.suggestionList) {
             console.log('Ẩn suggestions');
             this.suggestionList.classList.remove('show');

@@ -29,7 +29,7 @@ else
                 <tr>
                     <td>@order.Ngaydat.ToString("dd/MM/yyyy")</td>
                     <td>@order.Tongtien.ToString("N0") ₫</td>
-                    <td>@order.Trangthai</td>
+                    <td>@order.Trangthai.ToString()</td>
                     <td>
                         <a asp-controller="Order" asp-action="Details" asp-route-id="@order.Iddonhang">Xem chi tiết</a>
                     </td>

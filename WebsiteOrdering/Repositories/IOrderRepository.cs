@@ -1,4 +1,5 @@
-﻿using WebsiteOrdering.Models;
+﻿using WebsiteOrdering.Enums;
+using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Repositories
 {
@@ -13,8 +14,9 @@ namespace WebsiteOrdering.Repositories
         Task UpdateOrderAsync(Donhang order);
         Task<List<Donhang>> GetOrdersByUserIdAsync(string userId);
         Task<List<Donhang>> GetAllOrdersAsync();
-        Task<List<Donhang>> GetOrdersByStatusAsync(string status);
-        Task<bool> UpdateOrderStatusAsync(string id, string newStatus);
+        Task<List<Donhang>> GetOrdersByStatusAsync(TrangThai? status);
+        Task<bool> UpdateOrderStatusAsync(string id, TrangThai newStatus);
+        Task<bool> CancelOrderAsync(string orderId);
 
     }
 }

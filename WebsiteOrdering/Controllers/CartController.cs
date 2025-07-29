@@ -169,12 +169,29 @@ namespace WebsiteOrdering.Controllers
         public async Task< IActionResult >Index()
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
+            foreach (var item in cart)
+            {
+                if (!string.IsNullOrEmpty(item.IDMMONAN2))
+                {
+                    var monan2 = await _appDbContext.SanPhams
+                        .Where(p => p.Idmonan == item.IDMMONAN2)
+                        .Select(p => new { p.Tenmonan, p.Anhmonan })
+                        .FirstOrDefaultAsync();
+
+                    if (monan2 != null)
+                    {
+                        item.TENSANPHAM2 = monan2.Tenmonan;
+                        item.ANHSANPHAM2 = monan2.Anhmonan;
+                    }
+                }
+            }
             var model = new CartPageViewModel
             {
                 CartItems = cart,
                 UserInfo = new UserCheckoutInfoViewModel()
 
             };
+            model.UserInfo.PaymentInfo = "COD";
             await _accountRepository.FillUserInfoIfAuthenticated(model.UserInfo, User);
             // Lấy địa chỉ từ session
             if (HttpContext.Session.TryGetValue("UserAddress", out var addrBytes))

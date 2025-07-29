@@ -10,6 +10,7 @@ namespace WebsiteOrdering.ViewModels
         public string ANHSANPHAM { get; set; }
         public string? IDMMONAN2 { get; set; }
         public string? TENSANPHAM2 { get; set; }
+        public string? ANHSANPHAM2 { get; set; }
         public string? Size { get; set; }
         public string? DeBanh { get; set; }
         public string? GhiChu { get; set; }
@@ -86,7 +87,14 @@ namespace WebsiteOrdering.ViewModels
             }
 
         }
-
+        public decimal DonGia
+        {
+            get
+            {
+                decimal tongTopping = Topping?.Sum(t => t.Giatopping) ?? 0;
+                return GiaCoBan + (GiaSize ?? 0) + (GiaDeBanh ?? 0) + tongTopping;
+            }
+        }
 
     }
 

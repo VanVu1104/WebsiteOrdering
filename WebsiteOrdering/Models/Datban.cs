@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using WebsiteOrdering.Enums;
 
 namespace WebsiteOrdering.Models
 {
@@ -17,7 +18,7 @@ namespace WebsiteOrdering.Models
 
         public string? Ghichu { get; set; }
 
-        public string Trangthaidatban { get; set; } = null!;
+        public TrangThai Trangthaidatban { get; set; }
         [Column("IDNGDUNG")]
         public string? Idngdung { get; set; }
         public string? Tenngdat {  get; set; }

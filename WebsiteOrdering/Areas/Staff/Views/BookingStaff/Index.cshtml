@@ -1,4 +1,5 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +10,7 @@
     Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
     var now = TimeOnly.FromDateTime(DateTime.Now);
     var today = DateOnly.FromDateTime(DateTime.Now);
+
 
 }
 
@@ -90,14 +92,17 @@
         Tất cả đơn hàng
     </a>
 
-    <a href="@buildUrl("Chờ xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Chờ xác nhận" ? "btn-primary" : "btn-outline-primary")">
+    <a href="@buildUrl("Chờ xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Chờ xác nhận" ? "btn-warning" : "btn-outline-warning")">
         Chờ xác nhận (@ViewBag.CountChoXacNhan)
     </a>
-    <a href="@buildUrl("Đã xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Đã xác nhận" ? "btn-success" : "btn-outline-success")">
+    <a href="@buildUrl("Đã xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Đã xác nhận" ? "btn-primary" : "btn-outline-primary")">
         Đã xác nhận (@ViewBag.CountDaXacNhan)
     </a>
     <a href="@buildUrl("Đã hủy")" class="btn @(ViewBag.SelectedTrangThai == "Đã hủy" ? "btn-danger" : "btn-outline-danger")">
         Đã hủy (@ViewBag.CountDaHuy)
+    </a>
+    <a href="@buildUrl("Hoàn thành")" class="btn @(ViewBag.SelectedTrangThai == "Hoàn thành" ? "btn-success" : "btn-outline-success")">
+        Hoàn thành (@ViewBag.CountHoanThanh)
     </a>
 </div>
 
@@ -155,14 +160,15 @@
                 <td>@ct?.IdbanNavigation?.Khuvuc</td>
                 <td>@ct?.IdbanNavigation?.Tenban</td>
                 <td>
-                    <span class="badge @(d.Trangthaidatban == "Chờ xác nhận" ? "bg-warning" :
-                                         d.Trangthaidatban == "Đã xác nhận" ? "bg-success" :
-                                         d.Trangthaidatban == "Đã hủy" ? "bg-danger" : "bg-secondary")">
+                    <span class="badge @(d.Trangthaidatban == TrangThai.Pending ? "bg-warning" :
+                                         d.Trangthaidatban == TrangThai.Confirmed ? "bg-primary" :
+                                         d.Trangthaidatban == TrangThai.Cancelled ? "bg-danger" :
+                                          d.Trangthaidatban == TrangThai.Completed ? "bg-success" : "bg-secondary")">
                         @d.Trangthaidatban
                     </span>
                 </td>
                 <td style="white-space: nowrap;">
-                    @if (d.Trangthaidatban == "Chờ xác nhận")
+                    @if (d.Trangthaidatban == TrangThai.Pending)
                     {
                         <form method="post" asp-action="XacNhanDatBan" asp-route-id="@d.Iddatban" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận đặt bàn này?')">
@@ -172,7 +178,7 @@
                             Hủy
                         </button>
                     }
-                    else if (d.Trangthaidatban == "Đã xác nhận")
+                    else if (d.Trangthaidatban == TrangThai.Confirmed)
                     {
 
                         var isToday = d.Ngaydat == today;
@@ -206,11 +212,17 @@
                             Cập nhật
                         </button>
                     }
-                   
+                    <form asp-action="DetailDonDatBan" asp-area="Staff" asp-controller="BookingStaff">
+                        <input type="hidden" name="id" value="@d.Iddatban" />
+                        <button type="submit" class="btn btn-info text-white rounded-pill">
+                            <i class="bi bi-search"></i> Chi tiết
+                        </button>
+                    </form>
+
 
                 </td>
                 <td>
-                    @(d.Trangthaidatban == "Đã hủy" ? d.Lydo : "")
+                    @(d.Trangthaidatban == TrangThai.Cancelled ? d.Lydo : "")
                 </td>
 
             </tr>
@@ -281,20 +293,20 @@
     </div>
 
 
-<div id="editForm-@d.Iddatban" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
-    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; width:600px; max-width:95%;">
-        <div style="border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
-            <h5 style="margin:0;">Cập nhật đặt bàn - Mã: @d.Iddatban</h5>
-            <button type="button" style="float:right; margin-top:-30px; border:none; background:none; font-size:20px; cursor:pointer;" onclick="closeEditForm('@d.Iddatban')">&times;</button>
-        </div>
-        <form asp-action="EditDatBan" method="post">
-            <input type="hidden" name="Iddatban" value="@d.Iddatban" />
-            <div class="form-group">
-                <label>Chi nhánh</label>
-                <input type="text" value="@d.IdchinhanhNavigation.Tencnhanh" class="form-control" readonly />
+    <div id="editForm-@d.Iddatban" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:8px; width:600px; max-width:95%;">
+            <div style="border-bottom:1px solid #ddd; padding-bottom:10px; margin-bottom:15px;">
+                <h5 style="margin:0;">Cập nhật đặt bàn - Mã: @d.Iddatban</h5>
+                <button type="button" style="float:right; margin-top:-30px; border:none; background:none; font-size:20px; cursor:pointer;" onclick="closeEditForm('@d.Iddatban')">&times;</button>
             </div>
-            <div class="form-group">
-                <label>Bàn</label>
+            <form asp-action="EditDatBan" method="post">
+                <input type="hidden" name="Iddatban" value="@d.Iddatban" />
+                <div class="form-group">
+                    <label>Chi nhánh</label>
+                    <input type="text" value="@d.IdchinhanhNavigation.Tencnhanh" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label>Bàn</label>
                     @if (ViewBag.BanList != null && ViewBag.BanList.Count > 0)
                     {
                         var currentBanId = d.Chitietdatbans.FirstOrDefault()?.Idban ?? "";
@@ -317,20 +329,20 @@
                     }
 
 
-            </div>
+                </div>
                 <div class="form-group">
                     <label>Giờ bắt đầu</label>
                     <select name="Giobatdau" id="giobatdau-@d.Iddatban" class="form-control"
                             data-default="@d.Giobatdau.ToString("HH\\:mm")" required></select>
 
-                </div>  
-            <div style="margin-top:20px; text-align:right;">
-                <button type="button" class="btn btn-secondary" onclick="closeEditForm('@d.Iddatban')">Đóng</button>
-                <button type="submit" class="btn btn-primary">Lưu cập nhật</button>
-            </div>
-        </form>
+                </div>
+                <div style="margin-top:20px; text-align:right;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditForm('@d.Iddatban')">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu cập nhật</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
 }
 

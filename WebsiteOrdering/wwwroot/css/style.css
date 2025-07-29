@@ -122,6 +122,222 @@ header {
         color: var(--green-color);
     }
 
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--yellow-color);
+    font-family: 'Mestika';
+}
+
+    .user-toggle .arrow {
+        margin-left: 6px;
+        font-size: 12px;
+    }
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: max-content; /* 👈 Chiều rộng theo nội dung */
+    min-width: 100%; /* 👈 Không nhỏ hơn button cha */
+    white-space: nowrap; /* 👈 Không xuống dòng */
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+    .user-dropdown a,
+    .user-dropdown button {
+        display: block;
+        width: 100%;
+        padding: 10px 16px;
+        text-align: left;
+        border: none;
+        background: none;
+        font-size: 16px;
+        color: var(--green-color);
+        cursor: pointer;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        font-family: 'Mestika';
+        letter-spacing: 1px;
+        font-weight: bold;
+    }
+
+        .user-dropdown a:hover,
+        .user-dropdown button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .user-dropdown a.active {
+            font-weight: bold;
+            background-color: #e5e5e5 ActiveBorder;
+            color: var(--green-color);
+        }
+
+.user-menu:hover .user-dropdown {
+    display: block;
+}
+
+.logout-form {
+    margin: 0;
+    padding: 0;
+}
+
+.icon-user {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    display: none;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .header-inner {
+        width: 100%;
+        flex-direction: row;
+        padding: 0;
+        justify-content: space-between;
+    }
+
+    .restaurant-logo {
+        position: static;
+        transform: none;
+        margin-left: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .restaurant-logo img {
+            height: 72px;
+        }
+
+    .image-button {
+        width: 120px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .menu-toggle {
+        margin: 12px 0;
+    }
+
+    .user-toggle {
+        font-size: 18px;
+    }
+
+    .user-dropdown {
+        right: 0;
+        min-width: 140px;
+        padding: 8px 0;
+    }
+
+        .user-dropdown a,
+        .user-dropdown button {
+            font-size: 15px;
+            padding: 8px 14px;
+        }
+
+    .icon-user {
+        display: inline
+    }
+
+    .user-text {
+        display: none;
+    }
+
+    .arrow {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .restaurant-logo img {
+        height: 68px;
+    }
+
+    .image-button {
+        width: 100px;
+        height: 36px;
+        font-size: 12px;
+        background-size: contain;
+        padding: 0;
+        line-height: normal;
+    }
+
+    .menu-toggle {
+        width: 30px;
+        height: 24px;
+    }
+
+        .menu-toggle span:nth-child(1),
+        .menu-toggle span:nth-child(2) {
+            width: 24px;
+        }
+
+        .menu-toggle span:nth-child(3) {
+            width: 12px;
+        }
+
+        .menu-toggle:hover span:nth-child(1),
+        .menu-toggle:hover span:nth-child(2) {
+            width: 12px;
+        }
+
+        .menu-toggle:hover span:nth-child(3) {
+            width: 24px;
+        }
+
+    .user-menu {
+        display: block;
+        width: 100%;
+        text-align: right;
+    }
+
+    .user-toggle {
+        font-size: 16px;
+        padding: 10px 12px;
+    }
+
+    .user-dropdown {
+        position: absolute;
+        right: 12px;
+        top: 100%;
+        min-width: 160px;
+        padding: 8px 0;
+    }
+
+        .user-dropdown a,
+        .user-dropdown button {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+    .user-text {
+        display: none;
+    }
+
+    .arrow {
+        display: none;
+    }
+
+    .icon-user {
+        width: 22px;
+        height: 22px;
+        margin-right: 0;
+        display: inline;
+    }
+}
+
 /*=================================================================================================================================
                                                                     MENU
 =================================================================================================================================*/
@@ -169,7 +385,7 @@ header {
     margin-bottom: 20px;
     font-size: 45px;
     text-transform: uppercase;
-    font-family: "1FTV Cakelan";
+    font-family: "Cakelan";
     transition: all 0.4s ease;
 }
 
@@ -189,18 +405,35 @@ header {
         text-decoration: none;
     }
 
-.menu-bg {
+
+.menu-bg-wrapper {
     width: 50%;
     height: 100%;
-    object-fit: cover;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat; /* Không lặp ảnh */
-    background-origin: content-box; /* Giới hạn ảnh trong box */
-    background-clip: content-box;
-    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
 }
 
+.menu-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.6s ease;
+    will-change: opacity;
+    z-index: 1;
+}
+
+#menuBgCurrent {
+    opacity: 1;
+    z-index: 1;
+}
+
+#menuBgNext {
+    opacity: 0;
+    z-index: 2;
+}
 /* Nút đóng Menu */
 .close-menu {
     position: absolute;
@@ -219,6 +452,143 @@ header {
         transition: transform 0.2s ease;
     }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+    body.no-scroll {
+        overflow: hidden;
+        height: 100dvh; /* chặn cuộn nội dung trong body */
+    }
+
+    .side-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        background-color: var(--green-color);
+        transform: translateX(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.6s ease, opacity 0.4s ease;
+    }
+
+        .side-menu.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .side-menu * {
+            overscroll-behavior: none;
+            touch-action: none;
+        }
+
+    .menu-bg-wrapper {
+        width: 100%;
+        height: 50vh;
+    }
+
+    .side-menu ul {
+        width: 100%;
+        padding: 40px;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .menu-item {
+        font-size: 32px;
+    }
+
+        .menu-item:hover {
+            font-size: 36px;
+        }
+
+        .menu-item.active {
+            font-size: 32px;
+        }
+
+    .close-menu {
+        top: 20px;
+        right: 20px;
+    }
+
+    /* ✅ Tự động đổi ảnh nút close thành màu trắng */
+    .side-menu.active .close-menu img {
+        content: url("/images/menu/close_white.png");
+    }
+}
+
+@media (max-width: 768px) {
+    body.no-scroll {
+        overflow: hidden;
+        height: 100dvh; /* chặn cuộn nội dung trong body */
+    }
+
+    .side-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        background-color: var(--green-color);
+        transform: translateX(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.6s ease, opacity 0.4s ease;
+    }
+
+        .side-menu.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .side-menu * {
+            overscroll-behavior: none;
+            touch-action: none;
+        }
+
+    .menu-bg-wrapper {
+        width: 100%;
+        height: 50vh;
+    }
+
+    .side-menu ul {
+        width: 100%;
+        padding: 40px;
+        gap: 30px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .menu-item {
+        font-size: 32px;
+    }
+
+        .menu-item:hover {
+            font-size: 36px;
+        }
+
+        .menu-item.active {
+            font-size: 32px;
+        }
+
+    .close-menu {
+        top: 20px;
+        right: 20px;
+    }
+
+    /* ✅ Tự động đổi ảnh nút close thành màu trắng */
+    .side-menu.active .close-menu img {
+        content: url("/images/menu/close_white.png");
+    }
+}
 /* ---------------------------------------------------------FOOTER------------------------------------------- */
 .footer-section {
     grid-column: 1 / span 14;
@@ -265,7 +635,7 @@ header {
 
     .footer-links a {
         font-size: 18px;
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         color: var(--beige-color) !important;
         letter-spacing: 2.7px;
     }
@@ -279,7 +649,7 @@ header {
 
     .footer-details h3 {
         font-size: 18px;
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         color: var(--beige-color) !important;
         letter-spacing: 2.7px;
     }
@@ -287,7 +657,7 @@ header {
     .footer-details li {
         list-style-type: none;
         font-size: 18px;
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         color: var(--beige-color) !important;
         letter-spacing: 2.7px;
     }
@@ -310,7 +680,7 @@ header {
 }
 
     .footer-social-media a {
-        font-family: '1FTV VIP Mestika';
+        font-family: 'Mestika';
         font-size: 18px;
         color: var(--beige-color) !important;
         letter-spacing: 2.7px;
@@ -341,7 +711,7 @@ header {
 
     .bottom-footer a {
         height: fit-content;
-        font-family: "1FTV VIP Mestika";
+        font-family: "Mestika";
         font-size: 18px;
         color: var(--beige-color) !important;
         text-transform: capitalize;
@@ -361,7 +731,7 @@ header {
         align-self: center;
         margin: 0;
         padding: 0;
-        font-family: "1FTV VIP Mestika";
+        font-family: "Mestika";
         font-size: 18px;
         color: var(--beige-color) !important;
         text-transform: none !important;
@@ -416,7 +786,7 @@ header {
     }
 
     .video-text h2 {
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         font-size: 46px;
         margin: 0;
     }
@@ -434,7 +804,7 @@ header {
 
 .btn-book-now {
     text-decoration: none;
-    font-family: '1FTV Cakelan';
+    font-family: 'Cakelan';
     font-size: 18px;
     align-items: center;
     justify-content: center;
@@ -481,13 +851,13 @@ header {
 
     .intro-section h1,
     .intro-section h2 {
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         color: var(--yellow-color);
     }
 
     .intro-section p {
         color: #E0D4BB !important;
-        font-family: '1FTV VIP Mestika';
+        font-family: 'Mestika';
         font-size: 18px;
         opacity: 0;
         transform: translateY(20px);
@@ -563,7 +933,7 @@ header {
     display: inline-block;
     text-decoration: none;
     color: var(--yellow-color) !important;
-    font-family: "1FTV Cakelan" !important;
+    font-family: "Cakelan" !important;
     font-size: 20px;
     opacity: 0;
     animation: fadeSlideUp 0.6s ease-out forwards;
@@ -715,7 +1085,7 @@ header {
 }
 
 .quote-text {
-    font-family: '1FTV VIP Mestika';
+    font-family: 'Mestika';
     font-size: 32px;
     color: var(--green-color);
     margin: 0;
@@ -752,7 +1122,7 @@ header {
     .award-text a {
         font-size: 32px;
         font-weight: 600;
-        font-family: '1FTV Cakelan';
+        font-family: 'Cakelan';
         display: inline-block;
         color: var(--green-color);
     }
@@ -903,7 +1273,7 @@ header {
     color: #fff;
     text-shadow: 0 0 5px #eedfad, 0 0 10px #eedfad;
     -webkit-text-stroke: 0.3px #fff;
-    font-family: '1FTV Cakelan', sans-serif;
+    font-family: 'Cakelan', sans-serif;
     font-size: 64px;
     font-weight: 400;
 }
@@ -955,7 +1325,7 @@ header {
 
     .left-paragraph a {
         font-size: 20px;
-        font-family: '1FTV VIP Mestika';
+        font-family: 'Mestika';
         font-style: italic;
         margin: 0;
         padding: 0;
@@ -964,7 +1334,7 @@ header {
     .left-paragraph p {
         color: #E0D4BB;
         font-size: 18px;
-        font-family: '1FTV VIP Mestika';
+        font-family: 'Mestika';
         margin: 0;
         padding: 0;
         line-height: 1.9;
@@ -978,7 +1348,7 @@ header {
 
     .right-paragraph h2 {
         font-size: 36px;
-        font-family: '1FTV VIP Mestika';
+        font-family: 'Mestika';
         color: #E0D4BB;
         line-height: 1.9;
         margin: 0;
@@ -2031,6 +2401,125 @@ header {
     }
 }
 
+/*=================================================================================================================================
+                                                                    LOCATION
+=================================================================================================================================*/
+
+.order-type-container {
+    grid-column: 1 / span 14;
+    width: 99vw;
+    height: 740px;
+    margin-left: -124px;
+    background: linear-gradient(0deg, rgba(32, 63, 37, 0.25) 0%, rgba(32, 63, 37, 0.25) 100%), url("/images/location/select_order.png") center center / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+.options-wrapper {
+    grid-column: 3 / span 10;
+    width: 1043px;
+    height: 463px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    background-color: var(--green-color);
+    border-radius: 1rem;
+}
+
+    .options-wrapper h1 {
+        color: var(--Yellow, #E0B37F);
+        text-align: center;
+        -webkit-text-stroke-width: 0.5px;
+        -webkit-text-stroke-color: var(--Yellow, #E0B37F);
+        font-family: "Cakelan";
+        font-size: 36px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 25px;
+        letter-spacing: 1.8px;
+    }
+
+    .options-wrapper h2 {
+        text-align: center;
+        font-family: "Mestika";
+        font-size: 24px;
+        color: #fffff7;
+        font-weight: 400;
+        line-height: 25px;
+        letter-spacing: 1.8px;
+    }
+
+.order-option {
+    display: flex;
+    gap: 50px;
+    width: 886px;
+    height: 261px;
+    align-self: center;
+}
+
+    .order-option a {
+        text-decoration: none !important;
+    }
+
+.order-type-btn {
+    display: flex;
+    width: 418px;
+    height: 261px;
+    padding: 30px 96px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    border: 1px solid var(--yellow-color);
+    transition: all 0.3s ease-in-out;
+}
+
+    .order-type-btn span {
+        font-family: 'Mestika';
+        font-size: 24px;
+        color: var(--yellow-color);
+    }
+
+.order-type-icon {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    background-position: center;
+    transition: transform 0.3s ease;
+}
+
+.order-type-btn {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    color: var(--yellow-color); /* Màu chữ mặc định */
+    transition: color 0.4s ease;
+}
+
+.order-type-btn {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Chuyển động mượt mà hơn */
+}
+
+    .order-type-btn:hover {
+        transform: scale(1.03); /* Phóng to nhẹ */
+        box-shadow: 0 0 10px var(--yellow-color); /* Hiệu ứng tỏa sáng */
+        /*box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.1);*/ /* Bóng đổ sâu hơn */
+        border-color: var(--yellow-color);
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+        .order-type-btn:hover span {
+            color: var(--yellow-color); /* Giữ màu chữ hoặc làm đậm */
+        }
+
 /*GIỚI THIỆU*/
 
 /* Giới thiệu - Banner */
@@ -2102,7 +2591,7 @@ header {
     }
 
     .celeste-text p {
-        font-family: '1FTV VIP Mestika', serif;
+        font-family: 'Mestika', serif;
         font-size: 20px;
         line-height: 1.6;
         color: #EEDFAD;
@@ -2135,7 +2624,7 @@ header {
     height: 500px;
     object-fit: cover;
     position: relative;
-    top: 140px; 
+    top: 140px;
     z-index: 2;
 }
 
@@ -2145,7 +2634,7 @@ header {
     height: 500px;
     object-fit: cover;
     position: relative;
-    top: 60px; 
+    top: 60px;
     z-index: 1;
 }
 
@@ -2193,7 +2682,7 @@ header {
 .story-text {
     font-size: 20px;
     line-height: 1.6;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     padding: 0 15px;
     color: #EEDFAD;
     letter-spacing: 3px;
@@ -2202,15 +2691,15 @@ header {
 .story-line-bottom {
     width: 120px; /* hoặc 60%, tùy thiết kế */
     height: 1px;
-    background-color: white; 
-    margin: 55px auto 0; 
+    background-color: white;
+    margin: 55px auto 0;
 }
 
 /*Giới thiệu - Lịch sử hình thành*/
 .history-section {
     color: #eedfad;
     padding: 0 0 60px 0;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     text-align: center;
 }
 
@@ -2349,7 +2838,7 @@ header {
     max-width: 800px;
     margin: 50px auto;
     line-height: 1.6;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 .team-grid {
@@ -2398,7 +2887,7 @@ header {
     font-size: 20px;
     line-height: 1.6;
     text-align: center;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 .image-container-team:hover .team-overlay {
@@ -2426,7 +2915,7 @@ header {
     align-items: center;
     justify-content: center;
     color: white;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 .quote-overlay {
@@ -2505,7 +2994,7 @@ header {
         z-index: 1;
     }
 
-/* Lớp phủ mờ đen */
+    /* Lớp phủ mờ đen */
     .center-border-circle-premium .overlay-premium {
         position: absolute;
         width: 450px;
@@ -2551,7 +3040,7 @@ header {
     width: 335px;
     font-size: 20px;
     line-height: 1.8;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
     .text-block-premium h3 {
@@ -2776,13 +3265,13 @@ header {
         margin: 0 auto;
     }
 
-    .center-border-circle-premium img,
-    .center-border-circle-premium .overlay-premium {
-        width: 320px;
-        height: 320px;
-        object-fit: cover;
-        border-radius: 50%;
-    }
+        .center-border-circle-premium img,
+        .center-border-circle-premium .overlay-premium {
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
 
     .center-text-premium {
         position: absolute;
@@ -2830,11 +3319,11 @@ header {
         margin: auto;
     }
 
-    .quote-content p {
-        font-size: 22px;
-        line-height: 1.6;
-        letter-spacing: 2px;
-    }
+        .quote-content p {
+            font-size: 22px;
+            line-height: 1.6;
+            letter-spacing: 2px;
+        }
 
     .quote-icon.left,
     .quote-icon.right {
@@ -2847,10 +3336,10 @@ header {
         height: auto;
     }
 
-    .banner-gt h1 {
-        font-size: 32px;
-        padding: 20px;
-    }
+        .banner-gt h1 {
+            font-size: 32px;
+            padding: 20px;
+        }
 
     .celeste-text h2 {
         font-size: 30px;
@@ -2872,7 +3361,7 @@ header {
     .history-title,
     .team-section h2,
     .center-text-premium,
-    .title-text p{
+    .title-text p {
         font-size: 26px;
     }
 
@@ -2899,12 +3388,12 @@ header {
         font-size: 64px;
     }
 
-    .quote-icon.left,
-    .quote-icon.right {
-        position: static;
-        display: block;
-        margin: 10px auto;
-    }
+        .quote-icon.left,
+        .quote-icon.right {
+            position: static;
+            display: block;
+            margin: 10px auto;
+        }
 
     .premium-identity-section {
         padding: 40px 10px;
@@ -2931,11 +3420,11 @@ header {
         max-width: 95%;
     }
 
-    .quote-content p {
-        font-size: 18px;
-        line-height: 1.5;
-        letter-spacing: 1.5px;
-    }
+        .quote-content p {
+            font-size: 18px;
+            line-height: 1.5;
+            letter-spacing: 1.5px;
+        }
 
     .quote-icon {
         font-size: 48px;
@@ -3006,11 +3495,11 @@ header {
         padding: 10px 15px;
     }
 
-    .quote-content p {
-        font-size: 16px;
-        line-height: 1.4;
-        letter-spacing: 1px;
-    }
+        .quote-content p {
+            font-size: 16px;
+            line-height: 1.4;
+            letter-spacing: 1px;
+        }
 }
 
 .history-scroll-container {
@@ -3095,7 +3584,7 @@ header {
     margin: 0;
     letter-spacing: 1px;
     color: #EEDFAD;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     margin-top: 24px;
 }
 
@@ -3154,7 +3643,7 @@ header {
     white-space: nowrap;
 }
 
-    .ribbon-item img{
+    .ribbon-item img {
         height: 100px;
         margin-right: 20px;
     }
@@ -3165,13 +3654,13 @@ header {
     }
 
     .ribbon-item span {
-        font-family: '1FTV Cakelan', serif;
+        font-family: 'Cakelan', serif;
         font-size: 1.8rem;
         color: #1e2b22;
     }
 
     .ribbon-item-1 span {
-        font-family: '1FTV Cakelan', serif;
+        font-family: 'Cakelan', serif;
         font-size: 1.8rem;
         color: #1e2b22;
     }
@@ -3585,6 +4074,7 @@ header {
     overflow-y: auto;
     padding-right: 16px; /* chống tràn thanh scroll ra ngoài */
 }
+
     .product-col-left::-webkit-scrollbar {
         width: 8px;
     }
@@ -3593,6 +4083,7 @@ header {
         background-color: rgba(224, 179, 127, 0.5);
         border-radius: 4px;
     }
+
 .product-col-right {
     flex: 1;
 }
@@ -3626,7 +4117,7 @@ header {
 .product-empty {
     text-align: center;
     margin-top: 40px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     color: #E0B37F;
 }
 
@@ -3734,7 +4225,7 @@ header {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     min-height: fit-content;
     max-height: max-content;
     overflow: hidden;
@@ -3755,7 +4246,7 @@ header {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     min-height: fit-content;
     max-height: max-content;
     overflow: hidden;
@@ -3778,7 +4269,7 @@ header {
     transition: all 0.3s ease;
     min-height: 44px;
     width: 171px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 .product-card:hover .buy-button {
@@ -3818,15 +4309,15 @@ header {
 /* Hộp giỏ hàng chính */
 .cart-box {
     position: relative;
-/*    border: 1px solid #E0B37F;
-*/  
+    /*    border: 1px solid #E0B37F;
+*/
     background-color: #203f25;
     color: #E0B37F;
     font-family: 'Cakelan', serif;
     text-align: center;
     display: flex;
     flex-direction: column;
-    max-height: 100vh; 
+    max-height: 100vh;
 }
 
 .cart-title {
@@ -3847,60 +4338,60 @@ header {
 .cart-empty {
     background-color: #203f25;
     color: #EEDFAD;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     text-align: center;
     padding: 40px 20px;
     border: none;
 }
 
-/* Icon */
-.cart-empty .cart-icon img {
-    width: 60px;
-    height: auto;
-    margin-bottom: 20px;
-    filter: brightness(0) saturate(100%) invert(79%) sepia(28%) saturate(432%) hue-rotate(6deg) brightness(96%) contrast(89%);
-}
+    /* Icon */
+    .cart-empty .cart-icon img {
+        width: 60px;
+        height: auto;
+        margin-bottom: 20px;
+        filter: brightness(0) saturate(100%) invert(79%) sepia(28%) saturate(432%) hue-rotate(6deg) brightness(96%) contrast(89%);
+    }
 
-/* Dòng chữ thông báo */
+    /* Dòng chữ thông báo */
     .cart-empty p {
         font-size: 20px;
         margin-bottom: 30px;
         color: #EEDFAD;
     }
 
-/* === NÚT "Hãy bắt đầu chọn món" với khung viền ornate giống hình ảnh === */
-.cart-empty .view-cart-btn {
-    position: relative;
-    display: inline-block;
-    padding: 12px 60px;
-    background-color: #203f25;
-    color: #d4af37;
-    font-family: 'Cakelan', serif;
-    font-size: 18px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1;
-    letter-spacing: 0.3px;
-    line-height: 1.2;
-    border-radius: 0;
-    transition: all 0.3s ease;
-}
-
-    .cart-empty .view-cart-btn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,32 C0,14.3 14.3,0 32,0 H480 C497.7,0 512,14.3 512,32 C512,49.7 497.7,64 480,64 H32 C14.3,64 0,49.7 0,32 Z M1,32 C1,48.57 15.43,63 32,63 H480 C496.57,63 511,48.57 511,32 C511,15.43 496.57,1 480,1 H32 C15.43,1 1,15.43 1,32 Z' fill='none' stroke='%23d4af37' stroke-width='1.2'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
-        pointer-events: none;
+    /* === NÚT "Hãy bắt đầu chọn món" với khung viền ornate giống hình ảnh === */
+    .cart-empty .view-cart-btn {
+        position: relative;
+        display: inline-block;
+        padding: 12px 60px;
+        background-color: #203f25;
+        color: #d4af37;
+        font-family: 'Cakelan', serif;
+        font-size: 18px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        z-index: 1;
+        letter-spacing: 0.3px;
+        line-height: 1.2;
+        border-radius: 0;
+        transition: all 0.3s ease;
     }
 
-/* Hover effect */
-.cart-empty .view-cart-btn:hover {
-    background-color: #d4af37;
-    color: #203f25;
-}
+        .cart-empty .view-cart-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,32 C0,14.3 14.3,0 32,0 H480 C497.7,0 512,14.3 512,32 C512,49.7 497.7,64 480,64 H32 C14.3,64 0,49.7 0,32 Z M1,32 C1,48.57 15.43,63 32,63 H480 C496.57,63 511,48.57 511,32 C511,15.43 496.57,1 480,1 H32 C15.43,1 1,15.43 1,32 Z' fill='none' stroke='%23d4af37' stroke-width='1.2'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+            pointer-events: none;
+        }
+
+        /* Hover effect */
+        .cart-empty .view-cart-btn:hover {
+            background-color: #d4af37;
+            color: #203f25;
+        }
 
 /* Nút xem chi tiết (bên ngoài cart-empty, giữ nguyên để không ảnh hưởng) */
 .view-cart-btn {
@@ -3914,10 +4405,10 @@ header {
     font-family: 'Georgia', serif;
 }
 
-.view-cart-btn:hover {
-    background-color: #d4af37;
-    color: #10392D;
-}
+    .view-cart-btn:hover {
+        background-color: #d4af37;
+        color: #10392D;
+    }
 
 .svg-button {
     position: relative;
@@ -3941,7 +4432,7 @@ header {
         left: 50%;
         width: 330px;
         transform: translate(-50%, -50%);
-        font-family: '1FTV VIP Mestika', serif;
+        font-family: 'Mestika', serif;
         font-size: 20px;
         color: #E0B37F;
         pointer-events: none;
@@ -3965,7 +4456,7 @@ header {
 .cart-summary .summary-row {
     background-color: #203F25;
     padding: 10px 0px 50px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 20px;
     display: flex;
     justify-content: space-between;
@@ -4035,7 +4526,7 @@ header {
     .styled-cart-item .item-price {
         font-size: 18px;
         color: #EEDFAD;
-        font-family: '1FTV VIP Mestika', serif;
+        font-family: 'Mestika', serif;
         margin-bottom: 0;
         font-weight: 600;
     }
@@ -4094,35 +4585,35 @@ header {
     margin-top: 4px;
 }
 
-    /* Nút SVG hình thoi */
-    .styled-cart-item .qty-btn-custom {
-        background: transparent;
-        border: none;
-        padding: 0;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+/* Nút SVG hình thoi */
+.styled-cart-item .qty-btn-custom {
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .styled-cart-item .qty-btn-custom img {
+        width: 100%;
+        height: auto;
+        display: block;
     }
 
-        .styled-cart-item .qty-btn-custom img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-    /* Ô input số có gạch dưới */
+/* Ô input số có gạch dưới */
 .styled-cart-item .qty-input-wrapper {
     border-bottom: 1px solid #cccccc;
     padding-bottom: 3px;
-/*    min-width: 20px;
-*/  width: fit-content;
+    /*    min-width: 20px;
+*/ width: fit-content;
     display: flex;
     justify-content: center;
 }
 
-    /* Input readonly số lượng */
+/* Input readonly số lượng */
 .styled-cart-item .qty-input-custom {
     background: transparent;
     border: none;
@@ -4161,6 +4652,30 @@ header {
     /* ✅ Đảm bảo không bị tràn hoặc clip layout */
     display: flex;
     justify-content: center;
+}
+
+.edit-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: 300;
+    font-family: 'SVN-Castellar', serif;
+    color: #EEDFAD;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+    .edit-button:hover {
+        text-decoration: underline;
+    }
+
+    .edit-button:focus {
+        outline: none;
+    }
+
+.edit-form {
+    display: inline;
 }
 
 /*---------------------------------------------CHI TIẾT MÓN ĂN-------------------------------------------------*/
@@ -4251,7 +4766,7 @@ header {
 }
 
     .product-detail-btn-group .btn {
-        font-family: '1FTV Cakelan', serif;
+        font-family: 'Cakelan', serif;
         font-size: 24px;
         padding: 12px 32px;
         background: transparent;
@@ -4287,7 +4802,7 @@ header {
 /* =============== TIÊU ĐỀ PHẦN FORM =============== */
 .form-title {
     font-size: 24px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     color: white;
     background-color: #1f3a25;
     padding: 8px 16px;
@@ -4311,7 +4826,7 @@ input[type="checkbox"] {
     input[type="checkbox"] + label {
         position: relative;
         padding-left: 28px;
-        font-family: '1FTV VIP Mestika', serif;
+        font-family: 'Mestika', serif;
         font-size: 18px;
         color: #1e2e21;
         cursor: pointer;
@@ -4348,7 +4863,7 @@ input[type="checkbox"] {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: 90px;
+    gap: 55px;
     padding: 0px 16px;
 }
 
@@ -4362,7 +4877,7 @@ input[type="checkbox"] {
     width: 100%;
     border: 1px solid #1f3a25;
     padding: 10px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 14px;
     resize: none;
 }
@@ -4431,7 +4946,7 @@ input[type="checkbox"] {
     margin: 20px 0 50px 0;
 }
 
-.product-detail-info-container{
+.product-detail-info-container {
     margin: 20px 50px;
 }
 
@@ -4451,18 +4966,18 @@ input[type="checkbox"] {
 }
 
 .product-action-row {
-    width:fit-content;
+    width: fit-content;
     display: flex;
     align-items: center;
     gap: 150px;
-    justify-self:center;
+    justify-self: center;
 }
 
 #ghichu {
     border-radius: 2px;
     padding: 8px 12px;
     font-size: 16px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 .add-to-cart-container {
@@ -4506,7 +5021,7 @@ input[type="checkbox"] {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 20px;
     font-weight: bold;
     color: #E0B37F;
@@ -4520,7 +5035,7 @@ input[type="checkbox"] {
     font-size: 18px;
     font-weight: bold;
     color: inherit;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
 }
 
 /* Hiệu ứng hover */
@@ -4546,7 +5061,7 @@ input[type="checkbox"] {
 }
 
     .half-select label {
-        font-family: '1FTV VIP Mestika', serif;
+        font-family: 'Mestika', serif;
         font-size: 16px;
         color: #1c301d;
         margin-bottom: 4px;
@@ -4594,7 +5109,7 @@ input[type="checkbox"] {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 20px;
     text-decoration: none;
     border: none;
@@ -4611,15 +5126,19 @@ input[type="checkbox"] {
     color: #E0B37F;
 }
 
-.back-to-menu:hover {
-    opacity: 0.7;
+.back-to-menu-daydu:hover {
+    color: #152B18;
+}
+
+.back-to-menu-monphu:hover {
+    color: white;
 }
 
 .form-group-note-phu textarea {
     width: 100%;
     background: transparent;
     color: #E0B37F;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 16px;
     padding: 8px 12px;
     border: 1px solid #E0B37F;
@@ -4628,7 +5147,7 @@ input[type="checkbox"] {
 
 .form-title-note-phu {
     color: white;
-    font-family: '1FTV VIP Mestika', serif;
+    font-family: 'Mestika', serif;
     font-size: 20px;
     margin-bottom: 28px;
 }
@@ -4642,45 +5161,880 @@ input[type="checkbox"] {
     margin-top: 4px;
 }
 
-/* Nút SVG hình thoi */
-.product-detail-quantity .product-detail-quantity-btn {
-    background: transparent;
-    border: none;
-    padding: 0;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* Nút SVG hình thoi */
+    .product-detail-quantity .product-detail-quantity-btn {
+        background: transparent;
+        border: none;
+        padding: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .product-detail-quantity .product-detail-quantity-btn img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+    /* Ô input số có gạch dưới */
+    .product-detail-quantity .product-detail-quantity-wrapper {
+        border-bottom: 1px solid #cccccc;
+        padding-bottom: 3px;
+        /*    min-width: 20px;
+*/ width: fit-content;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Input readonly số lượng */
+    .product-detail-quantity .product-detail-quantity-input {
+        background: transparent;
+        border: none;
+        font-family: 'Cakelan', serif;
+        font-size: 20px;
+        color: #ffffff;
+        text-align: center;
+        width: fit-content;
+        max-width: 30px;
+        padding: 0;
+        line-height: 1;
+        pointer-events: none;
+    }
+
+.pro-detail {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
-    .product-detail-quantity .product-detail-quantity-btn img {
+    .pro-detail.monphu {
         width: 100%;
+        height: 100%;
+        object-fit: contain; /* hoặc cover tùy ý */
+    }
+
+/* ---------------------------------------------------------MENU BOOK------------------------------------------- */
+.flip-book-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.flip-book-container {
+    position: relative;
+    width: 676px;
+    height: 600px;
+    perspective: 2000px;
+    overflow: hidden;
+}
+
+.flip-book {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-169px);
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+}
+
+.flip-book-page {
+    width: 338px;
+    height: 600px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 0.8s ease, z-index 0.8s ease;
+    cursor: pointer;
+    z-index: 1000;
+    border: 2px solid #E0B37F;
+}
+
+    .flip-book-page .front,
+    .flip-book-page .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        overflow: hidden;
+        background-color: #000;
+    }
+
+        .flip-book-page .front img,
+        .flip-book-page .back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .flip-book-page .back {
+        transform: rotateY(180deg);
+    }
+
+    .flip-book-page.flipped {
+        transform: rotateY(-180deg);
+        z-index: 0 !important;
+    }
+
+    .flip-book-page:not(.flipped) {
+        z-index: 1000;
+    }
+
+.flip-book-container::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 175px;
+    height: 99.5%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.05) 15%, rgba(0, 0, 0, 0.12) 30%, #152B18 49%, #152B18 51%, rgba(0, 0, 0, 0.12) 70%, rgba(0, 0, 0, 0.05) 85%, rgba(0, 0, 0, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.flip-book-container.show-spine::before {
+    opacity: 1;
+}
+
+.intro-menu-section {
+    grid-column: 1 / span 14;
+}
+
+.intro-menu-wrapper {
+    display: flex;
+    gap: 30px;
+    width: 99vw;
+    background-color: white;
+    margin-left: -125px;
+    align-items: center;
+    justify-content: center;
+    text-align: justify;
+}
+
+    .intro-menu-wrapper p {
+        width: 35%;
+        font-size: 18px;
+        font-family: 'Mestika';
+        color: var(--green-color);
+        letter-spacing: 1.5px;
+        padding: 0 2rem;
+        margin: 0;
+        line-height: 42px
+    }
+
+.img-intro-1 {
+    width: 881px;
+    height: 576px;
+    padding: 2rem;
+    object-fit: cover;
+    background-position: center;
+}
+
+.img-menu-wrapper {
+    display: flex;
+    position: relative;
+    width: 99vw;
+    height: 740px;
+    margin-left: -124px;
+    gap: 0;
+    overflow: hidden;
+}
+
+.img-menu-left {
+    transform: scale(1.2);
+    background-image: url(/images/home/banner/menu.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    height: 100%;
+    width: 50%;
+}
+
+.img-menu-container {
+    width: 50%;
+    position: relative;
+    display: flex;
+    align-self: center;
+    justify-content: flex-end;
+    height: 354px;
+    position: relative;
+}
+
+.img-menu-overlay {
+    position: absolute;
+    width: 618px;
+    height: 354px;
+    left: -150px; /* điều chỉnh để nó đè lên ảnh bên trái */
+    z-index: 2;
+    background-image: url(/images/home/banner/menu_2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.img-frame-side-right {
+    width: 262px;
+    height: 354px;
+    z-index: 1;
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+}
+
+.img-menu-side {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url(/images/home/banner/menu_3.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.parallax-bg {
+    will-change: background-position;
+}
+
+.intro-menu-wrapper-2 {
+    display: flex;
+    width: 99vw;
+    background-color: white;
+    margin-left: -125px;
+    align-items: center;
+    text-align: justify;
+}
+
+    .intro-menu-wrapper-2 p {
+        width: 35%;
+        font-size: 18px;
+        font-family: 'Mestika';
+        color: var(--green-color);
+        letter-spacing: 1.5px;
+        padding: 0 2rem;
+        margin: 0;
+        line-height: 42px
+    }
+
+.img-intro-2 {
+    width: 881px;
+    height: 576px;
+    object-fit: contain;
+    background-position: center;
+}
+
+.detail-menu {
+    grid-column: 1/ span 14;
+    margin-block: 50px;
+    text-align: center;
+}
+
+.text-detail-menu {
+    font-family: 'SVN-Jane Austen';
+    color: var(--yellow-color);
+}
+
+.description-menu {
+    font-family: 'Mestika';
+    color: #E0D4BB !important;
+    font-size: 18px;
+}
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .intro-menu-wrapper,
+    .intro-menu-wrapper-2 {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+        width: 98.5vw;
+        gap: 20px;
+        text-align: center;
+        justify-self: center;
+        padding: 20px 0 20px 0;
+    }
+
+        .intro-menu-wrapper p,
+        .intro-menu-wrapper-2 p {
+            width: 80%;
+            font-size: 16px;
+            padding: 0 1rem;
+            line-height: 36px;
+        }
+
+    .img-intro-1,
+    .img-intro-2 {
+        width: 90vw;
         height: auto;
+        padding: 0;
+    }
+
+    .img-menu-wrapper {
+        flex-direction: column;
+        margin-left: 0;
+        height: auto;
+        width: 98vw;
+        justify-self: center;
+        margin-bottom: -18px;
+    }
+
+    .img-menu-left {
+        width: 100%;
+        height: 300px;
+        transform: scale(1.2);
+    }
+
+    .img-menu-container {
+        width: 100%;
+        justify-content: center;
+        height: auto;
+        margin-top: 20px;
+    }
+
+    .img-menu-overlay {
+        position: relative;
+        left: 0;
+        width: 90%;
+        height: auto;
+        background-size: cover;
+    }
+
+    .img-frame-side-right {
+        display: none; /* Ẩn khung nhỏ bên phải trên tablet */
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .intro-menu-wrapper,
+    .intro-menu-wrapper-2 {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+        padding: 10px 0 10px 0;
+        width: 100vw;
+        gap: 20px;
+        text-align: center;
+        justify-self: center;
+    }
+
+        .intro-menu-wrapper p,
+        .intro-menu-wrapper-2 p {
+            width: 90%;
+            font-size: 14px;
+            padding: 0 1rem;
+            line-height: 30px;
+        }
+
+    .img-intro-1,
+    .img-intro-2 {
+        width: 95vw;
+        height: auto;
+        padding: 0;
+    }
+
+    .img-menu-wrapper {
+        margin-left: 0;
+        height: auto;
+        width: 100vw;
+        transform: scale(0.8);
+        transform-origin: center top;
+    }
+
+    .img-menu-left {
+        width: 100%;
+        height: 220px;
+        transform: scale(1);
+    }
+
+    .img-menu-container {
+        display: none;
+    }
+
+    .detail-menu {
+        margin-block: 30px;
+    }
+
+    .description-menu {
+        font-size: 16px;
+    }
+}
+
+
+.checkout-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    margin: 30px 0;
+    overflow: hidden;
+}
+
+.checkout-left {
+    flex: 2;
+    overflow-y: auto;
+    max-height: none; /* JS sẽ set đúng height */
+    padding-right: 16px; /* chống tràn thanh scroll ra ngoài */
+}
+
+    .checkout-left::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .checkout-left::-webkit-scrollbar-thumb {
+        background-color: rgba(224, 179, 127, 0.5);
+        border-radius: 4px;
+    }
+
+.checkout-info {
+    flex: 1;
+    background: #EEDFAD;
+    padding: 35px;
+    max-width: 400px;
+    position: sticky;
+    top: 30px; /* Để nó giữ cố định khi cuộn */
+    align-self: flex-start;
+}
+
+.checkout-pro-anh {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.checkout-pro-quantity-static {
+    text-align: center;
+}
+
+.checkout-pro-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .checkout-pro-table th,
+    .checkout-pro-table td {
+        border-bottom: 1px solid #EEDFAD;
+        padding: 12px;
+        vertical-align: middle;
+    }
+
+    .checkout-pro-table th {
+        font-family: "Mestika", serif;
+        font-size: 18px;
+        color: #E0B37F;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    .checkout-pro-table td {
+        font-family: "Mestika", serif;
+        font-size: 16px;
+        color: #fff;
+    }
+
+.checkout-pro-quantity-static {
+    text-align: center;
+}
+
+.checkout-pro-topping {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.checkout-pro-quantity-group {
+    display: flex;
+    align-items: center;
+}
+
+.checkout-pro-btn {
+    cursor: pointer;
+    background: none;
+    border: 1px solid #E0B37F;
+    padding: 5px 10px;
+    font-family: "Mestika", serif;
+    color: #E0B37F;
+}
+
+.checkout-pro-btn-outline {
+    background: transparent;
+}
+
+.checkout-pro-quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #E0B37F;
+    margin: 0 5px;
+    background: transparent;
+    color: #fff;
+}
+
+.checkout-pro-checkout-btn {
+    display: block;
+    width: 100%;
+    background: #E0B37F;
+    border: none;
+    padding: 15px;
+    font-family: "Mestika", serif;
+    font-size: 18px;
+    color: #fff;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.checkout-pro-options {
+    color: #E0B37F;
+    font-family: 'SVN-Castellar', serif;
+    font-size: 16px;
+}
+
+.table-product-name {
+    width: 250px; /* hoặc 350px tuỳ layout */
+    max-width: 250px;
+    word-wrap: break-word; /* tự động ngắt dòng */
+    white-space: normal; /* cho phép xuống dòng */
+    font-size: 18px;
+    line-height: 1.5;
+    font-family: "Cakelan", serif !important;
+}
+
+.checkout-pro-hidden {
+    display: none;
+}
+
+.checkout-info-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 18px;
+    font-family: "Mestika", serif;
+    margin-top: 20px;
+}
+/*===========================================*/
+.checkout-info-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 20px; /* To rõ hơn */
+    font-family: "Mestika", serif;
+    color: #203f25; /* Xanh đậm */
+    margin-bottom: 28px; /* Cách trên dưới thoáng */
+}
+
+    .checkout-info-total span:first-child {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .checkout-info-total span:last-child {
+        font-weight: 700;
+    }
+
+.checkout-info-form {
+    margin-bottom: 20px;
+}
+
+/* --- Container chính --- */
+.checkout-info-card {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* Card body giữ padding chuẩn */
+.checkout-info-card-body {
+    padding: 0;
+}
+
+/* Tiêu đề */
+.checkout-info-card-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    color: #203f25;
+    font-family: "Mestika", serif;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+/* Input gạch dưới */
+.checkout-info-input {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #203f25;
+    background: transparent;
+    font-size: 18px;
+    padding: 8px 0;
+    margin-bottom: 28px;
+    color: #203f25;
+    font-family: "Mestika", serif;
+}
+
+    .checkout-info-input:focus {
+        outline: none;
+        border-color: #203f25;
+    }
+
+/* Label & strong */
+.checkout-info-card strong,
+.checkout-info-form-group label {
+    display: inline-block;
+    font-family: "Mestika", serif;
+    color: #203f25;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+/* Radio group */
+.checkout-info-form-check {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-family: "Mestika", serif;
+    font-size: 16px;
+    color: #203f25;
+}
+
+.checkout-info-form-check-input {
+    margin-right: 6px;
+}
+
+.checkout-info-row {
+    display: flex;
+    gap: 16px;
+}
+
+.checkout-info-half {
+    flex: 1;
+}
+
+.checkout-info-full {
+    margin-top: 16px;
+}
+
+/* Tổng cộng */
+.checkout-info-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "Mestika", serif;
+    color: #203f25;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 32px 0 24px 0;
+}
+
+/* Nút thanh toán */
+.checkout-info-btn {
+    display: inline-block;
+    width: 100%;
+    background: #203f25;
+    color: #E0B37F;
+    border: none;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: "Mestika", serif;
+    transition: all 0.3s ease-in-out;
+}
+
+.check-out-btn {
+    display: inline-block;
+    width: 100%;
+    background: #203f25;
+    color: #E0B37F;
+    border: none;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: "Mestika", serif;
+    transition: all 0.3s ease-in-out;
+}
+
+    .checkout-info-btn:hover, .check-out-btn:hover {
+        background: #152B18;
+    }
+
+.checkout-info-mb-3 {
+    margin-top: 28px;
+}
+
+.checkout-info-mt-2 {
+    margin-top: 12px;
+}
+
+/* Text muted */
+.checkout-info-text-muted {
+    color: #203f25;
+    opacity: 0.6;
+    font-family: "Mestika", serif;
+}
+
+.checkout-pro-back-to-menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Mestika', serif;
+    font-size: 20px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    color: #E0B37F;
+    margin-bottom: 35px;
+}
+
+    .checkout-pro-back-to-menu:hover {
+        color: white;
+    }
+
+.pizza-split-image {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    overflow: hidden;
+    display: flex;
+}
+
+.pizza-half {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+}
+
+    .pizza-half.left img {
+        width: 200%;
+        height: 100%;
+        object-fit: cover;
+        transform: translateX(0); /* hiển thị nửa trái */
+    }
+
+    .pizza-half.right img {
+        width: 200%;
+        height: 100%;
+        object-fit: cover;
+        transform: translateX(-50%); /* hiển thị nửa phải */
+    }
+
+/*=====================================================
+                    TRANG CÁ NHÂN
+=====================================================*/
+
+.personal-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.personal-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.personal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    height: 600px;
+    position: relative;
+}
+
+/* CÁC Ô NỘI DUNG - ẩn mặc định */
+.content {
+    display: none;
+    grid-column: span 1;
+    grid-row: span 2;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+    .content.active {
         display: block;
     }
 
-/* Ô input số có gạch dưới */
-.product-detail-quantity .product-detail-quantity-wrapper {
-    border-bottom: 1px solid #cccccc;
-    padding-bottom: 3px;
-    /*    min-width: 20px;
-*/ width: fit-content;
+/* TABS BÊN TRÁI (2 tab dọc) */
+.left-side {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+    .left-side .tab-btn {
+        padding: 20px;
+        height: 48%;
+        font-size: 16px;
+        border: none;
+        background-color: #dceeff;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .left-side .tab-btn:hover {
+            background-color: #b3e0ff;
+        }
+
+/* TABS BÊN PHẢI (1 tab) */
+.right-side {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
-/* Input readonly số lượng */
-.product-detail-quantity .product-detail-quantity-input {
-    background: transparent;
-    border: none;
-    font-family: 'Cakelan', serif;
-    font-size: 20px;
-    color: #ffffff;
-    text-align: center;
-    width: fit-content;
-    max-width: 30px;
-    padding: 0;
-    line-height: 1;
-    pointer-events: none;
+    .right-side .tab-btn {
+        padding: 20px;
+        height: 100%;
+        font-size: 16px;
+        border: none;
+        background-color: #ffe0dc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .right-side .tab-btn:hover {
+            background-color: #ffc2bc;
+        }
+
+/* VỊ TRÍ HIỂN THỊ NỘI DUNG: chiếm 2 hàng bên trái hoặc phải */
+.personal-grid.show-info.at-left .info-content,
+.personal-grid.show-orders.at-left .orders-content {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
+.personal-grid.show-booking.at-right .booking-content {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+/* ẨN các tab đối diện khi nội dung hiển thị */
+.personal-grid.show-info .right-side,
+.personal-grid.show-orders .right-side,
+.personal-grid.show-booking .left-side {
+    display: none;
+}
+
+/* Giữ khoảng trắng cân bằng */
+.personal-grid > div {
+    min-height: 100px;
 }

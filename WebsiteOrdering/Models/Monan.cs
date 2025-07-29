@@ -47,6 +47,7 @@ namespace WebsiteOrdering.Models
         public string Tenmonan { get; set; } = null!;
 
         public int Giamonan { get; set; }
+        public int SoLuongBan { get; set; }
 
         public string Anhmonan { get; set; } = null!;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.ViewModels;
@@ -83,7 +84,7 @@ namespace WebsiteOrdering.Services
                 Diachidh = info.Address,
                 Tongtien = CalculateTotalAmount(items) + shipFee,
                 Ngaydat = DateTime.Now,
-                Trangthai = "Pending",
+                Trangthai = TrangThai.Pending,
                 Ptttoan = info.PaymentInfo ?? "COD",
                 Idngdung = userId,
                 Idchinhanh = info.BranchId,
@@ -136,14 +137,17 @@ namespace WebsiteOrdering.Services
 
             return await _orderRepo.CreateOrderAsync(order, details, toppings);
         }
-        public async Task UpdateOrderPaymentStatusAsync(string orderId, string status, string transactionId)
+        public async Task UpdateOrderPaymentStatusAsync(string orderId, TrangThai status, string transactionId)
         {
             var order = await _orderRepo.FindOrderAsync(orderId);
             if (order != null)
             {
-                order.Trangthai = status;
-                order.Magiaodich = transactionId; // Thêm field này vào model Donhang
-                await _orderRepo.UpdateOrderAsync(order);
+                if (order != null)
+                {
+                    order.Trangthai = status;
+                    order.Magiaodich = transactionId;
+                    await _orderRepo.UpdateOrderAsync(order);
+                }
             }
         }
     }

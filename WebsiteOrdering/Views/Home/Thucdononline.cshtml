@@ -50,11 +50,31 @@
         </div>
     </section>
 
-    <script>
+    @* <script>
         document.querySelectorAll('.menu-click-target').forEach(function (div) {
             div.style.cursor = 'pointer';
             div.addEventListener('click', function () {
                 window.location.href = '/Products/';
+            });
+        });
+    </script> *@
+
+    <script>
+        document.querySelectorAll('.menu-click-target').forEach(function (div) {
+            div.style.cursor = 'pointer';
+            div.addEventListener('click', function () {
+                const caption = div.querySelector('.menu-caption-online p').innerText.trim().toUpperCase();
+
+                if (caption.includes('KHAI VỊ')) {
+                    window.location.href = '/Products?categoryIds=LMA03,LMA05&groupName=' + encodeURIComponent('Khai vị');
+                } else if (caption.includes('MÓN CHÍNH')) {
+                    window.location.href = '/Products?categoryIds=LMA01,LMA02,LMA04&groupName=' + encodeURIComponent('Món chính');
+                } else if (caption.includes('THỨC UỐNG') || caption.includes('TRÁNG MIỆNG')) {
+                    // Lấy LMA06 (tráng miệng) + LMA07 (nước + mục con)
+                    window.location.href = '/Products?categoryIds=LMA06,LMA07&groupName=' + encodeURIComponent('Thức uống & Tráng miệng');
+                } else {
+                    window.location.href = '/Products';
+                }
             });
         });
     </script>

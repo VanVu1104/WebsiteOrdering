@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Services;
@@ -63,10 +64,9 @@ namespace WebsiteOrdering.Controllers
                 );
 
                 // Cập nhật trạng thái thanh toán cho đơn hàng vừa tạo
-                await _checkoutService.UpdateOrderPaymentStatusAsync(orderId, "Paid", response.TransactionId);
+                await _checkoutService.UpdateOrderPaymentStatusAsync(orderId, TrangThai.Paid, response.TransactionId);
 
                 // Xóa sản phẩm đã đặt khỏi giỏ hàng
-                // Xóa sản phẩm theo ProductId thay vì dùng Except
                 var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new();
                 var selectedProductIds = checkoutData.SelectedItems.Select(x => x.IDMONAN).ToList();
 

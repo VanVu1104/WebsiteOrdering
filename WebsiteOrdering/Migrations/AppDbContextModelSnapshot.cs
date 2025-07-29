@@ -751,6 +751,24 @@ namespace WebsiteOrdering.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.MonAnGhepStats", b =>
+                {
+                    b.Property<string>("Idmonan")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDMONAN")
+                        .IsFixedLength();
+
+                    b.Property<int>("SoLanDuocGhep")
+                        .HasColumnType("int")
+                        .HasColumnName("SOLANDUOCGHEP");
+
+                    b.HasKey("Idmonan");
+
+                    b.ToTable("MONANGHEPSTATS", (string)null);
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
                     b.Property<string>("Idmonan")
@@ -784,6 +802,9 @@ namespace WebsiteOrdering.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("MOTA");
+
+                    b.Property<int>("SoLuongBan")
+                        .HasColumnType("int");
 
                     b.Property<string>("Tenmonan")
                         .IsRequired()
@@ -1089,6 +1110,18 @@ namespace WebsiteOrdering.Migrations
                     b.Navigation("IdloaimonanNavigation");
 
                     b.Navigation("IdsizeNavigation");
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.Models.MonAnGhepStats", b =>
+                {
+                    b.HasOne("WebsiteOrdering.Models.Monan", "MonAn")
+                        .WithMany()
+                        .HasForeignKey("Idmonan")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_MONANGHEPSTATS_MONAN");
+
+                    b.Navigation("MonAn");
                 });
 
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>

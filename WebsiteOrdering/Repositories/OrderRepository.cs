@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Models;
 
 namespace WebsiteOrdering.Repositories
@@ -6,9 +7,11 @@ namespace WebsiteOrdering.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly AppDbContext _context;
-        public OrderRepository(AppDbContext context)
+        private readonly IProductRepository _productRepository;
+        public OrderRepository(AppDbContext context, IProductRepository productRepository)
         {
             _context = context;
+            _productRepository = productRepository;
         }
 
         public async Task<string> CreateOrderAsync(Donhang order, List<Chitietdonhang> details, List<Chitiettopping> toppings)
@@ -95,25 +98,42 @@ namespace WebsiteOrdering.Repositories
                 .OrderByDescending(o => o.Ngaydat)
                 .ToListAsync();
         }
-        public async Task<List<Donhang>> GetOrdersByStatusAsync(string status)
+        public async Task<List<Donhang>> GetOrdersByStatusAsync(TrangThai? status)
         {
             return await _context.dhang
-                .Where(d => d.Trangthai.ToLower() == status.ToLower().Trim())
+                .Where(d => d.Trangthai == status)
                 .OrderByDescending(d => d.Ngaydat)
                 .ToListAsync();
         }
-        public async Task<bool> UpdateOrderStatusAsync(string id, string newStatus)
+        public async Task<bool> UpdateOrderStatusAsync(string id, TrangThai newStatus)
         {
             var order = await _context.dhang.FindAsync(id);
             if (order == null) return false;
 
-            if (order.Trangthai == "Cancel")
+            if (order.Trangthai == TrangThai.Cancelled)
                 return false;
 
-            if ((order.Trangthai == "Delivering" || order.Trangthai == "Delivered") && newStatus == "Cancel")
+            if ((order.Trangthai == TrangThai.Delivering || order.Trangthai == TrangThai.Completed)
+                && newStatus == TrangThai.Cancelled)
                 return false;
-
+            if (order.Trangthai != TrangThai.Completed && newStatus == TrangThai.Completed)
+            {
+                await _productRepository.CapNhatSoLuongBanVaGhepAsync(order.Iddonhang);
+            }
             order.Trangthai = newStatus;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> CancelOrderAsync(string orderId)
+        {
+            var order = await _context.dhang.FindAsync(orderId);
+
+            if (order == null ||
+                (order.Trangthai != TrangThai.Pending && order.Trangthai != TrangThai.Paid))
+                return false;
+
+            order.Trangthai = TrangThai.Cancelled;
+            _context.dhang.Update(order);
             await _context.SaveChangesAsync();
             return true;
         }

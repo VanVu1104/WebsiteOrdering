@@ -1,12 +1,16 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using IO_Directory = System.IO.Directory;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using WebsiteOrdering.Areas.Staff.ViewModels;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Product.GetProductById;
 using WebsiteOrdering.Repositories;
+using WebsiteOrdering.Services;
 using WebsiteOrdering.ViewModels;
+using WebsiteOrdering.Enums;
 
 namespace WebsiteOrdering.Areas.Staff.Controllers
 {
@@ -17,9 +21,11 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         private readonly IMediator _mediator;
         private readonly AppDbContext _appDbContext;
         private const string SESSION_KEY = "AllOrderSessions";
-
-        public OrderController(IMediator mediator, AppDbContext context)
+        private readonly IEmailService _emailService;
+        private readonly IProductRepository _productRepository;
+        public OrderController(IMediator mediator, AppDbContext context, IEmailService emailService)
         {
+            _emailService = emailService;
             _mediator = mediator;
             _appDbContext = context;
         }
@@ -146,7 +152,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 model.ToppingsSelected = toppings?.Split(',').ToList() ?? new List<string>();
                 model.SoLuongSelected = soLuong ?? 1;
                 model.GhiChuSelected = ghiChu;
-               
+
             }
             else
             {
@@ -185,7 +191,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             var datban = _appDbContext.Datbans.FirstOrDefault(d => d.Iddatban == idDatBan);
             if (datban != null)
             {
-                datban.Trangthaidatban = "Đang dùng bữa";
+                datban.Trangthaidatban = TrangThai.Eating;
                 _appDbContext.SaveChanges();
             }
 
@@ -287,17 +293,17 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             var datban = _appDbContext.Datbans.FirstOrDefault(d => d.Iddatban == idDatBan);
             if (datban != null)
             {
-                datban.Trangthaidatban = "Đã đặt món";
+                datban.Trangthaidatban = TrangThai.Ordered;
                 _appDbContext.SaveChanges();
             }
 
             TempData["Success"] = "Lưu đơn tạm thành công! Khi khách thanh toán, sẽ lưu đơn chính thức.";
-            return RedirectToAction("DanhSachKhachDaDen","BookingStaff");
+            return RedirectToAction("DanhSachKhachDaDen", "BookingStaff");
 
         }
 
-       
-        
+
+
         public IActionResult XemHoaDonDatBan(string idDatBan)
         {
             var allSessions = HttpContext.Session.Get<Dictionary<string, OrderSessionViewModel>>(SESSION_KEY);
@@ -354,7 +360,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CapNhatMonTrongSession( string idDatBan,string idMon,int soLuong,string? ghiChu,string? idPizzaGhep = null,string? idSize = null,string? idDeBanh = null,string[]? toppings = null)
+        public async Task<IActionResult> CapNhatMonTrongSession(string idDatBan, string idMon, int soLuong, string? ghiChu, string? idPizzaGhep = null, string? idSize = null, string? idDeBanh = null, string[]? toppings = null)
         {
             var allSessions = HttpContext.Session.Get<Dictionary<string, OrderSessionViewModel>>(SESSION_KEY);
             if (allSessions == null || !allSessions.ContainsKey(idDatBan))
@@ -386,7 +392,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 }
             }
             // Tìm món
-            var itemToUpdate = session.ChiTietMonAn.FirstOrDefault(x => x.IDMONAN == idMon );
+            var itemToUpdate = session.ChiTietMonAn.FirstOrDefault(x => x.IDMONAN == idMon);
 
             // Load topping
             var selectedToppings = new List<Topping>();
@@ -403,7 +409,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             {
                 monGhep = _appDbContext.SanPhams.FirstOrDefault(m => m.Idmonan == idPizzaGhep);
             }
-           
+
 
             if (itemToUpdate != null)
             {
@@ -519,7 +525,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             var datban = _appDbContext.Datbans
                 .Include(d => d.Chitietdatbans)
                     .ThenInclude(ct => ct.IdbanNavigation)
-                       
+
                 .Include(d => d.IdchinhanhNavigation)
                 .FirstOrDefault(d => d.Iddatban == idDatBan);
 
@@ -538,7 +544,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ThanhToanTaiCho(string idDatBan,  HoaDonThanhToanViewModel model)
+        public async Task<IActionResult> ThanhToanTaiCho(string idDatBan, HoaDonThanhToanViewModel model)
         {
             var allSessions = HttpContext.Session.Get<Dictionary<string, OrderSessionViewModel>>(SESSION_KEY);
             if (allSessions == null || !allSessions.ContainsKey(idDatBan))
@@ -549,11 +555,12 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             var phuongThucThanhToan = model.PhuongThucThanhToan;
 
             var datban = await _appDbContext.Datbans
+                                .Include(d => d.Nguoidung)
                                 .Include(d => d.Chitietdatbans)
                                     .ThenInclude(ct => ct.IdbanNavigation)
                                 .Include(d => d.IdchinhanhNavigation)
                                 .FirstOrDefaultAsync(d => d.Iddatban == idDatBan);
-            
+
 
             if (datban == null) return NotFound();
 
@@ -572,14 +579,14 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
             if (phuongThucThanhToan == "TienMat" && tienKhachDua.HasValue)
             {
-                tienThua = tienKhachDua.Value -  (int)tongTien;
+                tienThua = tienKhachDua.Value - (int)tongTien;
                 if (tienThua < 0)
                 {
                     TempData["Error"] = "Tiền khách đưa không đủ!";
                     return RedirectToAction("XemHoaDonDatBan", new { idDatBan });
                 }
             }
-            
+
             // Tạo đơn hàng
             var donhang = new Donhang
             {
@@ -588,18 +595,17 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 Ngaydat = DateTime.Now,
                 Tenkh = datban.Tenngdat,
                 Sdtkh = datban.Sđtngdat,
-                Diachidh =datban.Idchinhanh, // Để null, không bắt buộc lấy ghi chú
+                Diachidh = datban.Idchinhanh, // Để null, không bắt buộc lấy ghi chú
                 Songuoi = datban.Songuoidat,
-                Trangthai = "Hoàn thành",
+                Trangthai = TrangThai.Completed,
                 Tongtien = tongTien,
                 Ptttoan = phuongThucThanhToan,
-                Idchinhanh = datban.Idchinhanh,
-                Idngdung = datban.Idngdung
+                Idchinhanh = datban.Idchinhanh
             };
 
             _appDbContext.dhang.Add(donhang);
             await _appDbContext.SaveChangesAsync();
-
+            var monAnHtml = new StringBuilder();
             // Lưu chi tiết món
             foreach (var item in orderSession.ChiTietMonAn)
             {
@@ -619,7 +625,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                     Idmonan2 = item.IDMMONAN2,
                     Idsize = idSize,
                     Iddebanh = Iddebanh,
-                    Kieupizza = item.IDMMONAN2 != null ? "Pizza ghép" : "Thông thường",
+                    Kieupizza = item.IDMMONAN2 != null ? "Ghép" : "Nguyên",
                     Soluong = item.SoLuong,
                     Dongia = item.GiaCoBan,
                     Tongtiendh = item.TongTien,
@@ -636,32 +642,88 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                     };
                     _appDbContext.cttopping.Add(ctTopping);
                 }
+
+                var tenSanPham = item.TENSANPHAM;
+                if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                {
+                    tenSanPham += $" (Ghép với: {item.TENSANPHAM2})";
+                }
+                if (!string.IsNullOrEmpty(item.GhiChu))
+                {
+                    tenSanPham += $"<br/><i>Ghi chú: {item.GhiChu}</i>";
+                }
+
+                var danhSachTopping = item.Topping?.Select(t => t.Tentopping).ToList();
+                var toppingText = (danhSachTopping != null && danhSachTopping.Any())
+                    ? string.Join(", ", danhSachTopping)
+                    : "Không";
+
+                monAnHtml.AppendLine($@"
+                <tr>
+                    <td>{tenSanPham}</td>
+                    <td>{item.Size}</td>
+                    <td>{item.DeBanh}</td>
+                    <td>{toppingText}</td>
+                    <td>{item.SoLuong}</td>
+                    <td>{item.TongTien:N0} đ</td>
+                </tr>");
+
             }
-
             // Cập nhật trạng thái bàn
-            datban.Trangthaidatban = "Hoàn thành";
-
+            datban.Trangthaidatban = TrangThai.Completed;
             await _appDbContext.SaveChangesAsync();
+            //Cập nhật số lượng bán được món ăn và cập nhật nếu có pizza ghép
+            await _productRepository.CapNhatSoLuongBanVaGhepAsync(donhang.Iddonhang);
+            var email = datban.Nguoidung?.Email;
+            if (!string.IsNullOrEmpty(email))
+            {
+                var placeholders = new Dictionary<string, string>
+                {
+                    ["MaDonHang"] = donhang.Iddonhang,
+                    ["TenKhachHang"] = donhang.Tenkh ?? "Khách hàng",
+                    ["SDT"] = donhang.Sdtkh,
+                    ["DiaChi"] = datban.IdchinhanhNavigation.Tencnhanh,
+                    ["SoNguoi"] = datban.Songuoidat.ToString(),
+                    ["TenBan"] = chitietBan.IdbanNavigation?.Tenban,
+                    ["NgayDat"] = donhang.Ngaydat.ToString("dd/MM/yyyy HH:mm"),
+                    ["GioVao"] = datban.Giobatdau.ToString(),
+                    ["GioRa"] = chitietBan.Giora.ToString(),
+                    ["MonAnHtml"] = monAnHtml.ToString(),
+                    ["TrangThaiThanhToan"] = datban.Trangthaidatban.ToString(),
+                    ["TongTien"] = $"{tongTien:N0} đ",
+                    ["PhuongThucThanhToan"] = phuongThucThanhToan == "TienMat" ? "Tiền mặt" : "Chuyển khoản",
+                    ["IsTienMat"] = (phuongThucThanhToan == "TienMat").ToString().ToLower(),
+                    ["TienKhachDua"] = (phuongThucThanhToan == "TienMat" && tienKhachDua.HasValue) ? $"{tienKhachDua.Value:N0} đ" : "",
+                    ["TienThua"] = (phuongThucThanhToan == "TienMat" && tienKhachDua.HasValue) ? $"{tienThua:N0} đ" : ""
+                };
 
+                var templatePath = Path.Combine(IO_Directory.GetCurrentDirectory(), "Templates", "EmailHoaDonDatBan.html");
+                var body = EmailTemplateHelper.PopulateTemplate(templatePath, placeholders);
+
+                await _emailService.SendEmailAsync(email, $"Hóa đơn thanh toán - Mã đơn: {donhang.Iddonhang}", body);
+            }
             // Xóa session
             allSessions.Remove(idDatBan);
             HttpContext.Session.Set(SESSION_KEY, allSessions);
 
-            TempData["Success"] = $"Thanh toán thành công! {(tienKhachDua.HasValue ? $"Tiền thừa: {tienThua:N0} đ" : "")}";
-            return RedirectToAction("DanhSachHoaDon");
+          //  TempData["Success"] = $"Thanh toán thành công! {(tienKhachDua.HasValue ? $"Tiền thừa: {tienThua:N0} đ" : "")}";
+            return RedirectToAction("Index", "BookingStaff");
+
         }
 
         public async Task<IActionResult> DanhSachHoaDon()
         {
-            var staffChiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
-            if (string.IsNullOrEmpty(staffChiNhanhId))
+
+            var chiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
+            if (string.IsNullOrEmpty(chiNhanhId))
             {
-                return RedirectToAction("LoginStaff", "Admin");
+                TempData["Error"] = "Không xác định được chi nhánh nhân viên.";
+                return RedirectToAction("LoginStaff", "Admin", new { area = "Admin" });
             }
 
             var danhSach = await _appDbContext.dhang
                 .Include(d => d.IdchinhanhNavigation)
-                .Where(d => d.Trangthai == "Hoàn thành" && d.Idchinhanh == staffChiNhanhId)
+                .Where(d => d.Trangthai == TrangThai.Completed && d.Idchinhanh == chiNhanhId)
                 .OrderByDescending(d => d.Ngaydat)
                 .ToListAsync();
 

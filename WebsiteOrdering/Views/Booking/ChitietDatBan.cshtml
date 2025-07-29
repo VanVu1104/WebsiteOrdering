@@ -1,76 +1,68 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@model WebsiteOrdering.Models.Datban
+﻿@model WebsiteOrdering.Models.Datban
+<link rel="stylesheet" href="~/css/ctdb.css" />
+<div class="ctdb-container-tong">	
+	<div class="ctdb-background">
+		<div class="ctdb-tieude">
+			<div class="ctdb-datban">
+				<div class="ctdb-title">
+					<h2>CHI TIẾT ĐƠN ĐẶT BÀN</h2>
+				</div>
+				<p>Mã đơn hàng: @Model.Iddatban</p>
+				<p style="margin: 0 0 0 0 ">Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy")</p>
+			</div>
 
-<h2 class="text-center">Chi tiết đơn đặt bàn</h2>
+			<div class="ctdb-anh">
+				<img src="~/css/img/hinhhoadon.png" alt="Ảnh" />
+			</div>
+		</div>
 
-<table class="table">
-    <tr>
-        <th>Mã đặt bàn</th>
-        <td>@Model.Iddatban</td>
-    </tr>
-    <tr>
-        <th>Họ tên người đặt</th>
-        <td>@Model.Tenngdat</td>
-    </tr>
-    <tr>
-        <th>Số điện thoại</th>
-        <td>@Model.Sđtngdat</td>
-    </tr>
-    <tr>
-        <th>Email</th>
-        <td>@Model.Nguoidung?.Email</td>
-    </tr>
-    <tr>
-        <th>Chi nhánh</th>
-        <td>@Model.IdchinhanhNavigation?.Tencnhanh</td>
-    </tr>
-    <tr>
-        <th>Ngày đặt</th>
-        <td>@Model.Ngaydat.ToString("dd/MM/yyyy")</td>
-    </tr>
-    <tr>
-        <th>Giờ bắt đầu</th>
-        <td>@Model.Giobatdau.ToString(@"HH:mm")</td>
-    </tr>
-    <tr>
-        <th>Giờ kết thúc</th>
-        <td>@Model.Gioketthuc.ToString(@"HH:mm")</td>
-    </tr>
-    <tr>
-        <th>Số người</th>
-        <td>@Model.Songuoidat</td>
-    </tr>
-    <tr>
-        <th>Ghi chú</th>
-        <td>@Model.Ghichu</td>
-    </tr>
-    <tr>
-        <th>Trạng thái</th>
-        <td>@Model.Trangthaidatban</td>
-    </tr>
-</table>
+		<div class="ctdb-noidung">
+			<div class="ctdb-infor">
+				<h2>THÔNG TIN NGƯỜI ĐẶT</h2>
+				<p>Khách hàng: @Model.Tenngdat</p>
+				<p>Email: @Model.Nguoidung?.Email</p>
+				<p>Số điện thoại: @Model.Sđtngdat</p>
+			</div>
 
-<h4>Bàn đã đặt</h4>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Tên bàn</th>
-            <th>Khu vực</th>
-            <th>Giờ vào</th>
-            <th>Giờ ra</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ct in Model.Chitietdatbans)
-        {
-            <tr>
-                <td>@ct.IdbanNavigation?.Tenban</td>
-                <td>@ct.IdbanNavigation?.Khuvuc</td>
-                <td>@ct.Giovao.ToString(@"HH:mm")</td>
-                <td>@ct.Giora.ToString(@"HH:mm")</td>
-            </tr>
-        }
-    </tbody>
-</table>
+			<div class="ctdb-address">
+				<h2>THÔNG TIN ĐẶT BÀN</h2>
+
+				@if (Model.IdchinhanhNavigation != null)
+				{
+					<p>@Model.IdchinhanhNavigation?.Tencnhanh</p>
+				}
+				else
+				{
+					<p class="text-danger">Không tìm thấy thông tin chi nhánh.</p>
+				}
+				<p>@Model.Songuoidat Khách </p>
+				<p>@Model.Trangthaidatban</p>
+			</div>
+		</div>
+
+
+		<table class="ctdb-table">
+			<thead>
+				<tr>
+					<th>Tên bàn</th>
+					<th>Khu vực</th>
+					<th>Giờ vào</th>
+					<th>Giờ ra</th>
+					<th>Ghi chú</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var ct in Model.Chitietdatbans)
+				{
+					<tr>
+						<td>@ct.IdbanNavigation?.Tenban</td>
+						<td>@ct.IdbanNavigation?.Khuvuc</td>
+						<td>@ct.Giovao.ToString(@"hh\:mm")</td>
+						<td>@ct.Giora.ToString(@"hh\:mm")</td>
+						<td>@Model.Ghichu</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

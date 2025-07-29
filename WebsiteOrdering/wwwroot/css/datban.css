@@ -17,7 +17,16 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 }
-
+.dat-ban-modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(.3rem - 1px);
+    border-top-right-radius: calc(.3rem - 1px);
+}
 .dat-ban-custom-modal-content {
     background-color: #fff;
     margin: 10% auto;
@@ -66,10 +75,17 @@
 }
 
 .dat-ban-modal-footer {
-    display: flex;
     margin-top: 20px;
     text-align: right;
     gap: 15px;
+
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-top: 1px solid #dee2e6;
+    border-top-left-radius: calc(.3rem - 1px);
+    border-top-right-radius: calc(.3rem - 1px);
 }
 
 .dat-ban-huy {
@@ -138,20 +154,6 @@
         letter-spacing: 5px;
     }
 
-.dat-ban-overlay-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    color: white;
-    font-size: 50px;
-    font-family: 'Cakelan', serif;
-    letter-spacing: 5px;
-    opacity: 95%;
-    text-align: center;
-    padding: 0 20px;
-}
 
 .dat-ban-div-text {
     text-align: center;
@@ -441,6 +443,75 @@ textarea:focus {
         font-size: 1.8rem;
         color: #1e2b22;
     }
+
+/*
+
+.dat-ban-overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    color: white;
+    font-size: 50px;
+    font-family: 'Cakelan', serif;
+    letter-spacing: 5px;
+    opacity: 95%;
+    text-align: center;
+    padding: 0 20px;
+}
+*/
+
+
+.dat-ban-overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 0 20px;
+}
+
+    .dat-ban-overlay-text h1 {
+        font-family: '1FTVCakelan', serif;
+        font-size: 50px;
+        letter-spacing: 8px;
+        color: white;
+        margin: 0;
+    }
+
+    .dat-ban-overlay-text button.btn-search-ban {
+        margin-top: 25px;
+        padding: 10px 20px;
+        font-size: 24px;
+        font-family: '1FTVCakelan', serif;
+        background-color: #E0B37F;
+        color: #203F25;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .dat-ban-overlay-text button.btn-search-ban:hover {
+            background-color: transparent;
+            border: 1px solid #E0B37F;
+            color: #E0B37F;
+        }
+
+.dat-ban-icon-search {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    transition: fill 0.3s ease;
+}
+
+
 
 /* Animation trái ← phải */
 @keyframes dat-ban-scroll-left {

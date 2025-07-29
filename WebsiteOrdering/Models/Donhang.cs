@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.ViewModels;
 
 namespace WebsiteOrdering.Models
@@ -13,7 +14,7 @@ namespace WebsiteOrdering.Models
 
         public DateTime Ngaydat { get; set; }
 
-        public string Trangthai { get; set; } = null!;
+        public TrangThai Trangthai { get; set; }
 
         public decimal Tongtien { get; set; }
 

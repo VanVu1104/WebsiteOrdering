@@ -43,5 +43,10 @@ namespace WebsiteOrdering.Controllers
         {
             return View();
         }
+
+        public IActionResult MenuBook()
+        {
+            return View();
+        }
     }
 }

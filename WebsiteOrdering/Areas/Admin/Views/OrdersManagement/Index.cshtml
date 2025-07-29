@@ -1,8 +1,10 @@
-﻿@model List<WebsiteOrdering.Models.Donhang>
+﻿@using WebsiteOrdering.Enums
+@model List<WebsiteOrdering.Models.Donhang>
 @{
 	ViewData["Title"] = "Trang quản lý";
 	Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
-	var statusOptions = new List<string> { "Pending", "Paid", "Delivering", "Delivered", "Cancel" };
+	var selectedStatus = ViewBag.StatusFilter as TrangThai?;
+	var statusOptions = Enum.GetValues(typeof(TrangThai)).Cast<TrangThai>().ToList();
 }
 <h2>Quản lý đơn hàng</h2>
 
@@ -11,23 +13,22 @@
 		<input type="text" name="keyword" class="form-control" placeholder="Tìm mã đơn hàng"
 			   value="@ViewBag.Keyword" />
 	</div>
-	<div class="col-md-2">
-		<select name="status" class="form-select" onchange="this.form.submit()">
-			<option value="">-- Trạng thái --</option>
+	
+<div class="col-md-2">
+    <select name="status" class="form-select" onchange="this.form.submit()">
+        <option value="">-- Trạng thái --</option>
 			@foreach (var s in statusOptions)
 			{
-				<option value="@s" selected="@(ViewBag.StatusFilter == s ? "selected" : null)">
-					@s.Substring(0, 1).ToUpper()@s.Substring(1)
-				</option>
+				bool isSelected = selectedStatus?.ToString() == s.ToString();
+				<option value="@s" selected="@(isSelected ? "selected" : null)">@s.ToString()</option>
 			}
-		</select>
-	</div>
+    </select>
+</div>
 	<div class="col-md-2">
 		<select name="dateFilter" class="form-select" onchange="this.form.submit()">
 			<option value="">-- Lọc thời gian --</option>
 			<option value="week" selected="@(ViewBag.DateFilter == "week" ? "selected" : null)">Tuần này</option>
 			<option value="month" selected="@(string.IsNullOrEmpty(ViewBag.DateFilter) || ViewBag.DateFilter == "month" ? "selected" : null)">Tháng này</option>
-			<option value="custom" selected="@(ViewBag.DateFilter == "custom" ? "selected" : null)">Tùy chọn</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -35,6 +36,9 @@
 	</div>
 	<div class="col-md-2">
 		<input type="date" name="toDate" class="form-control" value="@ViewBag.ToDate" />
+	</div>
+	<div class="col-md-2">
+		@await Component.InvokeAsync("BranchDropdown", new { selectedBranchId = ViewBag.BranchId as string, showLabel = false })
 	</div>
 	<div class="col-md-1">
 		<button type="submit" class="btn btn-primary w-100">Lọc</button>
@@ -96,9 +100,9 @@
 					<td>@don.Tenkh</td>
 					<td>@don.Ngaydat.ToString("dd/MM/yyyy HH:mm")</td>
 					<td>@don.Tongtien.ToString("N0") đ</td>
-					<td>@don.Trangthai</td>
+					<td>@don.Trangthai.ToString()</td>
 					<td>
-						@if (don.Trangthai == "Cancel" || don.Trangthai == "Delivered")
+						@if (don.Trangthai == TrangThai.Cancelled || don.Trangthai == TrangThai.Completed)
 						{
 							<span class="text-muted">-</span>
 						}
@@ -112,8 +116,8 @@
 								<select name="newStatus" class="form-select form-select-sm me-2">
 									@foreach (var option in availableStatuses)
 									{
-										<option value="@option" selected="@(option == don.Trangthai ? "selected" : null)">
-											@option.Substring(0, 1).ToUpper()@option.Substring(1)
+										<option value="@option" selected="@(option == don.Trangthai.ToString() ? "selected" : null)">
+											@option.ToString()
 										</option>
 									}
 								</select>

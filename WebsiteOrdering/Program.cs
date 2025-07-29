@@ -102,6 +102,7 @@ builder.Services.AddScoped<IMonanRepository, MonanRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddHttpClient<IGeoService, GeoService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
 builder.Services.AddHostedService<DatBanBackgroundService>();
 builder.Services.AddSession(options =>
 {

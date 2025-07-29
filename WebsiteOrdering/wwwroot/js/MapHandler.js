@@ -145,7 +145,11 @@
             this.handleMapClick(e);
         });
         document.getElementById('btnSelectStore')?.addEventListener('click', () => this.saveSelectedStoreToSession());
-
+        //Nút đến trang giỏ hàng
+        document.getElementById("btnCart")?.addEventListener('click', () => this.cartSite());
+    }
+    async cartSite() {
+        window.location.href = "/Products/";
     }
     async saveSelectedStoreToSession() {
         const selected = document.querySelector('.store-item.selected');

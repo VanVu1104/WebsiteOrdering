@@ -1,87 +1,32 @@
-﻿@* <!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebsiteOrdering</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebsiteOrdering.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebsiteOrdering</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Thực đơn</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Index">Đặt bàn</a>
-                        </li>
-                    </ul>
-                </div>
-
-
-            </div>
-            <a asp-controller="Cart" asp-action="Index">
-
-                <i class="fa fa-shopping-cart">Giỏ hàng</i>
-                 <span>
-                @await Html.PartialAsync("_CartCount")
-                </span>
-            </a>
-        </nav>
-
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - WebsiteOrdering - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/indexbooking.js"></script>
-    <script src="~/js/pagedetailproduct.js" ></script>
-    @await RenderSectionAsync("Scripts", required: false)
-
-
-</body>
-</html>
- *@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebsiteOrdering</title>
+    <title>@ViewData["Title"] </title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebsiteOrdering.styles.css" asp-append-version="true" />
     @Html.Raw("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/css/splide.min.css\">")
+    <link rel="preload" href="/images/menu/menu.png" as="image">
+    <link rel="preload" href="/images/menu/menu_2.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_3.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_4.jpg" as="image">
+    <link rel="preload" href="/images/menu/menu_5.jpg" as="image">
+    @using Microsoft.AspNetCore.Identity
+    @using WebsiteOrdering.Models
+    @inject UserManager<ApplicationUser> UserManager
+    @inject SignInManager<ApplicationUser> SignInManager
 
 </head>
+@{
+    var currentPath = Context.Request.Path.ToString().ToLower();
+    var queryString = Context.Request.QueryString.ToString().ToLower();
+    var isLocationPage = currentPath.Contains("/location")
+                                        || queryString.Contains("type=delivery")
+                                        || queryString.Contains("type=pickup");
+}
 
 <body>
     <header>
@@ -94,34 +39,38 @@
                     <span></span>
                 </div>
                 <a asp-controller="Home" asp-action="Index" class="restaurant-logo">
-                    <img src="/images/header/celeste_elysee_logo.png" alt="Logo" />
+                    <img src="/images/header/logo_restaurant.png" alt="Logo" />
                 </a>
-             @*    <a asp-controller="Account" asp-action="Login">
-                    <button class="image-button">ĐĂNG NHẬP</button>
-                </a> *@
-
-                @if (User.Identity.IsAuthenticated)
+                @if (SignInManager.IsSignedIn(User))
                 {
-                    <!-- Icon user + dropdown -->
-                    <div class="dropdown">
-                        <button class="image-button user-button">
-                            <img src="~/images/header/user_icon.png" alt="@User.Identity.Name" style="width: 30px; height: 30px;" />
+                    var currentUser = await UserManager.GetUserAsync(User);
+                    <div class="user-menu">
+                        <button class="user-toggle" aria-label="Tài khoản">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon-user" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2a5 5 0 100 10 5 5 0 000-10zM4 20a8 8 0 0116 0v1H4v-1z" />
+                            </svg>
+                            <span class="user-text">
+                                Xin chào, <strong>@(currentUser?.FullName ?? "Người dùng")</strong>
+                            </span>
+                            <span class="arrow">&#9662;</span>
                         </button>
-                        <div class="dropdown-content">
-                            <a asp-controller="Account" asp-action="Profile">Cập nhật thông tin cá nhân</a>
+
+                        <div class="user-dropdown">
+                            <a asp-controller="Account" asp-action="Profile"
+                               class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Account"
+                                                                                      && ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+                                Thông tin tài khoản
+                            </a>
+
                             <a asp-controller="Order" asp-action="MyOrders">Đơn hàng của tôi</a>
-                            <form asp-controller="Account" asp-action="Logout" method="post" style="display: inline;">
-                                <button type="submit" class="btn-logout">Đăng xuất</button>
+
+                            <a asp-controller="Booking" asp-action="LichSuDatBan">Lịch sử đặt bàn</a>
+
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                <button type="submit">Đăng xuất</button>
                             </form>
                         </div>
                     </div>
-                    <a asp-controller="Cart" asp-action="Index">
-
-                        <i class="fa fa-shopping-cart">Giỏ hàng</i>
-                        <span>
-                            @await Html.PartialAsync("_CartCount")
-                        </span>
-                    </a>
                 }
                 else
                 {
@@ -129,14 +78,22 @@
                         <button class="image-button">ĐĂNG NHẬP</button>
                     </a>
                 }
+                @* <a asp-controller="Cart" asp-action="Index">
 
+                <i class="fa fa-shopping-cart">Giỏ hàng</i>
+                <span>
+                @await Html.PartialAsync("_CartCount")
+                </span>
+                </a> *@
             </div>
         </div>
     </header>
-
     <!-- 🔻 Slide menu -->
     <div class="side-menu" id="sideMenu">
-        <div class="menu-bg" id="menuBg"></div>
+        <div class="menu-bg-wrapper">
+            <img id="menuBgCurrent" class="menu-bg-img" src="/images/menu/menu.png" alt="Background current">
+            <img id="menuBgNext" class="menu-bg-img" src="" alt="Background next">
+        </div>
         <div class="right-menu">
             <ul>
                 <li class="menu-item active" data-bg="/images/menu/menu.png">
@@ -146,10 +103,10 @@
                     <a asp-area="" asp-controller="Home" asp-action="AboutUs">Giới thiệu</a>
                 </li>
                 <li class="menu-item" data-bg="/images/menu/menu_3.jpg">
-                    <a asp-area="" asp-controller="Products" asp-action="Index">Thực đơn</a>
+                    <a asp-area="" asp-controller="Home" asp-action="MenuBook">Thực đơn</a>
                 </li>
-                <li class="menu-item" data-bg="/images/menu/menu_4.jpg">
-                    <a asp-area="" asp-controller="Home" asp-action="ThucDonOnline">Đặt hàng online</a>
+                <li class="menu-item @(isLocationPage ? "active" : "")" data-bg="/images/menu/menu_4.jpg">
+                    <a asp-controller="Location" asp-action="SelectOrderType">Đặt hàng online</a>
                 </li>
                 <li class="menu-item" data-bg="/images/menu/menu_5.jpg">
                     <a asp-area="" asp-controller="Home" asp-action="ContactUs">Liên hệ</a>
@@ -162,6 +119,7 @@
     </div>
 
     @RenderSection("FullWidthContent", required: false)
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -182,9 +140,9 @@
                     <div class="footer-links">
                         <a>Giới thiệu</a>
                         <a>Thực đơn</a>
-                        <a>Đặt bàn</a>
                         <a>Đặt hàng online</a>
                         <a>Dịch vụ</a>
+                        <a>Liên hệ</a>
                         <div class="footer-social-media">
                             <a>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" fill="#EEDFAD" id="facebook">
@@ -239,9 +197,95 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @Html.Raw("<script src=\"https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.3/dist/js/splide.min.js\"></script>")
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const header = document.querySelector('header');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const bgCurrent = document.getElementById('menuBgCurrent');
+            const bgNext = document.getElementById('menuBgNext');
+            const currentPath = window.location.pathname.toLowerCase();
+            const queryParams = new URLSearchParams(window.location.search);
+            const typeParam = queryParams.get("type");
+
+            // ✅ Hàm chuyển ảnh nền
+            function switchBackground(newSrc) {
+                if (!newSrc || bgCurrent.src.includes(newSrc)) return;
+
+                bgNext.src = newSrc;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+
+                    setTimeout(() => {
+                        bgCurrent.src = newSrc;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
+            }
+
+            // ✅ Đặt active ban đầu (theo path hoặc query string)
+            menuItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (!link) return;
+
+                const linkPath = new URL(link.href, window.location.origin).pathname.toLowerCase();
+                const text = link.textContent.trim().toLowerCase();
+                const isLocationPage = currentPath.includes("/location")
+                    || (typeParam === "delivery" || typeParam === "pickup");
+
+                if (
+                    // Trường hợp đặc biệt: Đặt hàng online
+                    (isLocationPage && text.includes("đặt hàng online")) ||
+                    // Trường hợp khớp link thông thường
+                    linkPath === currentPath
+                ) {
+                    document.querySelector('.menu-item.active')?.classList.remove('active');
+                    item.classList.add('active');
+
+                    const bg = item.getAttribute('data-bg');
+                    if (bg) {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                    }
+                }
+            });
+
+            // ✅ Hover menu item → đổi ảnh nền
+            menuItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    const bg = item.getAttribute('data-bg');
+                    switchBackground(bg);
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    const activeItem = document.querySelector('.menu-item.active');
+                    const bg = activeItem?.getAttribute('data-bg');
+                    switchBackground(bg);
+                });
+
+                // ✅ Click menu → active + ảnh + chuyển trang sau hiệu ứng
+                const link = item.querySelector('a');
+                link?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetUrl = link.href;
+                    const bg = item.getAttribute('data-bg');
+
+                    document.querySelector('.menu-item.active')?.classList.remove('active');
+                    item.classList.add('active');
+
+                    if (bg) {
+                        switchBackground(bg);
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 200);
+                });
+            });
+
+            // ✅ Scroll header: thêm class khi cuộn
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 10) {
                     header.classList.add('scrolled');
@@ -251,64 +295,148 @@
             });
         });
     </script>
-    @* Click vào menu *@
-    <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const sideMenu = document.getElementById('sideMenu');
-        const menuItems = document.querySelectorAll('.menu-item');
-        const menuBg = document.getElementById('menuBg');
 
-        // Bật/tắt menu và đặt lại ảnh theo item.active
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
+    <script>
+        const menuToggle = document.getElementById('menuToggle'); // Nút mở menu
+        const sideMenu = document.getElementById('sideMenu');     // Khối menu
+        const menuItems = document.querySelectorAll('.menu-item');
+        const bgCurrent = document.getElementById('menuBgCurrent');
+        const bgNext = document.getElementById('menuBgNext');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const closeIcon = closeMenuBtn.querySelector('img');
+
+        function isMobileOrTablet() {
+            return window.innerWidth <= 991;
+        }
+
+        function lockScroll() {
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function unlockScroll() {
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+        }
+
+        // Mở menu
+        menuToggle?.addEventListener('click', () => {
             sideMenu.classList.toggle('active');
 
+            if (sideMenu.classList.contains('active') && isMobileOrTablet()) {
+                lockScroll();
+            } else {
+                unlockScroll();
+            }
+
+            // Cập nhật ảnh nền theo menu-item.active
             const activeItem = document.querySelector('.menu-item.active');
             if (activeItem) {
                 const bg = activeItem.getAttribute('data-bg');
-                menuBg.style.backgroundImage = `url(${bg})`;
+                bgCurrent.src = bg;
+                bgCurrent.style.opacity = '1';
+                bgNext.style.opacity = '0';
             }
         });
 
-        // Hover mỗi item để đổi ảnh, khi rời thì về ảnh active
+        // Đóng menu
+        closeMenuBtn?.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+            unlockScroll();
+        });
+
+        // Hover nút close → đổi ảnh (chỉ desktop)
+        closeMenuBtn?.addEventListener('mouseenter', () => {
+            if (!isMobileOrTablet()) {
+                closeIcon.src = "/images/menu/close_white.png";
+            }
+        });
+
+        closeMenuBtn?.addEventListener('mouseleave', () => {
+            if (!isMobileOrTablet()) {
+                closeIcon.src = "/images/menu/close_yellow.png";
+            }
+        });
+
+        // Hover menu item → chuyển ảnh nền
         menuItems.forEach(item => {
             item.addEventListener('mouseenter', () => {
                 const bg = item.getAttribute('data-bg');
-                menuBg.style.backgroundImage = `url(${bg})`;
+                if (!bg || bg === bgCurrent.src) return;
+
+                bgNext.src = bg;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+                    setTimeout(() => {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
             });
 
             item.addEventListener('mouseleave', () => {
                 const activeItem = document.querySelector('.menu-item.active');
-                if (activeItem) {
-                    const bg = activeItem.getAttribute('data-bg');
-                    menuBg.style.backgroundImage = `url(${bg})`;
-                }
+                const bg = activeItem?.getAttribute('data-bg');
+                if (!bg || bg === bgCurrent.src) return;
+
+                bgNext.src = bg;
+                bgNext.onload = () => {
+                    bgNext.style.opacity = '1';
+                    bgCurrent.style.opacity = '0';
+                    setTimeout(() => {
+                        bgCurrent.src = bg;
+                        bgCurrent.style.opacity = '1';
+                        bgNext.style.opacity = '0';
+                    }, 600);
+                };
             });
 
-            // Nếu bạn muốn click vào item thì nó trở thành active
-            item.addEventListener('click', () => {
+            // ✅ Click menu item → active + đổi ảnh + chuyển trang
+            item.querySelector('a')?.addEventListener('click', (e) => {
+                e.preventDefault(); // Chặn chuyển trang ngay
+
+                const targetUrl = e.currentTarget.href; // ✅ DÙNG .href thay vì getAttribute
+
+                // Cập nhật active menu
                 document.querySelector('.menu-item.active')?.classList.remove('active');
                 item.classList.add('active');
 
+                // Đổi ảnh nền
                 const bg = item.getAttribute('data-bg');
-                menuBg.style.backgroundImage = `url(${bg})`;
+                if (bg && bg !== bgCurrent.src) {
+                    bgNext.src = bg;
+                    bgNext.onload = () => {
+                        bgNext.style.opacity = '1';
+                        bgCurrent.style.opacity = '0';
+                        setTimeout(() => {
+                            bgCurrent.src = bg;
+                            bgCurrent.style.opacity = '1';
+                            bgNext.style.opacity = '0';
+                        }, 600);
+                    };
+                }
+
+                // ✅ Chuyển trang sau hiệu ứng
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 200);
             });
-        });
-    </script>
 
-    <script>
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const closeIcon = closeMenuBtn.querySelector('img');
+        });
 
-        closeMenuBtn.addEventListener('click', () => {
-            sideMenu.classList.remove('active');
-            menuToggle.classList.remove('active');
-        });
-        closeMenuBtn.addEventListener('mouseenter', () => {
-            closeIcon.src = "/images/menu/close_white.png";
-        });
-        closeMenuBtn.addEventListener('mouseleave', () => {
-            closeIcon.src = "/images/menu/close_yellow.png";
+        // ✅ Resize → cập nhật scroll lock lại
+        window.addEventListener('resize', () => {
+            if (sideMenu.classList.contains('active')) {
+                if (isMobileOrTablet()) {
+                    lockScroll();
+                } else {
+                    unlockScroll();
+                }
+            }
+
         });
     </script>
 

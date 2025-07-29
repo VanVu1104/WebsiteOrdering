@@ -1,4 +1,5 @@
 ﻿using WebsiteOrdering.Areas.ViewModelAdmin;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 
@@ -11,16 +12,43 @@ namespace WebsiteOrdering.Areas.Services
         {
             _orderRepository = orderRepository;
         }
-        public List<string> GetAvailableStatuses(string currentStatus)
+        public List<TrangThai> GetAvailableStatuses(TrangThai currentStatus)
         {
             return currentStatus switch
             {
-                "Pending" => ["Pending", "Paid", "Delivering", "Delivered", "Cancel"],
-                "Paid" => ["Paid", "Delivering", "Delivered", "Cancel"],
-                "Delivering" => ["Delivering", "Delivered"],
-                "Delivered" => ["Delivered"],
-                "Cancel" => ["Cancel"],
-                _ => []
+                TrangThai.Pending => new()
+        {
+            TrangThai.Pending,
+            TrangThai.Confirmed,
+            TrangThai.Paid,
+            TrangThai.Delivering,
+            TrangThai.Completed,
+            TrangThai.Cancelled
+        },
+                TrangThai.Paid => new()
+        {
+            TrangThai.Paid,
+            TrangThai.Confirmed,
+            TrangThai.Delivering,
+            TrangThai.Completed,
+            TrangThai.Cancelled
+        },
+                TrangThai.Confirmed => new()
+        {
+            TrangThai.Confirmed,
+            TrangThai.Paid,
+            TrangThai.Delivering,
+            TrangThai.Completed,
+            TrangThai.Cancelled
+        },
+                TrangThai.Delivering => new()
+        {
+            TrangThai.Delivering,
+            TrangThai.Completed
+        },
+                TrangThai.Completed => new() { TrangThai.Completed },
+                TrangThai.Cancelled => new() { TrangThai.Cancelled },
+                _ => new()
             };
         }
         public async Task<(List<Donhang> Orders, int TotalCount)> GetPagedFilteredOrdersAsync(OrderFilterModel filter)
@@ -61,9 +89,9 @@ namespace WebsiteOrdering.Areas.Services
                 _ => GetMonthRange(now) // Default to current month
             };
         }
-        private async Task<List<Donhang>> GetOrdersByStatusAsync(string status)
+        private async Task<List<Donhang>> GetOrdersByStatusAsync(TrangThai? status)
         {
-            return string.IsNullOrEmpty(status)
+            return string.IsNullOrEmpty(status.ToString())
                 ? await _orderRepository.GetAllOrdersAsync()
                 : await _orderRepository.GetOrdersByStatusAsync(status);
         }

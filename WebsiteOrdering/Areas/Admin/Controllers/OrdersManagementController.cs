@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebsiteOrdering.Areas.Services;
 using WebsiteOrdering.Areas.ViewModelAdmin;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Repositories;
 
 namespace WebsiteOrdering.Areas.Admin.Controllers
@@ -20,7 +21,8 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
         }
         [HttpGet("")]
         public async Task<IActionResult> Index(
-    string status,
+    TrangThai? status,
+    string? branchId,
     string keyword,
     string dateFilter,
     DateTime? fromDate,
@@ -36,14 +38,15 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
                 FromDate = fromDate,
                 ToDate = toDate,
                 Page = page,
-                PageSize = pageSize
+                ChiNhanhId = branchId,
+                PageSize = pageSize,
             };
 
             var (orders, totalCount) = await _orderService.GetPagedFilteredOrdersAsync(filter);
 
             var statusMap = orders.ToDictionary(
                 o => o.Iddonhang,
-                o => _orderService.GetAvailableStatuses(o.Trangthai)
+                o => _orderService.GetAvailableStatuses(o.Trangthai).Select(s => s.ToString()).ToList()
             );
 
             SetViewBagData(filter, statusMap, totalCount);
@@ -60,6 +63,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             ViewBag.Page = filter.Page;
             ViewBag.PageSize = filter.PageSize;
             ViewBag.TotalCount = totalCount;
+            ViewBag.BranchId = filter.ChiNhanhId;
         }
         [HttpGet("Details")]
         public async Task<IActionResult> Details(string id)
@@ -73,7 +77,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             return View(order);
         }
         [HttpPost("UpdateStatus")]
-        public async Task<IActionResult> UpdateStatus(string id, string newStatus)
+        public async Task<IActionResult> UpdateStatus(string id, TrangThai newStatus)
         {
             var success = await _orderRepository.UpdateOrderStatusAsync(id, newStatus);
 

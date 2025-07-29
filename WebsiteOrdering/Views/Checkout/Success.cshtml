@@ -1,7 +1,10 @@
-﻿@model WebsiteOrdering.Models.Donhang
+﻿@model WebsiteOrdering.ViewModels.DonhangViewModel
+@{
+    var donhang = Model.Donhang;
+}
 @{
     ViewData["Title"] = "Đơn hàng";
-
+ 
     <link rel="stylesheet" href="~/css/hoadon.css" />
 }
 <div class="hoa-don-container-tong">
@@ -18,8 +21,8 @@
                     </div>
                 </div>
 
-                <p>Mã đơn hàng: @Model.Iddonhang</p>
-                <p style="margin: 0 0 0 0 ">Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
+                <p>Mã đơn hàng: @donhang.Iddonhang</p>
+                <p style="margin: 0 0 0 0 ">Ngày đặt: @donhang.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
             </div>
             <div class="hoa-don-anh">
                 <img src="~/css/img/hinhhoadon.png" alt="Ảnh" />
@@ -29,24 +32,24 @@
         <div class="hoa-don-noidung">
             <div class="hoa-don-infor">
                 <h2>THÔNG TIN NGƯỜI ĐẶT</h2>
-                <p>Khách hàng: @Model.Tenkh</p>
-                <p>Số điện thoại: @Model.Sdtkh</p>
-                @if(Model.DeliveryMethod == "delivery")
+                <p>Khách hàng: @donhang.Tenkh</p>
+                <p>Số điện thoại: @donhang.Sdtkh</p>
+                @if(donhang.DeliveryMethod == "delivery")
                 {
-                    <p>Địa chỉ giao hàng: @Model.Diachidh</p>
+                    <p>Địa chỉ giao hàng: @donhang.Diachidh</p>
                 }
                 else
                 {
-                    <p>Nhận tại cửa hàng: @Model.Diachidh</p>
+                    <p>Nhận tại cửa hàng: @donhang.Diachidh</p>
                 }
             </div>
 
             <div class="hoa-don-address">
                 <h2>ĐỊA CHỈ NHÀ HÀNG</h2>
-                @if (Model.IdchinhanhNavigation != null)
+                @if (donhang.IdchinhanhNavigation != null)
                 {
-                    <p>@Model.IdchinhanhNavigation.Tencnhanh</p>
-                    <p>@Model.IdchinhanhNavigation.Diachicn</p>
+                    <p>@donhang.IdchinhanhNavigation.Tencnhanh</p>
+                    <p>@donhang.IdchinhanhNavigation.Diachicn</p>
                 }
                 else
                 {
@@ -65,7 +68,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Chitietdonhangs)
+                @foreach (var item in donhang.Chitietdonhangs)
                 {
                     <tr>
                         <td>
@@ -125,25 +128,25 @@
         <div class="hoa-don-tongcong">
             <div class="tongcong-row">
                 <p class="ten-tieude"><strong>TỔNG CỘNG</strong></p>
-                <p class="in-ra">@Model.Tongtien.ToString("N0") đ</p>
+                <p class="in-ra">@Model.TongTienHang.ToString("N0") đ</p>
             </div>
 
-            @if (Model.Tienship != null)
+            @if (Model.Donhang.Tienship != null)
             {
                 <div class="tongcong-row">
                     <p class="ten-tieude"><strong>PHÍ GIAO HÀNG</strong></p>
-                    <p class="in-ra">@Model.Tienship?.ToString("N0") đ</p>
+                    <p class="in-ra">@Model.Donhang.Tienship?.ToString("N0") đ</p>
                 </div>
             }
 
             <div class="tongcong-row">
                 <p class="ten-tieude"><strong>PHƯƠNG THỨC THANH TOÁN</strong></p>
-                <p class="in-ra">@Model.Ptttoan</p>
+                <p class="in-ra">@Model.Donhang.Ptttoan</p>
             </div>
 
             <div class="tongcong-row">
                 <p class="ten-tieude"><strong>THÀNH TIỀN</strong></p>
-                <p class="in-ra"><strong>@Model.Tongtien.ToString("N0") đ</strong></p>
+                <p class="in-ra"><strong>@Model.ThanhTien.ToString("N0") đ</strong></p>
             </div>
         </div>
     </div>

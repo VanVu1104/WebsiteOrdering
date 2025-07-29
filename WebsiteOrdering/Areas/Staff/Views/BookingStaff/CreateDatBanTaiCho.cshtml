@@ -20,6 +20,21 @@
 
 <form asp-action="CreateDatBanTaiCho" method="post" class="space-y-4">
     <div>
+        <label>Ngày đặt</label>
+        <input name="Ngaydat" id="ngayDatInput" class="form-control" type="date"
+               value="@DateTime.Now.ToString("yyyy-MM-dd")"
+               min="@DateTime.Now.ToString("yyyy-MM-dd")"
+               required />
+        <small class="text-muted">Không thể chọn ngày quá khứ</small>
+    </div>
+
+    <div>
+        <label>Giờ bắt đầu</label>
+        <select id="Giobatdau" name="Giobatdau" class="form-select" required>
+            <option value="">-- Chọn giờ --</option>
+        </select>
+    </div>
+    <div>
         <label>Chi nhánh</label>
         <input type="text" class="form-control" value="@chiNhanhTen" disabled />
         <input type="hidden" name="Idchinhanh" value="@idChiNhanh" />
@@ -32,12 +47,16 @@
             <option value="">-- Chọn khu vực --</option>
             @if (listBan != null)
             {
-                @foreach (var khuvuc in listBan.Select(b => b.Khuvuc).Distinct())
+                @foreach (var khuvuc in listBan.Select(b => b.Khuvuc?.Trim()).Where(k => !string.IsNullOrEmpty(k)).Distinct())
                 {
                     <option value="@khuvuc">@khuvuc</option>
                 }
+
+
             }
+
         </select>
+
     </div>
 
     <div>
@@ -45,43 +64,26 @@
         <select name="selectedIdban" id="banSelect" class="form-select" required>
             <option value="">-- Chọn bàn --</option>
         </select>
+
     </div>
 
     <div>
         <label>Tên người đặt (nếu có)</label>
-        <input asp-for="Tenngdat" class="form-control" placeholder="Khách vãng lai nếu bỏ trống" />
+        <input name="Tenngdat" class="form-control" placeholder="Khách vãng lai nếu bỏ trống" />
     </div>
 
     <div>
         <label>Số điện thoại</label>
-        <input asp-for="Sđtngdat" class="form-control" />
+        <input name="Sđtngdat" class="form-control" />
     </div>
 
     <div>
         <label>Số người</label>
-        <input asp-for="Songuoidat" class="form-control" type="number" min="1" />
+        <input name="Songuoidat" class="form-control" type="number" min="1" />
     </div>
-
-    <div>
-        <label>Ngày đặt</label>
-        <input asp-for="Ngaydat" id="ngayDatInput" class="form-control" type="date"
-               value="@DateTime.Now.ToString("yyyy-MM-dd")"
-               min="@DateTime.Now.ToString("yyyy-MM-dd")"
-               required />
-        <small class="text-muted">Không thể chọn ngày quá khứ</small>
-    </div>
-
-    <div>
-        <label>Giờ bắt đầu</label>
-        <select id="Giobatdau" name="Giobatdau" class="form-select" required>
-            <option value="">-- Chọn giờ --</option>
-        </select>
-        <small class="text-muted">Giờ kết thúc sẽ tự tính +2 giờ</small>
-    </div>
-
     <div>
         <label>Trạng thái</label>
-        <select asp-for="Trangthaidatban" class="form-select" required>
+        <select name="Trangthaidatban" class="form-select" required>
             <option value="">-- Chọn trạng thái --</option>
             <option value="Đã xác nhận">Đã xác nhận</option>
             <option value="Khách đã đến">Khách đã đến</option>
@@ -169,7 +171,7 @@
                     return;
                 }
 
-                const baseUrl = '@Url.Action("GetBanDaDat", "BookingStaff")';
+                const baseUrl = '@Url.Action("GetBanDaDat", "BookingStaff", new { area = "Staff" })';
                 const url = `${baseUrl}?ngay=${encodeURIComponent(ngay)}&gio=${encodeURIComponent(gio)}&idChinhanh=${encodeURIComponent(idChinhanh)}&idKhuvuc=${encodeURIComponent(khuvuc)}`;
 
                 fetch(url)
@@ -178,6 +180,8 @@
                         return response.json();
                     })
                     .then(data => {
+                        banSelect.innerHTML = '<option value="">-- Chọn bàn --</option>';
+
                         if (data && Array.isArray(data) && data.length > 0) {
                             data.forEach(ban => {
                                 const optionText = `${ban.tenban} - ${ban.trangthai} - Sức chứa: ${ban.songuoi}`;
@@ -197,6 +201,7 @@
                         console.error('❌ Lỗi khi load bàn:', error);
                         alert('Lỗi khi tải danh sách bàn: ' + error.message);
                     });
+
             }
 
             // Không cho chọn ngày quá khứ

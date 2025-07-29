@@ -26,7 +26,7 @@ namespace WebsiteOrdering.Models
         public DbSet<Chitietdatban> chitietdatbans { get; set; }
         public DbSet<Ban> bans { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
-
+        public DbSet<MonAnGhepStats> MonAnGhepStats { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
         
@@ -69,7 +69,27 @@ namespace WebsiteOrdering.Models
                     .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
             });
+            modelBuilder.Entity<MonAnGhepStats>(entity =>
+            {
+                entity.HasKey(e => e.Idmonan);
 
+                entity.ToTable("MONANGHEPSTATS");
+
+                entity.Property(e => e.Idmonan)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDMONAN");
+
+                entity.Property(e => e.SoLanDuocGhep)
+                    .HasColumnName("SOLANDUOCGHEP");
+
+                entity.HasOne(e => e.MonAn)
+                    .WithMany()
+                    .HasForeignKey(e => e.Idmonan)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_MONANGHEPSTATS_MONAN");
+            });
             modelBuilder.Entity<Chinhanh>(entity =>
             {
                 entity.HasKey(e => e.Idchinhanh).HasName("PK__CHINHANH__5F20FC40654C6C03");
@@ -254,6 +274,7 @@ namespace WebsiteOrdering.Models
                 entity.Property(e => e.Songuoidat).HasColumnName("SONGUOIDAT");
                 entity.Property(e => e.Trangthaidatban)
                     .IsUnicode(true)
+                    .HasConversion<string>()
                     .HasColumnName("TRANGTHAIDATBAN");
                 entity.Property(e => e.Lydo)
                     .HasColumnName("LYDO");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
@@ -323,6 +344,7 @@ namespace WebsiteOrdering.Models
                 entity.Property(e => e.Tienship).HasColumnName("TIENSHIP");
                 entity.Property(e => e.Tongtien).HasColumnName("TONGTIEN");
                 entity.Property(e => e.Trangthai)
+                    .HasConversion<string>()
                     .HasMaxLength(50)
                     .HasColumnName("TRANGTHAI");
 
