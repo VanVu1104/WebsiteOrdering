@@ -4,9 +4,7 @@
 <!--banner video section-->
 <div class="video-banner-homepage">
     <video autoplay muted loop class="video-content">
-
         <source src="/video/video_banner_homepage.mp4" />
-
         Trình duyệt của bạn không hỗ trợ phát video
     </video>
     <div class="video-overlay"></div>
@@ -14,6 +12,7 @@
         <h1>Khám phá</h1>
         <h2>Phong cách ẩm thực</h2>
         <h2>Trân trọng thiên nhiên</h2>
+
         <button class="btn-book-now" onclick="location.href='@Url.Action("Index", "Booking")'">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" id="restaurant-cloche" class="icon-clonche">
                 <path d="M90,76H10a2,2,0,0,1-2-2,42,42,0,0,1,84,0A2,2,0,0,1,90,76ZM12.05,72H88a38,38,0,0,0-75.9,0Z"></path>
@@ -21,8 +20,6 @@
                 <path d="M50,36a2,2,0,0,1-2-2V26a2,2,0,0,1,4,0v8A2,2,0,0,1,50,36Z"></path>
             </svg>
             <span>Đặt bàn ngay</span>
-
-              
         </button>
     </div>
 </div>
@@ -30,7 +27,6 @@
     <div class="intro-section">
         <h2>Men và mộng</h2>
         <h1>Vầng khói tròn</h1>
-
         <p>Giữa nhịp thành phố như bản hòa âm không dứt, chiếc bàn đá xám ánh lên như gương hồ tĩnh lặng.</p>
         <p>Một nhóm người – không vội vã – tụ họp lại bên chai rượu vang sóng sánh, ánh nhìn va chạm nhau như thể vừa nhớ lại điều gì rất xa, rất gần.</p>
         <p>Từ tầng vị giác gợi mở: bánh nướng vàng, truffle ẩn mình, rau thơm bung hương…</p>
@@ -50,7 +46,6 @@
         <p class="intro-end-2">một lát bánh mở ra cánh cổng.</p>
         <a href="/about" class="animated-underline">Khám phá câu chuyện</a>
     </div>
-
     <div class="quotes-container col-span-14">
         <div class="quote-wrapper">
             <div class="quote-img-container">
@@ -64,9 +59,7 @@
                 <div class="background-shape rotating">
                     <img src="~/images/home/quote/bg_shape.png" alt="shape" id="quote-shape" />
                     <div class="quote-texts">
-
                         <p class="quote-text" id="quote-text">"Một niềm vui để thưởng thức chậm rãi."</p>
-
                     </div>
                 </div>
             </div>
@@ -83,7 +76,6 @@
         </div>
         <div class="award-image">
             <div class="award-item">
-
                 <img src="/images/home/award/50TOP_logo.png" alt="50 top" />
             </div>
 
@@ -112,7 +104,7 @@
     <div class="widget">
         <div class="widget-container">
             <div class="widget-wrapper">
-                <div class="widget-item">
+                <a asp-controller="Home" asp-action="MenuBook" class="widget-item">
                     <span class="widget-caption-menu">
                         Thực đơn
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
@@ -129,9 +121,9 @@
                             <path d="M104.056 0H378C386.837 0 394 7.16346 394 16V578C394 586.837 386.837 594 378 594H16C7.16344 594 0 586.837 0 578V134.784C0 131.352 1.10313 128.012 3.1466 125.255L91.2025 6.47161C94.2204 2.40065 98.9883 0 104.056 0Z" fill="url(#pattern-widget-menu)" />
                         </svg>
                     </div>
-                </div>
+                </a>
 
-                <div class="widget-item-2">
+                <a asp-controller="Home" asp-action="ThucDonOnline" class="widget-item-2">
                     <span class="widget-caption-order">
                         Đặt món
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
@@ -148,11 +140,11 @@
                             <path d="M289.951 0H16.4865C7.65524 0 0.493977 7.15523 0.486543 15.9865L0.0134794 577.987C0.00603675 586.828 7.17166 594 16.0135 594H378.5C387.337 594 394.5 586.837 394.5 578V135.289C394.5 131.855 393.395 128.511 391.347 125.753L302.798 6.46337C299.779 2.39724 295.014 0 289.951 0Z" fill="url(#pattern-widget-order)" />
                         </svg>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div class="widget-wrapper-2">
-                <div class="widget-item">
+                <a asp-controller="Home" asp-action="AboutUs" class="widget-item">
                     <span class="widget-caption-introduce">
                         Giới thiệu
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
@@ -169,9 +161,9 @@
                             <path d="M104.549 594.8H378.013C386.845 594.8 394.006 587.645 394.013 578.813L394.487 16.8133C394.494 7.97144 387.328 0.799805 378.487 0.799805H16C7.16345 0.799805 0 7.96326 0 16.7998V459.51C0 462.945 1.10541 466.289 3.15271 469.047L91.7022 588.336C94.7205 592.403 99.4855 594.8 104.549 594.8Z" fill="url(#pattern-widget-introduce)" />
                         </svg>
                     </div>
-                </div>
+                </a>
 
-                <div class="widget-item-2">
+                <a asp-controller="Booking" asp-action="Index" class="widget-item-2">
                     <span class="widget-caption-book">
                         Đặt bàn
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
@@ -188,12 +180,10 @@
                             <path d="M290.444 594.8H16.5C7.66345 594.8 0.5 587.636 0.5 578.8V16.7998C0.5 7.96326 7.66345 0.799805 16.5 0.799805H378.5C387.337 0.799805 394.5 7.96326 394.5 16.7998V460.016C394.5 463.447 393.397 466.788 391.353 469.544L303.297 588.328C300.28 592.399 295.512 594.8 290.444 594.8Z" fill="url(#pattern-widget-book)" />
                         </svg>
                     </div>
-
-                </div>
+                </a>
             </div>
         </div>
     </div>
-
     <div class="paragraph-section">
         <div class="left-paragraph">
             <p>Tại <a>Céleste Élysée</a> , chúng tôi tin rằng mỗi món ăn là một hành trình – không phải của vị giác, mà của cảm xúc. Chúng tôi không nấu để lấp đầy, mà để gợi mở: một ký ức xa xăm, một ý niệm văn hóa, một khoảnh khắc đời sống.</p>
@@ -288,5 +278,3 @@
         </div>
     </div>
 </div>
-
-

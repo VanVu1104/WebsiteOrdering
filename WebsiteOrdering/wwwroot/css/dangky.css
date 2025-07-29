@@ -6,6 +6,34 @@
     overflow: hidden;
 }
 
+.div_back_home {
+    display: flex;
+    width: 100%;
+    max-width: 568px;
+    margin: 30px auto 0 auto;
+    gap: 145px;
+    justify-content: flex-start;
+}
+
+.back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: '1FTV VIP Mestika', serif;
+    font-size: 20px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    color: #203F25;
+}
+
+    .back-home:hover {
+        color: #E0B37F;
+    }
+
+
 .total_dangky {
     display: flex;
     width: 100%;
@@ -26,21 +54,24 @@
     }
 
 .form_dangky {
-    width: 50%;
-    padding: 60px 80px;
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    background-color: #fff;
-    box-sizing: border-box;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    padding: 0 30px 40px 40px;
+    flex-direction: column;
+    background-color: white;
+    line-height: 50px;
+    /*    padding: 30px;*/
+    justify-self: center;
+    align-content: center;
 }
 
     .form_dangky h2 {
         text-align: center;
-        font-size: 45px;
-        color: #203F25;
-        margin-bottom: 10px;
-        font-weight: bold;
+        font-size: 35px;
+        color: white;
     }
 
 form {

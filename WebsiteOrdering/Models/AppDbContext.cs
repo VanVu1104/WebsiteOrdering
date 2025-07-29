@@ -28,8 +28,8 @@ namespace WebsiteOrdering.Models
         public virtual DbSet<Location> Locations { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
-        
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-H0FGQ82\\SQLEXPRESS;Database=pizza1;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

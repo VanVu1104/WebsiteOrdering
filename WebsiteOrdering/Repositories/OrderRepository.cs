@@ -20,6 +20,22 @@ namespace WebsiteOrdering.Repositories
             return order.Iddonhang;
         }
 
+        //public async Task<Donhang?> GetOrderWithDetailsAsync(string orderId)
+        //{
+        //    return await _context.dhang.Include(o => o.Chitietdonhangs)
+        //            .ThenInclude(od => od.IdmonanNavigation)
+        //            .Include(o => o.Chitietdonhangs)
+        //                .ThenInclude(od => od.Idmonan2Navigation)
+        //            .Include(o => o.Chitietdonhangs)
+        //                .ThenInclude(od => od.IdsizeNavigation)
+        //            .Include(o => o.Chitietdonhangs)
+        //                .ThenInclude(od => od.IddebanhNavigation)
+        //            .Include(o => o.Chitietdonhangs)
+        //                .ThenInclude(od => od.Chitiettoppings)
+        //                    .ThenInclude(ct => ct.IdtoppingNavigation)
+        //                    .FirstOrDefaultAsync(o => o.Iddonhang == orderId);
+        //}
+
         public async Task<Donhang?> GetOrderWithDetailsAsync(string orderId)
         {
             return await _context.dhang.Include(o => o.IdchinhanhNavigation)

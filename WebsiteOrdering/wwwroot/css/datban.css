@@ -1,4 +1,8 @@
-﻿.dat-ban-modal-title {
+﻿/*input[type="radio"] {
+    display: inline !important;
+}
+*/
+.dat-ban-modal-title {
     font-weight: bold;
     margin: 0 auto;
     text-align: center;

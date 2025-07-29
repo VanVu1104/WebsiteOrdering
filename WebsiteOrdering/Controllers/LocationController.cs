@@ -472,5 +472,6 @@ namespace WebsiteOrdering.Controllers
 
             return Ok(new { success = true });
         }
+       
     }
 }

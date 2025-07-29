@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteOrdering.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDbContext : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,9 @@ namespace WebsiteOrdering.Migrations
                 {
                     IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     TENCNHANH = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DIACHICN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    DIACHICN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    LATITUDE = table.Column<decimal>(type: "decimal(9,6)", precision: 9, scale: 6, nullable: false),
+                    LONGITUDE = table.Column<decimal>(type: "decimal(9,6)", precision: 9, scale: 6, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -401,7 +403,9 @@ namespace WebsiteOrdering.Migrations
                     Magiaodich = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TENKH = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Sdtkh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TIENSHIP = table.Column<int>(type: "int", nullable: true),
+                    TIENSHIP = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    DeliveryMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Khoangcachship = table.Column<double>(type: "float", nullable: true),
                     IDCHINHANH = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
                     IDDATBAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: true),
                     IDNGDUNG = table.Column<string>(type: "nvarchar(450)", nullable: true)

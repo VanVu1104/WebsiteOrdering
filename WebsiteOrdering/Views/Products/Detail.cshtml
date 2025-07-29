@@ -13,11 +13,33 @@
     ViewData["Title"] = "Chi tiết sản phẩm";
     Layout = "_Layout";
     var isPizzaLoai01 = Model.Idloaimonan == "LMA01";
-    var isMonPhu = Model.Idloaimonan == "LMA05" || Model.Idloaimonan == "LMA06" || Model.Idloaimonan == "LMA07";
+    var isMonPhu = Model.Idloaimonan == "LMA05" || Model.Idloaimonan == "LMA06" || Model.Idloaimonan == "LMA07" || Model.Idloaimonan == "LMA08" || Model.Idloaimonan == "LMA09";
+    var isEdit = ViewBag.IsEdit == true;
+
+    var selectedSize = isEdit ? ViewBag.size : null;
+    var selectedCrust = isEdit ? ViewBag.debanh : null;
+    var selectedToppings = isEdit ? ViewBag.toppings : null;
+    var note = isEdit ? ViewBag.ghichu : null;
+    var quantity = isEdit ? ViewBag.soluong : null;
+    var selectedIdmonan2 = isEdit ? ViewBag.idmonan2 : null;
+
+    var isPizzaGhep = !string.IsNullOrEmpty(selectedIdmonan2);
+
+    var soluong = !string.IsNullOrEmpty(quantity) ? quantity : "1";
 }
 <div class="product-detail-container">
-    <form method="post" asp-action="AddToCart" asp-controller="Cart">
+    <form method="post" asp-controller="Cart"
+          asp-action="@(isEdit ? "UpdateCartItem" : "AddToCart")">
         <input type="hidden" name="IDMONAN" value="@Model.Idmonan" />
+        @if (isEdit)
+        {
+            <input type="hidden" name="originalIdmonan" value="@Model.Idmonan" />
+            <input type="hidden" name="originalIdmonan2" value="@selectedIdmonan2" />
+            <input type="hidden" name="originalSizeId" value="@selectedSize" />
+            <input type="hidden" name="originalDeBanhId" value="@selectedCrust" />
+            <input type="hidden" name="originalToppings" value="@(string.Join(",", selectedToppings ?? new List<string>()))" />
+        }
+
 
         <div class="product-detail-wrapper @(isMonPhu ? "single-column" : "")">
             @if (!isMonPhu)
@@ -35,8 +57,8 @@
                     {
                         <div class="product-detail-tab-wrapper">
                             <div class="product-detail-btn-group">
-                                <button type="button" class="btn active" id="btnPizzaNguyen">PIZZA NGUYÊN</button>
-                                <button type="button" class="btn" id="btnPizzaGhep">PIZZA GHÉP</button>
+                                <button type="button" class="btn @(isPizzaGhep ? "" : "active")" id="btnPizzaNguyen">PIZZA NGUYÊN</button>
+                                <button type="button" class="btn @(isPizzaGhep ? "active" : "")" id="btnPizzaGhep">PIZZA GHÉP</button>
                             </div>
                         </div>
                     }
@@ -44,7 +66,7 @@
                     @* Pizza Ghép *@
                     @if (isPizzaLoai01 && Model.PizzaGhep != null && Model.PizzaGhep.Any())
                     {
-                        <div id="pizzaGhepHalf" style="display: none;">
+                        <div id="pizzaGhepHalf" style="@(isPizzaGhep ? "display: block;" : "display: none;")">
                             <div class="form-title">Chọn bánh</div>
                             <div class="ghep-half-wrapper">
                                 <div class="half-select">
@@ -55,14 +77,19 @@
                                     <label for="nuaThuHai">Nửa thứ hai</label>
                                     <div class="custom-select">
                                         <select id="nuaThuHai" name="SelectedPizzaGhepId" required>
+                                           
                                             <option value="">Chọn nửa thứ hai</option>
                                             @foreach (var pizza in Model.PizzaGhep)
                                             {
-                                                <option value="@pizza.IDMONAN2" data-anh="@pizza.ANHMONAN2" data-gia="@pizza.GIACOBAN2">
+                                                <option value="@pizza.IDMONAN2"
+                                                        data-anh="@pizza.ANHMONAN2"
+                                                        data-gia="@pizza.GIACOBAN2"
+                                                        selected="@(pizza.IDMONAN2 == selectedIdmonan2 ? "selected" : null)">
                                                     @pizza.TENMONAN2
                                                 </option>
                                             }
                                         </select>
+                                      @*   <input type="hidden" id="hiddenPizzaGhepId" name="SelectedPizzaGhepId" value="" /> *@
                                         <img src="~/css/svg/icon_dropdown.svg" class="dropdown-icon" alt="Dropdown Icon" />
                                     </div>
                                 </div>
@@ -78,7 +105,11 @@
                             @foreach (var size in Model.ListGiaSizes)
                             {
                                 <div class="product-detail-form-check">
-                                    <input type="radio" name="SelectedSizeId" value="@size.Idsize" id="size_@size.Idsize" required>
+                                    <input type="radio"
+                                           name="SelectedSizeId"
+                                           value="@size.Idsize"
+                                           id="size_@size.Idsize"
+                                    @(selectedSize == size.IdsizeNavigation.Tensize ? "checked" : "") required>
                                     <label for="size_@size.Idsize">
                                         @size.IdsizeNavigation.Tensize - @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", size.Giasize).Trim() VNĐ
                                     </label>
@@ -95,7 +126,11 @@
                             @foreach (var debanh in Model.DeBanh)
                             {
                                 <div class="product-detail-form-check">
-                                    <input type="radio" name="SelectedDeBanhId" value="@debanh.Iddebanh" id="debanh_@debanh.Iddebanh" required>
+                                    <input type="radio"
+                                           name="SelectedDeBanhId"
+                                           value="@debanh.Iddebanh"
+                                           id="debanh_@debanh.Iddebanh"
+                                    @(selectedCrust == debanh.Tendebanh ? "checked" : "") required>
                                     <label for="debanh_@debanh.Iddebanh">
                                         @debanh.Tendebanh - @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", debanh.Giadebanh).Trim() VNĐ
                                     </label>
@@ -112,7 +147,12 @@
                             @foreach (var topping in Model.Toppings)
                             {
                                 <div class="product-detail-form-check">
-                                    <input type="checkbox" name="SelectedToppingIds" value="@topping.Idtopping" data-gia="@topping.Giatopping" id="topping_@topping.Idtopping">
+                                    <input type="checkbox"
+                                           name="SelectedToppingIds"
+                                           value="@topping.Idtopping"
+                                           data-gia="@topping.Giatopping"
+                                           id="topping_@topping.Idtopping"
+                                    @(selectedToppings != null && selectedToppings.Contains(topping.Idtopping.ToString()) ? "checked" : "")>
                                     <label for="topping_@topping.Idtopping">
                                         @topping.Tentopping
                                         <span class="price">- @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", topping.Giatopping).Trim() VNĐ</span>
@@ -125,19 +165,26 @@
                     @* 👉 Ghi chú nếu không phải món phụ *@
                     <div class="form-title">Ghi chú</div>
                     <div class="form-group">
-                        <textarea id="ghichu" name="ghichu" rows="3"></textarea>
+                        <textarea id="ghichu" name="ghichu" rows="3">@note</textarea>
                     </div>
                 </div>
             }
 
             <div class="product-detail-info square-style @(isMonPhu ? "full-width" : "")">
                 <div class="product-detail-image">
-                    <img id="imgPizzaNguyen" src="~/css/img/@Model.Anhmonan" alt="@Model.Tenmonan" />
+                    @if (isMonPhu)
+                    {
+                        <img src="~/css/img/@Model.Anhmonan" alt="@Model.Tenmonan" class="pro-detail monphu" />
+                    }
+                    else
+                    {
+                        <img id="imgPizzaNguyen" src="~/css/img/@Model.Anhmonan" alt="@Model.Tenmonan" style="@(isPizzaGhep ? "display: none;" : "")" />
+                    }
                     @if (isPizzaLoai01)
                     {
-                        <div id="pizzaGhepImages" style="display: none;">
+                        <div id="pizzaGhepImages" style="@(isPizzaGhep ? "display: block;" : "display: none;")">
                             <img id="imgPizzaGhepLeft" src="~/css/img/@Model.Anhmonan" alt="Half Pizza Left" />
-                            <img id="imgPizzaGhepRight" src="" alt="Half Pizza Right" />
+                            <img id="imgPizzaGhepRight" src="@(Model.PizzaGhep?.FirstOrDefault(p => p.IDMONAN2 == selectedIdmonan2)?.ANHMONAN2 ?? "")" alt="Half Pizza Right" />
                         </div>
                     }
                 </div>
@@ -165,7 +212,7 @@
                     {
                         <div class="form-title-note-phu">Ghi chú</div>
                         <div class="form-group-note-phu">
-                            <textarea id="ghichu" name="ghichu" rows="3"></textarea>
+                            <textarea id="ghichu" name="ghichu" rows="3">@note</textarea>
                         </div>
                     }
 
@@ -175,7 +222,7 @@
                                 <img src="~/css/svg/icon_minus.svg" alt="minus">
                             </button>
                             <div class="product-detail-quantity-wrapper">
-                                <input type="text" id="soluong" name="soluong" value="1" min="1" class="product-detail-quantity-input" readonly />
+                                <input type="text" name="soluong" id="soluong" value="@soluong" readonly class="product-detail-quantity-input" />
                             </div>
                             <button type="button" id="btnIncrease" class="product-detail-quantity-btn">
                                 <img src="~/css/svg/icon_plus.svg" alt="plus">
@@ -189,19 +236,27 @@
                                         <path class="add-to-cart-bg-fill" d="M466.604 0C466.604 5.52285 474.093 10 483.329 10C483.893 9.99999 484.45 9.98183 485 9.94922V50.0498C484.45 50.0172 483.893 50 483.329 50C474.093 50 466.604 54.4772 466.604 60H16.7236C16.7236 54.4772 9.23627 50.0002 0 50V10C9.23627 9.99985 16.7236 5.52275 16.7236 0H466.604Z" fill="#203F25" />
                                         <path class="add-to-cart-border-fill" d="M466.604 0H467.604V-1H466.604V0ZM483.329 10V11H483.329L483.329 10ZM485 9.94922H486V8.88813L484.941 8.95097L485 9.94922ZM485 50.0498L484.941 51.048L486 51.1109V50.0498H485ZM483.329 50L483.329 49H483.329V50ZM466.604 60V61H467.604V60H466.604ZM16.7236 60H15.7236V61H16.7236V60ZM0 50H-1V51L-1.64826e-05 51L0 50ZM0 10L-1.64836e-05 9L-1 9.00002V10H0ZM16.7236 0V-1H15.7236V0H16.7236ZM466.604 0H465.604C465.604 3.25242 467.804 6.02437 470.99 7.92935C474.196 9.84656 478.561 11 483.329 11V10V9C478.86 9 474.863 7.91487 472.016 6.21279C469.149 4.49848 467.604 2.27043 467.604 0H466.604ZM483.329 10L483.329 11C483.914 11 484.492 10.9811 485.059 10.9475L485 9.94922L484.941 8.95097C484.409 8.98252 483.872 8.99999 483.329 9L483.329 10ZM485 9.94922H484V50.0498H485H486V9.94922H485ZM485 50.0498L485.059 49.0516C484.49 49.0178 483.913 49 483.329 49L483.329 50L483.329 51C483.873 51 484.41 51.0166 484.941 51.048L485 50.0498ZM483.329 50V49C478.561 49 474.196 50.1534 470.99 52.0707C467.804 53.9756 465.604 56.7476 465.604 60H466.604H467.604C467.604 57.7296 469.149 55.5015 472.016 53.7872C474.863 52.0851 478.86 51 483.329 51V50ZM466.604 60V59H16.7236V60V61H466.604V60ZM16.7236 60H17.7236C17.7236 56.7477 15.5245 53.9757 12.3386 52.0708C9.13234 50.1535 4.76763 49.0001 1.64826e-05 49L0 50L-1.64826e-05 51C4.46864 51.0001 8.46574 52.0852 11.3122 53.7873C14.1791 55.5016 15.7236 57.7296 15.7236 60H16.7236ZM0 50H1V10H0H-1V50H0ZM0 10L1.64836e-05 11C4.76763 10.9999 9.13234 9.84645 12.3386 7.92924C15.5245 6.02425 17.7236 3.25234 17.7236 0H16.7236H15.7236C15.7236 2.27042 14.1791 4.49842 11.3122 6.21271C8.46574 7.91477 4.46864 8.99993 -1.64836e-05 9L0 10ZM16.7236 0V1H466.604V0V-1H16.7236V0Z" fill="#E0B37F" />
                                     </svg>
-                                    <span class="add-to-cart-btn-text">
-                                        Thêm vào giỏ &nbsp;&nbsp;
-                                        <span id="giaHienTai">
-                                            @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", Model.Giamonan).Trim() VNĐ
+                                        <span class="add-to-cart-btn-text">
+                                        @if (isEdit)
+                                            {
+                                                <text>Cập nhật giỏ&nbsp;&nbsp;</text>
+                                            }
+                                            else
+                                            {
+                                                <text>Thêm vào giỏ&nbsp;&nbsp;</text>
+                                            }
+
+                                            <span id="giaHienTai">
+                                                @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", Model.Giamonan).Trim() VNĐ
+                                            </span>
                                         </span>
 
-                                    </span>
                                 </span>
                             </button>
                         </div>
                     </div>
                 </div>
-
+                
             </div>
         </div>
     </form>
@@ -217,7 +272,8 @@
             const imgRight = document.getElementById("imgPizzaGhepRight");
             const giaTienEl = document.getElementById("giaHienTai");
             const giaPizzaNguyen = parseFloat('@Model.Giamonan');
-            const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower();
+            const isPizzaLoai01 = @Html.Raw(isPizzaLoai01 ? "true" : "false");
+            const isPizzaGhep = @Html.Raw(isPizzaGhep ? "true" : "false");
             const btnDecrease = document.getElementById("btnDecrease");
             const btnIncrease = document.getElementById("btnIncrease");
             const inputQuantity = document.getElementById("soluong");
@@ -260,6 +316,7 @@
                     // ✅ Thêm mới: disable select nửa thứ hai khi chọn pizza nguyên
                     if (nuaThuHai) {
                         nuaThuHai.disabled = true;
+                      //  document.getElementById("hiddenPizzaGhepId").value = nuaThuHai.value;
                         nuaThuHai.required = false;
                     }
 
@@ -287,6 +344,7 @@
                     // ✅ Thêm mới: enable lại select nửa thứ hai khi chọn pizza ghép
                     if (nuaThuHai) {
                         nuaThuHai.disabled = false;
+                       // document.getElementById("hiddenPizzaGhepId").value = "";
                         nuaThuHai.required = true;
                     }
 
@@ -294,21 +352,23 @@
                 });
 
                 // ✅ Khi chọn nửa thứ hai
-                nuaThuHai?.addEventListener("change", () => {
-                    const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
-                    const img = selected.getAttribute("data-anh");
-                    const gia = parseFloat(selected.getAttribute("data-gia"));
+               
+                    nuaThuHai?.addEventListener("change", () => {
+                        const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
+                        const img = selected.getAttribute("data-anh");
+                        const gia = parseFloat(selected.getAttribute("data-gia"));
 
-                    if (imgRight && img) {
-                        imgRight.src = "/css/img/" + img;
-                    }
+                        if (imgRight && img) {
+                            imgRight.src = "/css/img/" + img;
+                        }
 
-                    if (!isNaN(gia) && gia > 0) {
-                        giaTienEl.textContent = formatCurrency(gia / 2) + " VNĐ";
-                    }
+                        if (!isNaN(gia) && gia > 0) {
+                            giaTienEl.textContent = formatCurrency(gia / 2) + " VNĐ";
+                        }
 
-                    tinhTongTien();
-                });
+                        tinhTongTien();
+                    });
+               
 
                 // Hiệu ứng xoay icon dropdown
                 const customSelect = document.querySelector('.custom-select');
@@ -410,10 +470,6 @@
                     tongTienEl.textContent = "Tổng tiền: " + formatCurrency(tongTien) + " VNĐ";
                 }
 
-                // if (giaTienEl) {
-                //     giaTienEl.textContent = formatCurrency(tongTien) + " VNĐ";
-                // }
-
                 if (giaTienEl) {
                     if (isPizzaLoai01 && btnGhep.classList.contains("active")) {
                         const selected = nuaThuHai.options[nuaThuHai.selectedIndex];
@@ -435,7 +491,6 @@
 
             // Validate khi thêm vào giỏ
             document.getElementById("btnAddToCart")?.addEventListener("click", function (e) {
-                // const isPizzaLoai01 = @isPizzaLoai01.ToString().ToLower();
                 const hasSize = @((Model.ListGiaSizes?.Any() == true).ToString().ToLower());
                 const soLuong = parseInt(inputQuantity?.value || "0");
 
@@ -472,7 +527,21 @@
                     }
                 }
             });
-            btnNguyen?.click();
+
+            if (isPizzaLoai01 && isPizzaGhep) {
+                const selected = nuaThuHai?.options[nuaThuHai.selectedIndex];
+                const img = selected?.getAttribute("data-anh");
+                if (img && imgRight) {
+                    imgRight.src = "/css/img/" + img;
+                }
+            }
+
+            if (isPizzaGhep) {
+                btnGhep?.click();
+            } else {
+                btnNguyen?.click();
+            }
+
         });
     </script>
 }

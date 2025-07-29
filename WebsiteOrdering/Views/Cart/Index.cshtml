@@ -1,17 +1,19 @@
 ﻿@model WebsiteOrdering.ViewModels.CartPageViewModel
 
 @{
-    ViewData["Title"] = "Giỏ hàng của bạn";
+    ViewData["Title"] = "Thông tin thanh toán";
     var selectedIds = TempData["SelectedIds"] as List<string> ?? new List<string>();
+    <link rel="stylesheet" href="~/css/style.css" />
 }
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
+
 @section Scripts {
     <script src="~/js/site.js"></script>
 }
-<h2>Giỏ hàng của bạn</h2>
 
 @if (Model.CartItems == null || !Model.CartItems.Any())
 {
@@ -19,142 +21,174 @@
 }
 else
 {
-    <form asp-action="CartEmpty" asp-controller="Cart" >
-        <button type="submit" class="btn btn-danger mb-3">Xoá toàn bộ giỏ hàng</button>
-    </form>
+    // <form asp-action="CartEmpty" asp-controller="Cart">
+    //     <button type="submit" class="btn btn-danger mb-3">Xoá toàn bộ giỏ hàng</button>
+    // </form>
+
     <form method="post" asp-action="Confirm" asp-controller="Checkout">
-    <table class="table table-bordered align-middle">
-        <thead>
-            <tr>
-                <th>Chọn</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Size</th>
-                <th>Đế bánh</th>
-                <th>Topping</th>
-                <th>Số lượng</th>
-                <th>Ghi chú</th>
-                <th>Tổng tiền</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-                @foreach (var item in Model.CartItems)
-            {
-                var itemId = $"{item.IDMONAN}_{item.IDMMONAN2}_{item.Size}_{item.DeBanh}_{string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())}";
-
-                <tr>
-                    <td>
-                            <input type="checkbox" name="selectedIds" value="@itemId" class="form-check-input cart-select"
-                               data-tongtien="@item.TongTien"
-                               checked />
-                    </td>
-
-                    <td><img src="~/css/img/@item.ANHSANPHAM" alt="Ảnh" width="100" /></td>
-
-                    <td>
-                        @item.TENSANPHAM
-                        @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+        <div class="checkout-container">
+            <div class="checkout-left">
+                <a href="/Products" class="checkout-pro-back-to-menu">
+                    Quay lại
+                    <svg viewBox="0 0 512 512" width="20" height="20" fill="none">
+                        <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <!-- GIỎ HÀNG -->
+                <table class="checkout-pro-table">
+                    <thead>
+                        <tr>
+                            <th class="checkout-pro-hidden">Chọn</th>
+                            <th>Ảnh</th>
+                            <th class="table-product-name">Sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng</th>
+                            <th class="checkout-pro-hidden">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CartItems)
                         {
-                            <br />
+                            var itemId = $"{item.IDMONAN}_{item.IDMMONAN2}_{item.Size}_{item.DeBanh}_{string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())}";
+                            <tr>
+                                <td class="checkout-pro-hidden">
+                                    <input type="checkbox" name="selectedIds" value="@itemId"
+                                           class="checkout-pro-check cart-select"
+                                           data-tongtien="@item.TongTien"
+                                           checked />
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                                    {
+                                        <div class="pizza-split-image">
+                                            <img class="pizza-half left" src="~/css/img/@item.ANHSANPHAM" alt="Ảnh vị 1" />
+                                            <img class="pizza-half right" src="~/css/img/@item.ANHSANPHAM2" alt="Ảnh vị 2" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <img src="~/css/img/@item.ANHSANPHAM" alt="Ảnh" class="checkout-pro-anh" />
+                                    }
+                                </td>
+                                <td class="table-product-name">
+                                    <div class="checkout-pro-name">
+                                        @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
+                                        {
+                                            <text>PIZZA 2 VỊ – @item.TENSANPHAM & @item.TENSANPHAM2</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@item.TENSANPHAM</text>
+                                        }
+                                    </div>
+                                    <div class="checkout-pro-options">
+                                        @if (!string.IsNullOrEmpty(item.Size))
+                                        {
+                                            <div>Size: @item.Size</div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.DeBanh))
+                                        {
+                                            <div>Đế: @item.DeBanh</div>
+                                        }
+                                        @{
+                                            if (item.Topping != null && item.Topping.Any())
+                                            {
+                                                <div>
+                                                    Topping:
+                                                    @{
+                                                        foreach (var top in item.Topping)
+                                                        {
+                                                            @top.Tentopping
+                                                            if (top != item.Topping.Last())
+                                                            {
+                                                                @:<span>, </span>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+;
+                                            }
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.GhiChu))
+                                        {
+                                            <div>Ghi chú: @item.GhiChu</div>
+                                        }
+                                    </div>
+                                </td>
 
-                            <small>+ Ghép với: <b>@item.TENSANPHAM2</b></small>
+
+                                <td>@item.DonGia.ToString("N0") VNĐ</td>
+
+                                <td>
+                                    <div class="checkout-pro-quantity-static">
+                                        @item.SoLuong
+                                    </div>
+                                </td>
+
+                                <td>@item.TongTien.ToString("N0") VNĐ</td>
+
+                                <td class="checkout-pro-hidden">
+                                    <form asp-action="DeleteItem" asp-controller="Cart">
+                                        <input type="hidden" name="idmonan" value="@item.IDMONAN" />
+                                        <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
+                                        <input type="hidden" name="size" value="@item.Size" />
+                                        <input type="hidden" name="debanh" value="@item.DeBanh" />
+                                        @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
+                                        {
+                                            <input type="hidden" name="toppings" value="@top.Idtopping" />
+                                        }
+                                        <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                                    </form>
+
+                                    <button type="button" class="btn btn-sm btn-warning btn-edit"
+                                            data-idmonan="@item.IDMONAN"
+                                            data-idmonan2="@item.IDMMONAN2"
+                                            data-size="@item.Size"
+                                            data-debanh="@item.DeBanh"
+                                            data-toppings="@string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())"
+                                            data-soluong="@item.SoLuong"
+                                            data-ghichu="@item.GhiChu"
+                                            data-name="@item.TENSANPHAM"
+                                            data-name2="@item.TENSANPHAM2"
+                                            data-anhsanpham="@item.ANHSANPHAM"
+                                            data-giasize="@item.GiaSize"
+                                            data-giadebanh="@item.GiaDeBanh"
+                                            data-giacoban="@item.GiaCoBan"
+                                            data-toggle="modal" data-target="#editModal">
+                                        Sửa
+                                    </button>
+                                </td>
+                            </tr>
                         }
-                    </td>
+                    </tbody>
+                </table>
+            </div>
 
-                    <td>@item.Size</td>
-                    <td>@item.DeBanh</td>
+            <div class="checkout-info">
+                @await Html.PartialAsync("_UserInfo", Model.UserInfo)
+                <div class="checkout-info-total">
+                    <span>Tổng cộng:</span>
+                    <span id="totalAmount">0 VNĐ</span>
+                </div>
+                <button type="submit" class="check-out-btn">Thanh toán</button>
 
-                    <td>
-                        @if (item.Topping != null && item.Topping.Any())
-                        {
-                            <ul class="mb-0">
-                                @foreach (var top in item.Topping)
-                                {
-                                    <li>@top.Tentopping (@top.Giatopping₫)</li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span>Không có</span>
-                        }
-                    </td>
-
-                    <td>
-                        <form asp-action="UpdateCart" asp-controller="Cart"  class="d-flex align-items-center">
-                            <input type="hidden" name="idmonan" value="@item.IDMONAN" />
-                            <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
-                            <input type="hidden" name="size" value="@item.Size" />
-                            <input type="hidden" name="debanh" value="@item.DeBanh" />
-                            @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
-                            {
-                                <input type="hidden" name="toppings" value="@top.Idtopping" />
-                            }
-
-                            <div class="input-group">
-                                <button type="button" class="btn btn-outline-secondary btn-decrease">−</button>
-                                <input type="text" name="soluong" class="form-control text-center quantity-input" value="@item.SoLuong" style="width: 50px;" />
-                                <button type="button" class="btn btn-outline-secondary btn-increase">+</button>
+                <div class="modal fade" id="loading-modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p class="mt-3">Đang chuyển hướng đến trang thanh toán...</p>
+                                <p class="text-muted">Vui lòng không đóng trang này</p>
                             </div>
-                        </form>
-
-                    </td>
-
-                    <td>@item.GhiChu</td>
-                    <td>@item.TongTien.ToString("N0")₫</td>
-
-                    <td>
-                        <form asp-action="DeleteItem" asp-controller="Cart" >
-                            <input type="hidden" name="idmonan" value="@item.IDMONAN" />
-                            <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
-                            <input type="hidden" name="size" value="@item.Size" />
-                            <input type="hidden" name="debanh" value="@item.DeBanh" />
-                            @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
-                            {
-                                <input type="hidden" name="toppings" value="@top.Idtopping" />
-                            }
-                            <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
-                        </form>
-                        <button type="button" class="btn btn-sm btn-warning btn-edit"
-                                data-idmonan="@item.IDMONAN"
-                                data-idmonan2="@item.IDMMONAN2"
-                                data-size="@item.Size"
-                                data-debanh="@item.DeBanh"
-                                data-toppings="@string.Join(",", item.Topping?.Select(t => t.Idtopping) ?? new List<string>())"
-                                data-soluong="@item.SoLuong"
-                                data-ghichu="@item.GhiChu"
-                                data-name="@item.TENSANPHAM"
-                                data-name2="@item.TENSANPHAM2"
-                                data-anhsanpham="@item.ANHSANPHAM"
-                                data-giasize="@item.GiaSize"
-                                data-giadebanh="@item.GiaDeBanh"
-                                data-giacoban="@item.GiaCoBan"
-                                data-toggle="modal" data-target="#editModal">
-                            Sửa
-                        </button>
-
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    @await Html.PartialAsync("_UserInfo", Model.UserInfo)
-    <hr />
-    <button type="submit" class="btn btn-primary">Thanh toán các món đã chọn</button>
-    <div class="modal fade" id="loading-modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
-                    <p class="mt-3">Đang chuyển hướng đến trang thanh toán...</p>
-                    <p class="text-muted">Vui lòng không đóng trang này</p>
                 </div>
             </div>
         </div>
-    </div>
     </form>
     <!-- Modal Sửa Giỏ Hàng -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -231,10 +265,6 @@ else
                                 }
                             </div>
                         </div>
-
-                     @*   <div class="mb-3">
-                            <strong>Tổng tiền dự kiến: <span id="edit-total-price">0₫</span></strong>
-                        </div>*@
                     </div>
                    
                     <div class="modal-footer">
@@ -246,7 +276,17 @@ else
             </div>
         </div>
     </div>
-    <h4 class="text-end">
-        Tổng đơn: <span id="totalAmount">0₫</span>
-    </h4>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const left = document.querySelector('.checkout-left');
+            const info = document.querySelector('.checkout-info');
+
+            if (left && info) {
+                const infoHeight = info.offsetHeight;
+                left.style.maxHeight = infoHeight + 'px';
+                left.style.overflowY = 'auto';
+            }
+        });
+    </script>
 }

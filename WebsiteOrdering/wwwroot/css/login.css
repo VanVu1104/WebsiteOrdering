@@ -22,13 +22,58 @@ body {
 .anh_login {
     width: 50vw;
     height: 100vh;
+    position: relative;
     overflow: hidden;
+    font-family: sans-serif;
 }
 
     .anh_login img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
+    }
+
+.login-text {
+    height: 175px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #203F25;
+    color: white;
+    text-align: center;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    font-family: 'Baloo 2', cursive;
+}
+
+    .login-text p {
+        line-height: 30px;
+        margin: auto 80px 20px 80px;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        font-family: 'Baloo 2', cursive;
+    }
+
+.btn-tieptuc-trangchu {
+    width: 170px;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: 1px solid white;
+    font-weight: bold;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-tieptuc-trangchu:hover {
+        background-color: #203F25;
+        border: 1px solid #E0B37F;
+        color: #E0B37F;
     }
 
 .chung {
@@ -211,6 +256,7 @@ body {
         transform: scaleX(-1);  Lật ngược sóng 
     }*/
 
+
 .nav-tabs {
     display: flex;
     width: 100%;
@@ -287,6 +333,21 @@ form {
     width: 100%;
     max-width: 568px;
     margin: 30px auto 0 auto;
+}
+
+.div_gg {
+    width: 100%;
+    max-width: 568px;
+    margin: 30px auto 0 auto;
+}
+
+.div_back_home {
+    display: flex;
+    width: 100%;
+    max-width: 568px;
+    margin: 30px auto 0 auto;
+    gap: 145px;
+    justify-content: flex-start;
 }
 
 #dn_email, #dn_mk {

@@ -60,11 +60,18 @@
                 <a style="background:#203F25;color:white" id="tabStaff" class="nav-tab tab-right active" asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff" onclick="switchTab('staff')">NHÂN VIÊN</a>
             </div>
 
-
-
             <div class="form_loginnv">
+                @* <div class="div_back_home">
+                    <a href="/Home" class="back-home">
+                        <svg viewBox="0 0 512 512" width="40" height="40" fill="none">
+                            <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
 
-                <h2>ĐĂNG NHẬP NHÂN VIÊN </h2>
+                    <h2>ĐĂNG NHẬP NHÂN VIÊN</h2>
+                </div> *@
+                <h2>ĐĂNG NHẬP NHÂN VIÊN</h2>
 
                 <form asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff" method="post">
                     <div id="dn_email">

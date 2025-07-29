@@ -60,15 +60,24 @@
     <div class="total_dangky">
 
         <div class="form_dangky">
+            @* <div class="div_back_home">
+                <a href="/Home" class="back-home">
+                    <svg viewBox="0 0 512 512" width="40" height="40" fill="none">
+                        <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
 
+                <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>
+            </div> *@
             <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>
 
-            <form asp-controller="#" asp-action="#" method="post">
+            <form asp-action="Register" method="post">
 
-                 <div id="dk_tendn">
-                <span>
-                <img style="width:30px;height:23px" src="~/css/img/icon_user.png" alt="Email icon" />
-                </span>
+                <div id="dk_tendn">
+                    <span>
+                        <img style="width:30px;height:23px" src="~/css/img/icon_user.png" alt="Email icon" />
+                    </span>
                     <input asp-for="FullName" type="text" placeholder="Nhập tên đăng nhập" />
                     <span asp-validation-for="FullName"></span>
                 </div>
