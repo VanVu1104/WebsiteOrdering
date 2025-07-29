@@ -7,7 +7,9 @@ using WebsiteOrdering.Product.GetAllCategoryById;
 using WebsiteOrdering.Product.GetAllProducts;
 using WebsiteOrdering.Product.GetProductById;
 using WebsiteOrdering.Helper;
-using WebsiteOrdering.ViewModels; // Để dùng session extension (Get<T>)
+using WebsiteOrdering.ViewModels;
+using WebsiteOrdering.Services;
+using WebsiteOrdering.Areas.Repository; // Để dùng session extension (Get<T>)
 
 namespace WebsiteOrdering.Controllers
 {
@@ -16,11 +18,16 @@ namespace WebsiteOrdering.Controllers
     {
         public readonly IMediator _mediator;
         private readonly AppDbContext _appDbContext;
+        private readonly LuceneProductIndexer _luceneIndexer;
+        private readonly IMonanRepository _monanRepository;
 
-        public ProductsController(IMediator mediator, AppDbContext appDbContext)
+        public ProductsController(IMediator mediator, AppDbContext appDbContext,
+            LuceneProductIndexer luceneIndexer, IMonanRepository monanRepository)
         {
             _mediator = mediator;
             _appDbContext = appDbContext;
+            _luceneIndexer = luceneIndexer;
+            _monanRepository = monanRepository;
         }
 
         //[HttpGet("")]
@@ -73,50 +80,35 @@ namespace WebsiteOrdering.Controllers
         //}
 
         [HttpGet("")]
-        public async Task<IActionResult> Index(int page = 1, string categoryId = null, string categoryIds = null)
+        public async Task<IActionResult> Index(int page = 1, string categoryId = null, string categoryIds = null, string searchTerm = "")
         {
             var categories = await _mediator.Send(new GetAllCategoriesQuery());
             ViewBag.Categories = categories;
-
-            List<Monan> products;
-
-            // ✅ Nếu có categoryIds (danh sách nhiều loại)
-            if (!string.IsNullOrEmpty(categoryIds))
+            ViewBag.SearchTerm = searchTerm;
+            List<Monan> products = new();
+            // Có tìm kiếm
+            if (!string.IsNullOrEmpty(searchTerm))
             {
-                var categoryIdList = categoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
-                products = new List<Monan>();
+                var exactMatchProducts = await _mediator.Send(new GetProductsByExactNameQuery(searchTerm));
 
-                foreach (var catId in categoryIdList)
+                if (exactMatchProducts != null && exactMatchProducts.Any())
                 {
-                    // ✅ Bổ sung lấy mục con:
-                    var allChildrenIds = GetAllChildCategoryIds(categories, catId);
-                    allChildrenIds.Add(catId);  // Thêm chính nó vào danh sách
-
-                    foreach (var childId in allChildrenIds)
-                    {
-                        var prods = await _mediator.Send(new GetProductsByCategoiesQuery(childId));
-                        if (prods != null && prods.Count > 0)
-                        {
-                            products.AddRange(prods);
-                        }
-                    }
+                    products = exactMatchProducts.ToList();
+                }
+                else
+                {
+                    var luceneResults = _luceneIndexer.SearchWithScore(searchTerm, 100);
+                    var matchedIds = luceneResults.Select(r => r.Id).ToList();
+                    var allProducts = await _mediator.Send(new GetAllProductQuery());
+                    products = allProducts.Where(p => matchedIds.Contains(p.Idmonan)).ToList();
                 }
 
-                ViewBag.SelectedCategory = categoryIds;
-
-                if (products.Count == 0)
-                {
-                    TempData["Message"] = "Không tìm thấy sản phẩm thuộc các loại đã chọn.";
-                }
+                ViewBag.SelectedCategory = null;
             }
-
-            // ✅ Logic cũ khi lọc theo categoryId đơn lẻ
             else if (!string.IsNullOrEmpty(categoryId))
             {
                 var allChildrenIds = GetAllChildCategoryIds(categories, categoryId);
                 allChildrenIds.Add(categoryId);
-
-                products = new List<Monan>();
 
                 foreach (var catId in allChildrenIds)
                 {
@@ -251,6 +243,29 @@ namespace WebsiteOrdering.Controllers
 
             // ⚡ Vẫn trả View "Detail"
             return View("Detail", product);
+        }
+        // Action API cho tìm kiếm AJAX
+        [HttpGet("searchProducts")]
+        public JsonResult SearchProducts(string term)
+        {
+            if (string.IsNullOrEmpty(term))
+            {
+                return Json(new List<object>());
+            }
+
+            var searchResults = _luceneIndexer.SearchWithScore(term, 10);
+            // Tách ID ra để EF xử lý được
+            var resultIds = searchResults.Select(r => r.Id).ToList();
+
+            var products = _appDbContext.SanPhams
+                .Where(p => resultIds.Contains(p.Idmonan))
+                .Select(p => new
+                {
+                    id = p.Idmonan,
+                    name = p.Tenmonan,
+                })
+                .ToList();
+            return Json(products);
         }
     }
 }

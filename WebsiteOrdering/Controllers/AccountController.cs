@@ -235,7 +235,7 @@ namespace WebsiteOrdering.Controllers
                 if (result.Succeeded)
                 {
                     TempData["SuccessMessage"] = "Cập nhật thông tin thành công.";
-                    return RedirectToAction("Profile"); // PRG pattern
+                    return RedirectToAction("Personal", "Personal"); // PRG pattern
                 }
 
                 foreach (var error in result.Errors)
