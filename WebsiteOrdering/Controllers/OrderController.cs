@@ -68,7 +68,7 @@ namespace WebsiteOrdering.Controllers
                 return StatusCode(500, "Hủy đơn hàng thất bại.");
             }
 
-            return RedirectToAction(nameof(MyOrders));
+            return RedirectToAction("Personal", "Personal", new { tab = "orders" });
         }
 
     }

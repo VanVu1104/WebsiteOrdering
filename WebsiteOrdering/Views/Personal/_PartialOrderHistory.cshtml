@@ -31,7 +31,7 @@ else
                         <tr>
                             <td>@order.Ngaydat.ToString("dd/MM/yyyy")</td>
                             <td>@order.Tongtien.ToString("N0") VNĐ</td>
-                            <td><span>@order.Trangthai</span></td>
+                            <td><span>@order.Trangthai.ToFriendly()</span></td>
                             <td>
                                 <a class="personal-orders-detail-link" asp-controller="Order" asp-action="Details" asp-route-id="@order.Iddonhang">[Chi tiết]</a>
                             </td>

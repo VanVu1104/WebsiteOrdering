@@ -156,7 +156,7 @@
                     <span class="badge @(d.Trangthaidatban == TrangThai.Pending ? "bg-warning" :
                                          d.Trangthaidatban == TrangThai.Confirmed ? "bg-success" :
                                          d.Trangthaidatban == TrangThai.Cancelled ? "bg-danger" : "bg-secondary")">
-                        @d.Trangthaidatban
+                        @d.Trangthaidatban.ToFriendly()
                     </span>
                 </td>
                 <td style="white-space: nowrap;">

@@ -108,18 +108,19 @@
                     <span>Đường đi</span>
                 </div>
             </div>
-            <div id="pickupActions" class="map-actions">
-                <button id="btnSelectStore" class="control-btn highlight-btn">
-                    ✓ Chọn cửa hàng này
-                </button>
-            </div>
-            <!-- Delivery Actions - Chỉ hiển thị khi delivery -->
-            <div id="deliveryActions" class="map-actions hidden">
+            <div class="map-actions map-actions-row">
                 <button id="btnSaveSessionLocation" class="control-btn highlight-btn">
-                    💾 Lưu vị trí đã chọn
+                    Lưu vị trí đã chọn
                 </button>
-                <button id="btnClearRoute" class="control-btn danger-btn">
-                    🗑️ Xóa đường đi
+
+                <!-- Chỉ hiện khi pickup -->
+                <button id="btnSelectStore" class="control-btn highlight-btn hidden">
+                    Chọn cửa hàng này
+                </button>
+
+                <!-- Chỉ hiện khi delivery -->
+                <button id="btnClearRoute" class="control-btn danger-btn hidden">
+                    Xóa đường đi
                 </button>
             </div>
         </div>
@@ -131,7 +132,9 @@
     <script>
         const locations = @Html.Raw(Json.Serialize(Model));
         const OPENROUTE_API_KEY = '@ViewBag.OpenRouteApiKey';
+        window.initialDeliveryType = '@ViewBag.OrderType';
     </script>
+
     @* <script src="~/js/map-handler.js"></script> *@
     <script src="~/js/locationservice.js"></script>
     <script src="~/js/searchservice.js"></script>

@@ -1,38 +1,34 @@
-﻿.location-container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+﻿/* Tổng container chia 2 cột */
+.location-container {
+    display: flex;
+    height: 100dvh;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    overflow: hidden;
+    font-family: 'Mestika', serif;
 }
 
 .map-wrapper {
-    position: relative;
-    background-color: #FFFFF7;
-    overflow: hidden;
+    flex: 1;
     display: flex;
-    width: 99vw;
-    height: 80vh;
-    min-height: 600px;
-    margin-left:-128px;
-    font-family: '1FTV VIP Mestika';
+    flex-direction: row;
+    overflow: hidden;
+    background-color: #FFFFF7;
 }
 
+/* Sidebar bên trái */
 .sidebar {
-    width: 400px; /* tăng nhẹ để khớp ảnh */
-    background: #FFFFF7;
-    padding: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    width: 400px;
+    background-color: #FFFFF7;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    align-items: center;
-    letter-spacing: 1.3px;
+    align-items: center; /* 👉 Căn giữa theo chiều ngang */
+    overflow: hidden;
 }
 
     .sidebar .delivery-options {
         display: flex;
-        margin: 30px 0 10px 0;
+        margin: 15px 0;
         border: 1px solid var(--green-color);
         background: transparent;
         border-radius: 30px;
@@ -72,130 +68,120 @@
             font-size: 1rem;
         }
 
-/* Store List in Sidebar */
 .store-list-sidebar {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
     overflow: hidden;
 }
 
-    .store-list-sidebar h5 {
-        margin: 0 0 20px 0;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        flex-shrink: 0; /* Không cho phép title co lại */
-    }
+.store-tabs-container {
+    flex-shrink: 0;
+    padding: 25px;
+    background-color: #FFFFF7;
+    border-bottom: 1px solid #ccc;
+}
+
+
+.store-list-sidebar h5 {
+    margin: 0 0 20px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    flex-shrink: 0; /* Không cho phép title co lại */
+}
 
 .search-inner {
-    display: flex
+    display: flex;
 }
 
 .search-container {
-    width:366px;
+    width: 366px;
     position: relative;
-    padding: 0;
     background: transparent;
     flex-shrink: 0;
     margin-bottom: 20px;
-    margin-left:10px;
+    margin-left: 10px;
 }
 
-.store-list-sidebar, .search-wrapper, .search-wrapper-delivery {
-    position: relative;
+.search-wrapper,
+.search-wrapper-delivery,
+.store-list-sidebar {
     width: 367px;
-    text-align: justify;
     justify-content: space-between;
 }
 
-    .store-list-sidebar .searchInput {
-        width: 100%;
-        height:47px;
-        padding: 20px;
-        font-size: 16px;
-        border: 1px solid #CED7DF;
-        border-radius: 8px;
-        color: rgb(0,0,0,60);
-        background: #F5F5F5;
-        transition: all 0.3s ease;
-        box-sizing: border-box;
+.searchInput {
+    width: 100%;
+    height: 47px;
+    padding: 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    color: rgb(0,0,0,60);
+    background: #F5F5F5;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+    .searchInput:focus {
+        outline: none;
+        border-color: var(--green-color);
+        box-shadow: 0 4px 12px rgba(79, 172, 254, 0.2);
     }
 
-        .store-list-sidebar .searchInput:focus {
-            outline: none;
-            border-color: var(--green-color);
-            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.2);
-            transform: none;
-        }
+/* Áp dụng cho cả .store-list-sidebar và .store-list-container */
+.store-list-sidebar::-webkit-scrollbar,
+.store-list-container::-webkit-scrollbar,
+.suggestions.show::-webkit-scrollbar {
+    width: 5px; /* Độ rộng của thanh cuộn dọc */
+}
 
-    .store-list-sidebar .search-icon {
-        z-index: 1;
-        align-content: center;
-        font-size: 16px;
-        width: 25px;
-        height: 25px;
-        margin-left: -40px;
-        align-self: center;
-    }
-    /* Áp dụng cho cả .store-list-sidebar và .store-list-container */
-    .store-list-sidebar::-webkit-scrollbar,
-    .store-list-container::-webkit-scrollbar,
-    .suggestions.show::-webkit-scrollbar {
-        width: 5px; /* Độ rộng của thanh cuộn dọc */
-    }
-    .store-list-sidebar::-webkit-scrollbar-track,
-    .store-list-container::-webkit-scrollbar-track,
-    .suggestions.show::-webkit-scrollbar-track {
-        background: #f1f1f1; /* Màu nền của track (phần rãnh) */
-        border-radius: 4px;
-    }
+.store-list-sidebar::-webkit-scrollbar-track,
+.store-list-container::-webkit-scrollbar-track,
+.suggestions.show::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Màu nền của track (phần rãnh) */
+    border-radius: 4px;
+}
 
-    .store-list-sidebar::-webkit-scrollbar-thumb,
-    .store-list-container::-webkit-scrollbar-thumb,
-    .suggestions.show::-webkit-scrollbar-thumb {
-        background: var(--green-color); /* Màu của phần kéo */
-        border-radius: 4px;
-        transition: background 0.3s ease;
-    }
+.store-list-sidebar::-webkit-scrollbar-thumb,
+.store-list-container::-webkit-scrollbar-thumb,
+.suggestions.show::-webkit-scrollbar-thumb {
+    background: var(--green-color); /* Màu của phần kéo */
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
 
-        .store-list-sidebar::-webkit-scrollbar-thumb:hover,
-        .store-list-container::-webkit-scrollbar-thumb:hover,
-        .suggestions.show::-webkit-scrollbar-thumb:hover {
-            background: #999; /* Màu khi hover */
-        }
+    .store-list-sidebar::-webkit-scrollbar-thumb:hover,
+    .store-list-container::-webkit-scrollbar-thumb:hover,
+    .suggestions.show::-webkit-scrollbar-thumb:hover {
+        background: #999; /* Màu khi hover */
+    }
 
 #storeList {
     flex: 1;
     overflow-y: auto;
-    min-height: 0;
-    padding-bottom: 10px; /* Để tránh tràn lên nút */
-    margin-bottom: 10px;
-    height: 100vh;
+    max-height: calc(100dvh - 220px);
+    padding: 0 10px 10px 10px;
+    margin: 0;
 }
-/* Store Items in Sidebar */
+
 .store-list-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 0;
     background: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    margin-left:10px;
 }
 
 .store-item,
 .suggestion-item {
-    width: 340px;
+    width: 100%;
     padding: 16px;
+    border: 1.5px solid #ced7df;
+    border-radius: 1rem;
+    margin-bottom: 10px;
     cursor: pointer;
     transition: background 0.25s ease, transform 0.2s ease;
     display: flex;
     flex-direction: row;
-    border: 1.5px solid #ced7df;
-    border-radius: 1rem;
-    margin-bottom: 10px;
 }
 
     .store-item:last-child {
@@ -231,13 +217,14 @@
     font-weight: bold;
 }
 
-/* Map Area */
+/* Map chiếm phần còn lại, luôn đủ chiều cao */
 .map-mode {
     flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
-    height: 570px;
+    height: 100%;
+    min-height: 400px;
 }
 
     .map-mode.active {
@@ -287,7 +274,6 @@
 }
 
     .control-btn:hover {
-
         transform: translateY(-2px);
         background: var(--dark-green);
     }
@@ -319,7 +305,7 @@
 
 #btnSaveSessionLocation,
 #btnClearRoute {
-    width: 45%;
+    width: fit-content;
 }
 
 .location-counter {
@@ -332,13 +318,14 @@
     font-size: 16px;
 }
 
+/* Bản đồ */
 .interactive-map {
     flex: 1;
     width: 100%;
+    height: 100%;
     position: relative;
     z-index: 1;
-    min-height: 100%;
-    border: none;
+    min-height: 400px;
 }
 
 .map-legend {
@@ -362,6 +349,7 @@
 .legend-marker {
     font-size: 1.1rem;
 }
+
 .map-actions-left {
     padding: 15px 20px;
     background-color: #fffff7;
@@ -406,17 +394,19 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 400px;
+    max-height: 615px;
     overflow: hidden;
 }
 
+/* Sửa nhỏ layout sidebar store list để đúng chiều cao */
 #storeList {
     flex: 1;
     overflow-y: auto;
-    min-height: 0;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    height: 100vh;
+    max-height: calc(100vh - 160px); /* tăng chiều cao như yêu cầu trước */
+    padding-right: 5px;
+    margin: 0;
+    width: 100%; /* 👈 đảm bảo bằng với input */
+    box-sizing: border-box;
 }
 
 /* Hidden Store Mode */
@@ -428,24 +418,24 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 500px; /* Giới hạn chiều cao tổng thể */
+    max-height: 615px; /* Giới hạn chiều cao tổng thể */
     overflow: hidden;
 }
 /* Other existing styles */
 .suggestions {
     display: none;
     overflow-y: auto;
-    height: 350px; /* ✅ ép chiều cao khi rỗng */
+    height: fit-content; /* ✅ ép chiều cao khi rỗng */
     margin-bottom: 0;
 }
 
     .suggestions.show {
         display: flex;
         flex-direction: column;
-        gap: 10px;
         overflow-y: auto;
-        min-height: 200px;
+        min-height: 500px;
         margin: 20px 0 20px 0;
+        padding-right: 10px;
     }
 
 .loading-spinner {
@@ -458,8 +448,7 @@
     animation: spin 1s linear infinite;
     position: absolute;
     right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 15px;
 }
 
 .hidden {
@@ -503,91 +492,86 @@
     }
 }
 
-/* Responsive design */
+/* Responsive Layout: Tablet */
 @media (max-width: 1024px) {
-    .sidebar {
-        width: 320px;
-    }
-}
-
-@media (max-width: 768px) {
-    .location-container {
-        padding: 15px;
-        margin-left: 0;
-        width: 100vw;
-    }
-
-    .page-title {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 10px;
-    }
-
     .map-wrapper {
         flex-direction: column;
-        height: auto;
-        min-height: 600px;
     }
 
     .sidebar {
         width: 100%;
-        max-height: 300px;
-        height: auto;
+        max-width: 100%;
     }
 
-        .sidebar .delivery-options {
-            width: 90%;
-            margin: 20px auto;
-        }
-
     .map-mode {
-        height: 400px;
+        width: 100%;
+        min-height: 300px;
     }
 
     .interactive-map {
-        height: 350px;
+        min-height: 350px;
     }
 
     .map-controls {
         flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
+        align-items: flex-start;
+        gap: 12px;
     }
 
-    .control-btn {
+    .map-actions-left {
+        width: 100%;
         justify-content: center;
     }
 }
 
-@media (max-width: 480px) {
-    .sidebar {
-        max-height: 250px;
+/* Responsive Layout: Mobile */
+@media (max-width: 768px) {
+    .location-container {
+        padding: 15px;
     }
-    .page-title {
-        font-size: 1.8rem;
+
+    .map-wrapper {
+        padding: 0;
     }
 
     .sidebar {
-        max-height: 250px;
+        padding: 0 10px;
+        align-items: stretch;
+    }
+
+    .search-container,
+    .search-wrapper,
+    .search-wrapper-delivery,
+    .store-list-sidebar {
+        width: 100% !important;
+    }
+
+    .store-item,
+    .suggestion-item {
+        width: 100%;
     }
 
     .map-mode {
-        height: 350px;
+        height: auto;
+        padding-top: 10px;
     }
 
     .interactive-map {
-        height: 300px;
+        min-height: 300px;
     }
 
-    .store-item {
-        padding: 12px;
+    .map-controls {
+        padding: 10px;
     }
 
-    .store-name {
-        font-size: 0.9rem;
+    .map-actions-left {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
     }
 
-    .store-address {
-        font-size: 0.8rem;
+    .map-actions {
+        padding: 10px;
+        flex-direction: column;
     }
 }

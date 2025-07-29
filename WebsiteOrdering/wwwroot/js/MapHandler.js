@@ -5,7 +5,7 @@
         //this.searchService = new SearchService();
         this.deliverySearchService = new SearchService();
         this.pickupSearchService = new SearchService();
-        this.currentDeliveryMethod = 'delivery';
+        this.currentDeliveryMethod = window.initialDeliveryType || 'delivery';
         this.markers = [];
         this.userMarker = null;
         this.routeControl = null;
@@ -653,49 +653,56 @@
     //        });
     //    });
     //}
-    bindDeliveryModeToggle() {
-        const deliveryOptions = document.querySelectorAll('.delivery-option');
+    handleDeliveryModeChange(type) {
         const mapMode = document.getElementById('map-mode');
         const storeSidebar = document.querySelector('.store-list-sidebar');
 
-        if (!deliveryOptions.length || !mapMode || !storeSidebar) {
-            console.warn('⚠️ Không tìm thấy phần tử giao diện cần thiết');
-            return;
+        this.currentDeliveryMethod = type;
+        storeSidebar.classList.remove('hidden');
+        mapMode.classList.add('active');
+
+        // Search block và store list
+        if (type === 'delivery') {
+            document.getElementById('pickupSearchBlock')?.classList.add('hidden');
+            document.getElementById('deliverySearchBlock')?.classList.remove('hidden');
+            document.getElementById('storeList')?.classList.add('hidden');
+        } else if (type === 'pickup') {
+            document.getElementById('pickupSearchBlock')?.classList.remove('hidden');
+            document.getElementById('deliverySearchBlock')?.classList.add('hidden');
+            document.getElementById('storeList')?.classList.remove('hidden');
+            this.loadSortedStores();
         }
+
+        // Nút trong hàng ngang
+        document.getElementById('btnSelectStore')?.classList.toggle('hidden', type !== 'pickup');
+        document.getElementById('btnClearRoute')?.classList.toggle('hidden', type !== 'delivery');
+    }
+    setDeliveryMode(type) {
+        const deliveryOptions = document.querySelectorAll('.delivery-option');
+        deliveryOptions.forEach(opt => {
+            if (opt.dataset.type === type) {
+                opt.classList.add('active');
+            } else {
+                opt.classList.remove('active');
+            }
+        });
+
+        this.handleDeliveryModeChange(type);
+    }
+    bindDeliveryModeToggle() {
+        const deliveryOptions = document.querySelectorAll('.delivery-option');
 
         deliveryOptions.forEach(option => {
             option.addEventListener('click', () => {
                 deliveryOptions.forEach(opt => opt.classList.remove('active'));
                 option.classList.add('active');
-
                 const type = option.dataset.type;
-                this.currentDeliveryMethod = type;
-
-                // Không ẩn sidebar nữa
-                storeSidebar.classList.remove('hidden');
-
-                if (type === 'delivery') {
-                    mapMode.classList.add('active');
-                    document.getElementById('deliveryActions')?.classList.remove('hidden');
-                    document.getElementById('pickupActions')?.classList.add('hidden');
-                    document.getElementById('deliverySearchBlock')?.classList.remove('hidden');
-                    document.getElementById('pickupSearchBlock')?.classList.add('hidden');
-
-                    // Ẩn danh sách cửa hàng và nút chọn cửa hàng
-                    document.getElementById('storeList')?.classList.add('hidden');
-                } else if (type === 'pickup') {
-                    mapMode.classList.add('active');
-                    document.getElementById('pickupActions')?.classList.remove('hidden');
-                    document.getElementById('deliveryActions')?.classList.add('hidden');
-                    document.getElementById('pickupSearchBlock')?.classList.remove('hidden');
-                    document.getElementById('deliverySearchBlock')?.classList.add('hidden');
-
-                    // Hiện lại danh sách cửa hàng và gọi lại hàm load
-                    document.getElementById('storeList')?.classList.remove('hidden');
-                    this.loadSortedStores();
-                }
+                this.handleDeliveryModeChange(type);
             });
         });
+
+        // Gọi trực tiếp không cần click giả
+        this.setDeliveryMode(this.currentDeliveryMethod);
     }
 }
 

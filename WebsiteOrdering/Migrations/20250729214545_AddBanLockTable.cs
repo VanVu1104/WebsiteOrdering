@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebsiteOrdering.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddBanLockTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -179,6 +179,7 @@ namespace WebsiteOrdering.Migrations
                     IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
                     TENMONAN = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     GIAMONAN = table.Column<int>(type: "int", nullable: false),
+                    SoLuongBan = table.Column<int>(type: "int", nullable: false),
                     ANHMONAN = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     MOTA = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     TRANGTHAIMAN = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -312,6 +313,26 @@ namespace WebsiteOrdering.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BANLOCK",
+                columns: table => new
+                {
+                    IDBANLOCK = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
+                    IDBAN = table.Column<string>(type: "char(5)", maxLength: 5, nullable: false),
+                    BATDAU = table.Column<TimeOnly>(type: "time", nullable: false),
+                    KETTHUC = table.Column<TimeOnly>(type: "time", nullable: false),
+                    NGAY = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__IDBANLOCK__5F20FC40654C6C03", x => x.IDBANLOCK);
+                    table.ForeignKey(
+                        name: "FK__BANLOCK__IDBAN__267ABA7A",
+                        column: x => x.IDBAN,
+                        principalTable: "BAN",
+                        principalColumn: "IDBAN");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LISTGIASIZE",
                 columns: table => new
                 {
@@ -338,6 +359,24 @@ namespace WebsiteOrdering.Migrations
                         column: x => x.IDSIZE,
                         principalTable: "SIZE",
                         principalColumn: "IDSIZE");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MONANGHEPSTATS",
+                columns: table => new
+                {
+                    IDMONAN = table.Column<string>(type: "char(5)", unicode: false, fixedLength: true, maxLength: 5, nullable: false),
+                    SOLANDUOCGHEP = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MONANGHEPSTATS", x => x.IDMONAN);
+                    table.ForeignKey(
+                        name: "FK_MONANGHEPSTATS_MONAN",
+                        column: x => x.IDMONAN,
+                        principalTable: "MONAN",
+                        principalColumn: "IDMONAN",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -548,6 +587,11 @@ namespace WebsiteOrdering.Migrations
                 column: "IDCHINHANH");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BANLOCK_IDBAN",
+                table: "BANLOCK",
+                column: "IDBAN");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CHITIETDATBAN_IDBAN",
                 table: "CHITIETDATBAN",
                 column: "IDBAN");
@@ -652,6 +696,9 @@ namespace WebsiteOrdering.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BANLOCK");
+
+            migrationBuilder.DropTable(
                 name: "CHITIETDATBAN");
 
             migrationBuilder.DropTable(
@@ -662,6 +709,9 @@ namespace WebsiteOrdering.Migrations
 
             migrationBuilder.DropTable(
                 name: "Locations");
+
+            migrationBuilder.DropTable(
+                name: "MONANGHEPSTATS");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

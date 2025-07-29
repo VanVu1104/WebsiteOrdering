@@ -43,6 +43,12 @@
     <div class="total_loginnv">
         <div class="anh_loginnv">
             <img src="~/css/img/abc.jpg" alt="Background Image" />
+            <div class="login-text">
+			<p>Khám phá và trải nghiệm dịch vụ nhanh chóng mà không cần đăng nhập</p>
+			<button type="button" onclick="window.location.href='@Url.Action("Index", "Home")'" class="btn-tieptuc-trangchu">
+				Tiếp tục
+			</button>
+		</div>
         </div>
 
         <div class="chung_nv">
@@ -93,7 +99,7 @@
                             <input type="checkbox" />
                             Ghi nhớ tài khoản
                         </label>
-                        <a class="forgot_pass" asp-action="ForgotPassword">Quên mật khẩu?</a>
+                        @* <a class="forgot_pass" asp-action="ForgotPassword">Quên mật khẩu?</a> *@
                     </div>
 
                     <button type="submit" class="btn_login">ĐĂNG NHẬP</button>

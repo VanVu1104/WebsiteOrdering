@@ -12,7 +12,69 @@
     #searchSuggestions .dropdown-item:hover {
         background-color: #f8f9fa;
     }
+.search-form-custom {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-family: 'Mestika', sans-serif;
+}
 
+.search-wrapper {
+    display: flex;
+    width: 100%;
+    border: 1px solid #E0B37F;
+    font-family: inherit;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 10px 15px;
+    color: #E0B37F;
+    font-size: 16px;
+    outline: none;
+}
+
+    .search-input::placeholder {
+        color: #E0B37F;
+    }
+
+.search-icon-button {
+    background-color: #203F25;
+    border: none;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+    .search-icon-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.search-text-button {
+    background-color: #E0B37F;
+    border: none;
+    color: #203F25;
+    padding: 0 15px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.search-clear-button {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding-right: 15px;
+}
 /* ---------------------------------------------------------HEADER------------------------------------------- */
 header {
     background-color: var(--green-color);
@@ -4070,8 +4132,30 @@ header {
 
 .product-col-left {
     flex: 2;
-    max-height: 1073px; /* hoặc 100vh - chiều cao tuỳ chỉnh */
-    overflow-y: auto;
+    /*max-height: 1073px;*/ /* hoặc 100vh - chiều cao tuỳ chỉnh */
+    /*overflow-y: auto;*/
+    padding-right: 16px; /* chống tràn thanh scroll ra ngoài */
+}
+
+    .product-col-left::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .product-col-left::-webkit-scrollbar-thumb {
+        background-color: rgba(224, 179, 127, 0.5);
+        border-radius: 4px;
+    }
+.product-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: space-between;
+}
+
+.product-col-left {
+    flex: 2;
+    /*max-height: 1073px;*/ /* hoặc 100vh - chiều cao tuỳ chỉnh */
+    /*overflow-y: auto;*/
     padding-right: 16px; /* chống tràn thanh scroll ra ngoài */
 }
 
@@ -4084,6 +4168,20 @@ header {
         border-radius: 4px;
     }
 
+.product-scroll-area {
+    overflow-y: auto;
+    max-height: calc(100vh - 230px); /* tuỳ chỉnh chiều cao */
+    padding-right: 8px;
+}
+
+    .product-scroll-area::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .product-scroll-area::-webkit-scrollbar-thumb {
+        background-color: rgba(224, 179, 127, 0.5);
+        border-radius: 4px;
+    }
 .product-col-right {
     flex: 1;
 }
@@ -6248,6 +6346,8 @@ input[type="checkbox"] {
 
 /*=============LỊCH SỬ ĐẶT BÀN===============*/
 /* Tiêu đề */
+/*=============LỊCH SỬ ĐẶT BÀN===============*/
+/* Tiêu đề */
 .personal-booking-title {
     font-size: 26px;
     letter-spacing: 2px;
@@ -6358,3 +6458,165 @@ input[type="checkbox"] {
     .personal-booking-detail a:hover {
         text-decoration: underline;
     }
+
+.modal-cancel-dialog {
+    max-width: 500px;
+    align-items: center; /* căn dọc */
+    justify-content: center; /* căn ngang */
+}
+
+.modal-cancel-content {
+    background-color: #fff8f7;
+    border-radius: 12px;
+    border: 1px solid #ffc2bd;
+    overflow: hidden;
+}
+
+.modal-cancel-header {
+    background-color: #ffe2e0;
+    border-bottom: 1px solid #ffc2bd;
+    padding: 16px 24px;
+}
+
+.modal-cancel-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #c30010;
+}
+
+.modal-cancel-body {
+    padding: 20px 24px;
+}
+
+.modal-cancel-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: inline-block;
+    color: #5a2a2a;
+}
+
+.modal-cancel-reason-list {
+    margin-top: 10px;
+}
+
+.modal-cancel-reason-item {
+    cursor: pointer;
+    font-size: 15px;
+    padding: 10px 15px;
+    border: 1px solid #ffd4cf;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+    .modal-cancel-reason-item:hover {
+        background-color: #fff0ef;
+    }
+
+    .modal-cancel-radio:checked + label,
+    .modal-cancel-reason-item input:checked {
+        background-color: #ffe2e0;
+        border-color: #ff9b94;
+    }
+
+.modal-cancel-detail-container {
+    margin-top: 12px;
+}
+
+.modal-cancel-textarea {
+    resize: vertical;
+    min-height: 80px;
+    border-radius: 6px;
+    border: 1px solid #ffc2bd;
+}
+
+.modal-cancel-footer {
+    padding: 12px 24px;
+    background-color: #fff0ef;
+    border-top: 1px solid #ffc2bd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-cancel-btn-close {
+    background-color: #ccc;
+    border-color: #ccc;
+}
+
+.modal-cancel-btn-submit {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+    .modal-cancel-btn-submit:hover {
+        background-color: #c9302c;
+        border-color: #ac2925;
+    }
+/*=============CHI TIẾT ĐƠN HÀNG=============*/
+.detail-order-wrapper {
+    color: #E0B37F;
+    font-family: 'Mestika', serif;
+    padding: 40px 0;
+}
+
+.detail-order-title {
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.detail-order-id,
+.detail-order-date,
+.detail-order-status {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.detail-order-cancel-btn {
+    background-color: #d84343;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    font-size: 20px;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+.detail-order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+    .detail-order-table thead {
+        background-color: #E0B37F;
+        color: #203F25;
+    }
+
+    .detail-order-table th,
+    .detail-order-table td {
+        padding: 12px 16px;
+        vertical-align: top;
+    }
+
+.detail-order-item-name {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.detail-order-total-label {
+    text-align: right;
+    font-weight: bold;
+    font-size: 20px;
+    padding-right: 10px;
+    border-top: 2px solid #E0B37F;
+}
+
+.detail-order-total-amount {
+    font-weight: bold;
+    font-size: 20px;
+    border-top: 2px solid #E0B37F;
+}

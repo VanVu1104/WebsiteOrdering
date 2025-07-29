@@ -22,7 +22,7 @@ namespace WebsiteOrdering.Models
         public string Idchinhanh { get; set; } = null!;
 
         public virtual ICollection<Chitietdatban> Chitietdatbans { get; set; } = new List<Chitietdatban>();
-
+        public virtual ICollection<Banlock> Banlock { get; set; } = new List<Banlock>();
         public virtual Chinhanh IdchinhanhNavigation { get; set; } = null!;
     }
 }

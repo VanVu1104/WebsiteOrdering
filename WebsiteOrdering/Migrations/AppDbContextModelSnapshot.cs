@@ -297,6 +297,41 @@ namespace WebsiteOrdering.Migrations
                     b.ToTable("BAN", (string)null);
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.Banlock", b =>
+                {
+                    b.Property<string>("IdBanLock")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDBANLOCK")
+                        .IsFixedLength();
+
+                    b.Property<TimeOnly>("BatDau")
+                        .HasColumnType("time")
+                        .HasColumnName("BATDAU");
+
+                    b.Property<string>("IdBan")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDBAN");
+
+                    b.Property<TimeOnly>("KetThuc")
+                        .HasColumnType("time")
+                        .HasColumnName("KETTHUC");
+
+                    b.Property<DateOnly>("Ngay")
+                        .HasColumnType("date")
+                        .HasColumnName("NGAY");
+
+                    b.HasKey("IdBanLock")
+                        .HasName("PK__IDBANLOCK__5F20FC40654C6C03");
+
+                    b.HasIndex("IdBan");
+
+                    b.ToTable("BANLOCK", (string)null);
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Chinhanh", b =>
                 {
                     b.Property<string>("Idchinhanh")
@@ -959,6 +994,18 @@ namespace WebsiteOrdering.Migrations
                     b.Navigation("IdchinhanhNavigation");
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.Banlock", b =>
+                {
+                    b.HasOne("WebsiteOrdering.Models.Ban", "Ban")
+                        .WithMany("Banlock")
+                        .HasForeignKey("IdBan")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK__BANLOCK__IDBAN__267ABA7A");
+
+                    b.Navigation("Ban");
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Chitietdatban", b =>
                 {
                     b.HasOne("WebsiteOrdering.Models.Ban", "IdbanNavigation")
@@ -1161,6 +1208,8 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Ban", b =>
                 {
+                    b.Navigation("Banlock");
+
                     b.Navigation("Chitietdatbans");
                 });
 
