@@ -1,8 +1,10 @@
-﻿@model List<WebsiteOrdering.Models.Donhang>
+﻿@using WebsiteOrdering.Enums
+@model List<WebsiteOrdering.Models.Donhang>
 @{
 	ViewData["Title"] = "Trang quản lý";
 	Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
-	var statusOptions = new List<string> { "Pending", "Paid", "Delivering", "Delivered", "Cancel" };
+	var selectedStatus = ViewBag.StatusFilter as TrangThai?;
+	var statusOptions = Enum.GetValues(typeof(TrangThai)).Cast<TrangThai>().ToList();
 }
 <h2>Quản lý đơn hàng</h2>
 
@@ -16,9 +18,8 @@
 			<option value="">-- Trạng thái --</option>
 			@foreach (var s in statusOptions)
 			{
-				<option value="@s" selected="@(ViewBag.StatusFilter == s ? "selected" : null)">
-					@s.Substring(0, 1).ToUpper()@s.Substring(1)
-				</option>
+				bool isSelected = selectedStatus?.ToString() == s.ToString();
+				<option value="@s" selected="@(isSelected ? "selected" : null)">@s.ToString()</option>
 			}
 		</select>
 	</div>
@@ -98,7 +99,7 @@
 					<td>@don.Tongtien.ToString("N0") đ</td>
 					<td>@don.Trangthai</td>
 					<td>
-						@if (don.Trangthai == "cancel" || don.Trangthai == "delivered")
+						@if (don.Trangthai == TrangThai.Cancelled || don.Trangthai == TrangThai.Completed)
 						{
 							<span class="text-muted">-</span>
 						}
@@ -112,8 +113,8 @@
 								<select name="newStatus" class="form-select form-select-sm me-2">
 									@foreach (var option in availableStatuses)
 									{
-										<option value="@option" selected="@(option == don.Trangthai ? "selected" : null)">
-											@option.Substring(0, 1).ToUpper()@option.Substring(1)
+										<option value="@option" selected="@(option == don.Trangthai.ToString() ? "selected" : null)">
+											@option.ToString()
 										</option>
 									}
 								</select>

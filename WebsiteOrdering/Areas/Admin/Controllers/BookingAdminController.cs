@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
@@ -19,7 +20,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             _appDbContext = context;
         }
         // Hiển thị danh sách đơn đặt bàn
-        public async Task<IActionResult> Index(string idChiNhanh = null, string trangThai = null, DateTime? tuNgay = null)
+        public async Task<IActionResult> Index(string idChiNhanh = null, TrangThai? trangThai = null, DateTime? tuNgay = null)
         {
             ViewBag.ChiNhanhList = await _appDbContext.chinhanh.ToListAsync();
 
@@ -48,15 +49,15 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             }
 
             // Lọc trạng thái nếu có
-            if (!string.IsNullOrEmpty(trangThai))
+            if (!string.IsNullOrEmpty(trangThai.ToString()))
             {
                 query = query.Where(d => d.Trangthaidatban == trangThai);
             }
 
             // Đếm đơn theo trạng thái (chỉ dùng bộ lọc chi nhánh + ngày nếu có)
-            ViewBag.CountChoXacNhan = await baseFilter.CountAsync(d => d.Trangthaidatban == "Chờ xác nhận");
-            ViewBag.CountDaXacNhan = await baseFilter.CountAsync(d => d.Trangthaidatban == "Đã xác nhận");
-            ViewBag.CountDaHuy = await baseFilter.CountAsync(d => d.Trangthaidatban == "Đã hủy");
+            ViewBag.CountChoXacNhan = await baseFilter.CountAsync(d => d.Trangthaidatban == TrangThai.Pending);
+            ViewBag.CountDaXacNhan = await baseFilter.CountAsync(d => d.Trangthaidatban == TrangThai.Confirmed);
+            ViewBag.CountDaHuy = await baseFilter.CountAsync(d => d.Trangthaidatban == TrangThai.Cancelled);
 
             var result = await query.OrderBy(d => d.Ngaydat).ToListAsync();
 
@@ -103,7 +104,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
 
             if (datban == null) return NotFound();
 
-            datban.Trangthaidatban = "Đã xác nhận";
+            datban.Trangthaidatban = TrangThai.Confirmed;
             await _appDbContext.SaveChangesAsync();
 
             var email = datban.Nguoidung?.Email;
@@ -140,7 +141,7 @@ namespace WebsiteOrdering.Areas.Admin.Controllers
             .FirstOrDefaultAsync(d => d.Iddatban == id);
             if (datban == null) return NotFound();
 
-            datban.Trangthaidatban = "Đã hủy";
+            datban.Trangthaidatban = TrangThai.Cancelled;
             // Nếu chọn "Khác" thì lưu lý do chi tiết
             if (lyDo == "Khác" && !string.IsNullOrWhiteSpace(lyDoChiTiet))
             {

@@ -64,7 +64,7 @@ namespace WebsiteOrdering.Repositories
 
             var user = new ApplicationUser
             {
-                FullName = normalizedName,
+                FullName= normalizedName,
                 UserName = normalizedEmail,
                 Email = normalizedEmail,
                 EmailConfirmed = false,

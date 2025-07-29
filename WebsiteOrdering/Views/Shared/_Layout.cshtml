@@ -65,9 +65,7 @@
                             <a asp-controller="Order" asp-action="MyOrders">Đơn hàng của tôi</a>
 
                             <a asp-controller="Booking" asp-action="LichSuDatBan">Lịch sử đặt bàn</a>
-
                             <a asp-controller="Personal" asp-action="Personal">Trang cá nhân</a>
-
                             <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
                                 <button type="submit">Đăng xuất</button>
                             </form>
@@ -107,8 +105,8 @@
                 <li class="menu-item" data-bg="/images/menu/menu_3.jpg">
                     <a asp-area="" asp-controller="Home" asp-action="MenuBook">Thực đơn</a>
                 </li>
-                <li class="menu-item" data-bg="/images/menu/menu_4.jpg">
-                    <a asp-controller="Location" asp-action="Index">Đặt hàng online</a>
+                <li class="menu-item @(isLocationPage ? "active" : "")" data-bg="/images/menu/menu_4.jpg">
+                    <a asp-controller="Location" asp-action="SelectOrderType">Đặt hàng online</a>
                 </li>
                 <li class="menu-item" data-bg="/images/menu/menu_5.jpg">
                     <a asp-area="" asp-controller="Home" asp-action="ContactUs">Liên hệ</a>

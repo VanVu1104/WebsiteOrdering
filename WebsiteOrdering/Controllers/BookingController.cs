@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using WebsiteOrdering.Enums;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
@@ -142,7 +143,7 @@ namespace WebsiteOrdering.Controllers
                 .Include(c => c.IddatbanNavigation)
                 .AnyAsync(c => c.Idban == selectedIdban
                     && c.IddatbanNavigation.Ngaydat == datban.Ngaydat
-                      && c.IddatbanNavigation.Trangthaidatban != "Đã hủy"
+                      && c.IddatbanNavigation.Trangthaidatban !=  TrangThai.Cancelled 
                     && (
                         (datban.Giobatdau >= c.Giovao && datban.Giobatdau < c.Giora) ||     // giao nhau
                         (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora) ||
@@ -180,7 +181,7 @@ namespace WebsiteOrdering.Controllers
                 Gioketthuc = gioKetThuc,
                 Songuoidat = datban.Songuoidat,
                 Ghichu = datban.Ghichu ?? "",
-                Trangthaidatban = "Chờ xác nhận",
+                Trangthaidatban = TrangThai.Pending,
                 Idngdung = idNguoiDung,
                 Idchinhanh = datban.Idchinhanh,
                 Tenngdat = tenNguoiDat,
@@ -224,7 +225,7 @@ namespace WebsiteOrdering.Controllers
                     c.IddatbanNavigation.Ngaydat == DateOnly.Parse(ngay) &&
                     c.IddatbanNavigation.Idchinhanh == idChinhanh &&
                     c.IdbanNavigation.Khuvuc == idKhuvuc &&
-                    c.IddatbanNavigation.Trangthaidatban != "Đã hủy" &&
+                    c.IddatbanNavigation.Trangthaidatban != TrangThai.Cancelled &&
                     (
                         (gioBatDau >= c.Giovao && gioBatDau < c.Giora) ||
                         (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora) ||
@@ -359,7 +360,7 @@ namespace WebsiteOrdering.Controllers
             if (datBan == null)
                 return NotFound("Không tìm thấy đơn đặt bàn.");
 
-            if (datBan.Trangthaidatban != "Chờ xác nhận")
+            if (datBan.Trangthaidatban != TrangThai.Pending)
                 return BadRequest("Chỉ có thể cập nhật đơn đang chờ xác nhận.");
 
             // Lấy danh sách chi nhánh
@@ -463,7 +464,7 @@ namespace WebsiteOrdering.Controllers
             if (datBan == null)
                 return NotFound("Không tìm thấy đơn.");
 
-            if (datBan.Trangthaidatban != "Chờ xác nhận")
+            if (datBan.Trangthaidatban != TrangThai.Pending)
                 return BadRequest("Chỉ cập nhật đơn đang chờ xác nhận.");
 
             var chiTiet = datBan.Chitietdatbans.FirstOrDefault();
@@ -492,7 +493,7 @@ namespace WebsiteOrdering.Controllers
                     .Include(c => c.IddatbanNavigation)
                     .AnyAsync(c => c.Idban == selectedIdban
                         && c.IddatbanNavigation.Ngaydat == datban.Ngaydat
-                        && c.IddatbanNavigation.Trangthaidatban != "Đã hủy"
+                        && c.IddatbanNavigation.Trangthaidatban != TrangThai.Cancelled
                         && c.Iddatban != datBan.Iddatban
                         && (
                             (datban.Giobatdau >= c.Giovao && datban.Giobatdau < c.Giora) ||
@@ -556,11 +557,11 @@ namespace WebsiteOrdering.Controllers
                 return NotFound("Không tìm thấy đơn đặt bàn.");
 
             // Chỉ cho phép hủy nếu trạng thái là Đã xác nhận
-            if (datban.Trangthaidatban != "Đã xác nhận")
+            if (datban.Trangthaidatban != TrangThai.Confirmed)
                 return BadRequest("Chỉ có thể hủy đơn ở trạng thái Đã xác nhận.");
 
             // Cập nhật trạng thái
-            datban.Trangthaidatban = "Đã hủy";
+            datban.Trangthaidatban = TrangThai.Cancelled;
 
             // Lưu lý do
             if (lyDo == "Khác" && !string.IsNullOrWhiteSpace(lyDoChiTiet))

@@ -1,4 +1,5 @@
-﻿@model WebsiteOrdering.Models.Donhang
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Donhang
 @{
     ViewData["Title"] = "Chi tiết đơn hàng";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
@@ -9,7 +10,7 @@
 <p><strong>Khách hàng:</strong> @Model.Tenkh</p>
 <p><strong>Địa chỉ:</strong> @Model.Diachidh</p>
 <p><strong>Ngày đặt:</strong> @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
-<p><strong>Trạng thái:</strong> @Model.Trangthai</p>
+<p><strong>Trạng thái:</strong> @Model.Trangthai.ToString()</p>
 
 <h3>Danh sách món ăn</h3>
 <table class="table table-bordered">
@@ -63,16 +64,16 @@
 <form asp-action="UpdateStatus" asp-route-id="@Model.Iddonhang" method="post" class="row g-2">
     <div class="col-md-6">
         <select name="newStatus" class="form-select">
-            @foreach (var option in (List<string>)ViewBag.AvailableStatuses)
+            @foreach (var option in (List<TrangThai>)ViewBag.AvailableStatuses)
             {
-                <option value="@option" selected="@(option.Equals(Model.Trangthai, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">
-                    @option.Substring(0, 1).ToUpper()@option.Substring(1)
+                <option value="@option" selected="@(option == Model.Trangthai ? "selected" : null)">
+                    @option.ToString()
                 </option>
             }
         </select>
     </div>
     <div class="col-md-3">
-        <button type="submit" class="btn btn-success" @(Model.Trangthai == "cancel" || Model.Trangthai == "delivered" ? "disabled" : "")>Cập nhật trạng thái</button>
+        <button type="submit" class="btn btn-success" @(Model.Trangthai == TrangThai.Cancelled || Model.Trangthai == TrangThai.Completed ? "disabled" : "")>Cập nhật trạng thái</button>
     </div>
 </form>
 <p><strong>Tiền ship:</strong> @(Model.Tienship?.ToString("N0") ?? "0") đ</p>

@@ -1,8 +1,10 @@
-﻿namespace WebsiteOrdering.Areas.ViewModelAdmin
+﻿using WebsiteOrdering.Enums;
+
+namespace WebsiteOrdering.Areas.ViewModelAdmin
 {
     public class OrderFilterModel
     {
-        public string Status { get; set; }
+        public TrangThai? Status { get; set; }
         public string Keyword { get; set; }
         public string DateFilter { get; set; }
         public DateTime? FromDate { get; set; }

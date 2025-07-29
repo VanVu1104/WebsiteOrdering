@@ -1,4 +1,5 @@
-﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<WebsiteOrdering.Models.Datban>
 
 @{
@@ -55,8 +56,8 @@
                 <td>@item.Ngaydat.ToString("dd/MM/yyyy")</td>
                 <td>@item.Giobatdau - @item.Gioketthuc</td>
                 <td>
-                   
-                    @if (item.Trangthaidatban == "Khách đã đến")
+
+                    @if (item.Trangthaidatban == TrangThai.Came)
                     {
                         <form asp-area="Staff" asp-controller="Order" asp-action="TaoDonHangTaiCho" method="post" style="display:inline;">
                             <input type="hidden" name="idDatBan" value="@item.Iddatban" />
@@ -65,7 +66,7 @@
                             </button>
                         </form>
                     }
-                    else if (item.Trangthaidatban == "Đang dùng bữa")
+                    else if (item.Trangthaidatban == TrangThai.Eating)
                     {
                         <form asp-area="Staff" asp-controller="Order" asp-action="XemHoaDonDatBan" asp-route-idDatBan="@item.Iddatban"  style="display:inline;">
                             <button type="submit" class="btn btn-info btn-sm">
@@ -76,13 +77,13 @@
 
 
                     }
-                    else if (item.Trangthaidatban == "Đã đặt món")
+                    else if (item.Trangthaidatban == TrangThai.Ordered)
                     {
-                        <form asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" method="get" style="display:inline;">
-                            <button type="submit" class="btn btn-info btn-sm">
-                                Xem hóa đơn
-                            </button>
-                        </form>
+                        @* <form asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" method="get" style="display:inline;"> *@
+                        @*     <button type="submit" class="btn btn-info btn-sm"> *@
+                        @*         Xem hóa đơn *@
+                        @*     </button> *@
+                        @* </form> *@
                         <a asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" class="btn btn-info">Xem hóa đơn</a>
 
                         <form asp-area="Staff" asp-controller="Order" asp-action="ChuanBiThanhToan" method="post" style="display:inline;">

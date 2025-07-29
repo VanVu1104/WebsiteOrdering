@@ -472,6 +472,23 @@ namespace WebsiteOrdering.Controllers
 
             return Ok(new { success = true });
         }
-       
+        [HttpGet]
+        public IActionResult SelectOrderType()
+        {
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Index(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                return RedirectToAction(nameof(SelectOrderType));
+            }
+
+            ViewBag.OrderType = type;
+            ViewBag.OpenRouteApiKey = _orsOptions.Value.ApiKey;
+            var locations = await _locationService.GetAllLocationsAsync();
+            return View("Index", locations); // dùng View gốc
+        }
     }
 }

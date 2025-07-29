@@ -1,45 +1,4 @@
-﻿@* @model WebsiteOrdering.ViewModels.RegisterViewModel
-
-<h2>Register</h2>
-@if (ViewBag.EmailConfirmationMessage != null)
-{
-    <div class="alert alert-success">
-        @ViewBag.EmailConfirmationMessage
-    </div>
-}
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
-<form asp-action="Register" method="post">
-    <div>
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" />
-        <span asp-validation-for="FullName"></span>
-    </div>
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" />
-        <span asp-validation-for="ConfirmPassword"></span>
-    </div>
-    <button type="submit">Register</button>
-</form>
-<p>
-    Đã có tài khoản? <a asp-action="Login">Đăng nhập</a>
-</p>
-<p>
-    Đăng nhập với số điện thoại? <a asp-action="RegisterPhoneNumber">Đăng ký</a>
-</p>
-<partial name="_ValidationScriptsPartial" /> *@
-
-    @model WebsiteOrdering.ViewModels.RegisterViewModel
+﻿@model WebsiteOrdering.ViewModels.RegisterViewModel
 @{
     <link rel="stylesheet" href="~/css/dangky.css" />
     Layout = null;
@@ -68,8 +27,7 @@
                     </svg>
                 </a>
 
-                <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>
-            </div> *@
+                <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>*@
             <h2 style="color: #203F25;">TẠO TÀI KHOẢN</h2>
 
             <form asp-action="Register" method="post">

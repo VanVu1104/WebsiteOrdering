@@ -1,55 +1,63 @@
-﻿@model WebsiteOrdering.Models.Donhang
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Donhang
 @{
-    ViewData["Title"] = "Chi tiết đơn hàng";
+	ViewData["Title"] = "Chi tiết đơn hàng";
 }
 <h2>Chi tiết đơn hàng</h2>
 <p>Ngày đặt: @Model.Ngaydat.ToString("dd/MM/yyyy")</p>
 <p>Tổng tiền: @Model.Tongtien.ToString("N0") ₫</p>
-
+<p>Trạng thái: @Model.Trangthai.ToString()</p>
+@if (Model.Trangthai == TrangThai.Pending || Model.Trangthai == TrangThai.Paid || Model.Trangthai == TrangThai.Preparing)
+{
+	<form asp-action="Cancel" method="post" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này không?');">
+		<input type="hidden" name="id" value="@Model.Iddonhang" />
+		<button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
+	</form>
+}
 <table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Ghép với</th>
-            <th>Size</th>
-            <th>Đế bánh</th>
-            <th>Kiểu</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Topping</th>
-            <th>Ghi chú</th>
-            <th>Tổng tiền</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Chitietdonhangs)
-        {
-            <tr>
-                <td>@item.IdmonanNavigation.Tenmonan</td>
-                <td>@(item.Idmonan2Navigation?.Tenmonan ?? "-")</td>
-                <td>@item.IdsizeNavigation?.Tensize</td>
-                <td>@item.IddebanhNavigation?.Tendebanh</td>
-                <td>@item.Kieupizza</td>
-                <td>@item.Soluong</td>
-                <td>@item.Dongia.ToString("N0")</td>
-                <td>
-                    @if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
-                    {
-                        <ul class="mb-0">
-                            @foreach (var tp in item.Chitiettoppings)
-                            {
-                                <li>@tp.IdtoppingNavigation.Tentopping (@tp.IdtoppingNavigation.Giatopping₫)</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <span>Không có</span>
-                    }
-                </td>
-                <td>@(item.Ghichu ?? "-")</td>
-                <td>@item.Tongtiendh.ToString("N0")</td>
-            </tr>
-        }
-    </tbody>
+	<thead>
+		<tr>
+			<th>Sản phẩm</th>
+			<th>Ghép với</th>
+			<th>Size</th>
+			<th>Đế bánh</th>
+			<th>Kiểu</th>
+			<th>Số lượng</th>
+			<th>Đơn giá</th>
+			<th>Topping</th>
+			<th>Ghi chú</th>
+			<th>Tổng tiền</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.Chitietdonhangs)
+		{
+			<tr>
+				<td>@item.IdmonanNavigation.Tenmonan</td>
+				<td>@(item.Idmonan2Navigation?.Tenmonan ?? "-")</td>
+				<td>@item.IdsizeNavigation?.Tensize</td>
+				<td>@item.IddebanhNavigation?.Tendebanh</td>
+				<td>@item.Kieupizza</td>
+				<td>@item.Soluong</td>
+				<td>@item.Dongia.ToString("N0")</td>
+				<td>
+					@if (item.Chitiettoppings != null && item.Chitiettoppings.Any())
+					{
+						<ul class="mb-0">
+							@foreach (var tp in item.Chitiettoppings)
+							{
+								<li>@tp.IdtoppingNavigation.Tentopping (@tp.IdtoppingNavigation.Giatopping₫)</li>
+							}
+						</ul>
+					}
+					else
+					{
+						<span>Không có</span>
+					}
+				</td>
+				<td>@(item.Ghichu ?? "-")</td>
+				<td>@item.Tongtiendh.ToString("N0")</td>
+			</tr>
+		}
+	</tbody>
 </table>

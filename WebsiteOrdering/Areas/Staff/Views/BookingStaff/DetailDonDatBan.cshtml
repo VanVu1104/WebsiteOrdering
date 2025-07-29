@@ -1,4 +1,6 @@
-﻿@*
+﻿@using WebsiteOrdering.Enums
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model WebsiteOrdering.Models.Datban
@@ -30,9 +32,19 @@
                             <tr>
                                 <th>Trạng thái</th>
                                 <td>
-                                    <span class="badge @(Model.Trangthaidatban == "Đã xác nhận" ? "badge-success" : "badge-warning")">
+                                    <span class="badge
+                                        @(Model.Trangthaidatban == TrangThai.Pending ? "bg-warning text-dark" :
+                                          Model.Trangthaidatban == TrangThai.Confirmed ? "bg-info text-white" :
+                                          Model.Trangthaidatban == TrangThai.Cancelled ? "bg-danger" :
+                                          Model.Trangthaidatban == TrangThai.Completed ? "bg-success" :
+                                          Model.Trangthaidatban == TrangThai.Came ? "bg-primary" :
+                                          Model.Trangthaidatban == TrangThai.Eating ? "bg-secondary" :
+                                          Model.Trangthaidatban == TrangThai.Ordered ? "bg-dark text-white" :
+                                          "bg-light text-dark")">
                                         @Model.Trangthaidatban
                                     </span>
+
+
                                 </td>
                             </tr>
                             <tr><th>Chi nhánh</th><td>@Model.IdchinhanhNavigation?.Tencnhanh</td></tr>
@@ -51,7 +63,7 @@
             }
 
             <div class="mt-3">
-                <a asp-action="Index" class="btn btn-secondary">
+                <a asp-action="Index" asp-area="Staff" asp-controller="BookingStaff" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Quay lại
                 </a>
             </div>

@@ -67,6 +67,8 @@
             <a class="sidebar-link" asp-area="Admin" asp-controller="Admin" asp-action="Index">Trang chủ</a>
             <a class="sidebar-link" asp-area="Admin" asp-controller="ProductsManagement" asp-action="Index">Quản lý sản phẩm</a>
             <a class="sidebar-link" asp-area="Admin" asp-controller="OrdersManagement" asp-action="Index">Quản lý đơn hàng</a>
+            <a class="sidebar-link" asp-area="Admin" asp-controller="Statistics" asp-action="">Thống kê doanh thu</a>
+            <a class="sidebar-link" asp-area="Admin" asp-controller="Statistics" asp-action="ThongKeMonAn">Thống kê sản phẩm</a>
 
             <form asp-area="Admin" asp-controller="Admin" asp-action="LogoutAdmin" method="post">
                 <button type="submit" class="logout-button">Đăng xuất</button>
@@ -79,7 +81,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
 

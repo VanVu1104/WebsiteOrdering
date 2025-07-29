@@ -1,4 +1,5 @@
-﻿@*
+﻿@using WebsiteOrdering.Enums
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model WebsiteOrdering.Models.Datban
@@ -30,7 +31,7 @@
                             <tr>
                                 <th>Trạng thái</th>
                                 <td>
-                                    <span class="badge @(Model.Trangthaidatban == "Đã xác nhận" ? "badge-success" : "badge-warning")">
+                                    <span class="badge @(Model.Trangthaidatban == TrangThai.Confirmed ? "badge-success" : "badge-warning")">
                                         @Model.Trangthaidatban
                                     </span>
                                 </td>

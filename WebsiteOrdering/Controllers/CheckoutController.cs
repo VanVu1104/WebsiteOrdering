@@ -27,7 +27,7 @@ namespace WebsiteOrdering.Controllers
 
         //    var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new();
         //    var selectedItems = _checkoutService.GetSelectedItems(cart, selectedIds);
-           
+
         //    if (!selectedItems.Any())
         //    {
         //        TempData["Error"] = "Không có món nào được chọn.";
@@ -76,27 +76,23 @@ namespace WebsiteOrdering.Controllers
         //        return RedirectToAction("Success", new { id = orderId });
         //    }
         //}
-        [HttpPost]
-        public async Task<IActionResult> Confirm(UserCheckoutInfoViewModel userInfo, [FromForm] List<string> selectedIds)
+        [HttpPost("Confirm")]
+        public async Task<IActionResult> Confirm(CartPageViewModel model, [FromForm] List<string> selectedIds)
         {
-            // Check if user is authenticated before processing
             if (!User.Identity?.IsAuthenticated == true)
             {
-                // Store checkout data in session for after login
-                var checkoutData = new
-                {
-                    UserInfo = userInfo,
-                    SelectedIds = selectedIds
-                };
-                HttpContext.Session.SetString("PendingCheckoutData", JsonSerializer.Serialize(checkoutData));
-
-                // Store return URL
-                var returnUrl = Url.Action("ProcessPendingCheckout", "Checkout");
-                return RedirectToAction("Login", "Account", new { returnUrl = returnUrl });
+                var returnUrl = Url.Action("Index", "Cart");
+                return RedirectToAction("Login", "Account", new { returnUrl });
             }
 
-            return await ProcessConfirm(userInfo, selectedIds);
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Cart");
+            }
+
+            return await ProcessConfirm(model.UserInfo, selectedIds);
         }
+
 
         // New method to process pending checkout after login
         public async Task<IActionResult> ProcessPendingCheckout()
@@ -191,7 +187,18 @@ namespace WebsiteOrdering.Controllers
         {
             var order = await _orderRepository.GetOrderWithDetailsAsync(id);
             if (order == null) return NotFound("Không tìm thấy đơn hàng.");
-            return View(order);
+
+            var tongTienHang = order.Chitietdonhangs.Sum(item => item.Tongtiendh * item.Soluong);
+            var thanhTien = tongTienHang + (order.Tienship ?? 0);
+
+            var viewModel = new DonhangViewModel
+            {
+                Donhang = order,
+                TongTienHang = tongTienHang,
+                ThanhTien = (int)thanhTien
+            };
+
+            return View(viewModel);
         }
         [HttpGet]
         public async Task<IActionResult> CheckOrderStatus(string orderId)

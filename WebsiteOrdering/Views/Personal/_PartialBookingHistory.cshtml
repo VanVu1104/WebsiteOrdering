@@ -1,4 +1,5 @@
-﻿@model List<WebsiteOrdering.Models.Datban>
+﻿@using WebsiteOrdering.Enums
+@model List<WebsiteOrdering.Models.Datban>
 
 @{
     ViewData["Title"] = "Lịch sử đặt bàn của tôi";
@@ -36,11 +37,11 @@ else
                         </td>
                         <td class="personal-booking-status">@item.Trangthaidatban</td>
                         <td class="personal-booking-action">
-                            @if (item.Trangthaidatban == "Chờ xác nhận")
+                            @if (item.Trangthaidatban == TrangThai.Pending)
                             {
                                 <a asp-action="CapNhatDatBan" asp-controller="Booking" asp-route-id="@item.Iddatban" class="personal-booking-btn-update">Cập nhật</a>
                             }
-                            else if (item.Trangthaidatban == "Đã xác nhận")
+                            else if (item.Trangthaidatban == TrangThai.Confirmed)
                             {
                                 <button type="button" class="personal-booking-btn-cancel" onclick="openHuyModal('@item.Iddatban')">Hủy</button>
                             }

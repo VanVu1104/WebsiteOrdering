@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebsiteOrdering.Services;
 using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
+using WebsiteOrdering.Enums;
 
 namespace WebsiteOrdering.Services
 {
@@ -28,7 +29,7 @@ namespace WebsiteOrdering.Services
 
                     // Xử lý nhắc nhở trước 30p
                     var datbansNhac = await _appDbContext.Datbans
-                        .Where(d => d.Trangthaidatban == "Đã xác nhận"
+                        .Where(d => d.Trangthaidatban == TrangThai.Confirmed
                             && d.Ngaydat == DateOnly.FromDateTime(now.Date)
                             && d.Giobatdau <= TimeOnly.FromDateTime(now.AddMinutes(30))
                             && d.Giobatdau > TimeOnly.FromDateTime(now))
@@ -60,7 +61,7 @@ namespace WebsiteOrdering.Services
 
                     // Xử lý hủy sau 15p nếu không đến
                     var datbansHuy = await _appDbContext.Datbans
-                        .Where(d => d.Trangthaidatban == "Đã xác nhận"
+                        .Where(d => d.Trangthaidatban == TrangThai.Confirmed
                             && d.Ngaydat == DateOnly.FromDateTime(now.Date)
                             && d.Giobatdau.AddMinutes(15) <= TimeOnly.FromDateTime(now))
                         .Include(d => d.Nguoidung)
@@ -69,7 +70,7 @@ namespace WebsiteOrdering.Services
 
                     foreach (var datban in datbansHuy)
                     {
-                        datban.Trangthaidatban = "Đã hủy";
+                        datban.Trangthaidatban = TrangThai.Cancelled;
                         datban.Lydo = "Khách không đến sau 15 phút";
 
                         var email = datban.Nguoidung?.Email;

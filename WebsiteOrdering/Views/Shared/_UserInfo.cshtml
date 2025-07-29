@@ -1,83 +1,66 @@
 ﻿@model WebsiteOrdering.ViewModels.UserCheckoutInfoViewModel
 <link rel="stylesheet" href="~/css/style.css" />
-
 <div class="checkout-info-card">
     <div class="checkout-info-card-body">
         <h5 class="checkout-info-card-title">Thông tin đặt hàng</h5>
 
         <div class="checkout-info-mb-2">
-            <strong>Tên người nhận</strong>
-            @if (!string.IsNullOrEmpty(Model.FullName))
-            {
-                <input type="text" name="FullName" class="checkout-info-input checkout-info-input-sm"
-                       placeholder="Nhập họ tên" value="@Model.FullName" />
-            }
-            else
-            {
-                <input type="text" name="FullName" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập họ tên">
-            }
+            <strong>Tên người nhận *</strong>
+            <input asp-for="FullName" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập họ tên" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
         </div>
 
         <div class="checkout-info-mb-2">
-            <strong>Số điện thoại</strong>
-            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
-            {
-                <input type="text" name="PhoneNumber" class="checkout-info-input checkout-info-input-sm"
-                       placeholder="Nhập số điện thoại" value="@Model.PhoneNumber" />
-            }
-            else
-            {
-                <input type="text" name="PhoneNumber" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập số điện thoại">
-            }
+            <strong>Số điện thoại *</strong>
+            <input asp-for="PhoneNumber" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập số điện thoại" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
         </div>
 
         <div class="checkout-info-mb-2">
             @if (Model.DeliveryMethod == "delivery")
             {
-                <input type="hidden" name="DeliveryMethod" value="@Model.DeliveryMethod" />
-
-                <strong>Địa chỉ giao hàng</strong>
-                <input type="text" id="userAddress" class="checkout-info-input" value="@Model.Address" readonly />
-                <input type="hidden" name="Address" value="@Model.Address" />
-
+                <input type="hidden" asp-for="DeliveryMethod" />
+                <strong>Địa chỉ giao hàng *</strong>
+                <input asp-for="Address" class="checkout-info-input" readonly />
+                <span asp-validation-for="Address" class="text-danger"></span>
                 <div class="checkout-info-row">
                     <div class="checkout-info-half">
                         <strong>Giao hàng từ</strong>
                         <input type="text" class="checkout-info-input" value="@Model.BranchName" readonly />
-                        <input type="hidden" name="BranchName" value="@Model.BranchName" />
-                        <input type="hidden" name="BranchId" value="@Model.BranchId" />
+                        <input type="hidden" asp-for="BranchName" />
+                        <input type="hidden" asp-for="BranchId" />
                     </div>
                     <div class="checkout-info-half">
                         <strong>Số km</strong>
                         <input type="text" class="checkout-info-input" value="@Model.DistanceKm km" readonly />
-                        <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
+                        <input type="hidden" asp-for="DistanceKm" />
                     </div>
                 </div>
 
                 <div class="checkout-info-full">
                     <strong>Thời gian giao hàng dự kiến</strong>
                     <input type="text" class="checkout-info-input" value="@Model.EstimatedMinutes phút" readonly />
-                    <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
+                    <input type="hidden" asp-for="EstimatedMinutes" />
                 </div>
             }
             else
             {
-                <input type="hidden" name="DeliveryMethod" value="@Model.DeliveryMethod" />
+                <input type="hidden" asp-for="DeliveryMethod" />
                 <strong>Nhận hàng tại cửa hàng</strong>
-                <input type="text" class="checkout-info-input" value="@Model.BranchName" readonly />
-                <input type="hidden" name="BranchName" value="@Model.BranchName" />
-                <input type="hidden" name="BranchId" value="@Model.BranchId" />
-
+                <input asp-for="BranchName" class="checkout-info-input" readonly />
+                <input type="hidden" asp-for="BranchName" />
+                <input type="hidden" asp-for="BranchId" />
                 <div class="checkout-info-row">
                     <div class="checkout-info-half">
                         <strong>Khoảng cách</strong>
                         <input type="text" class="checkout-info-input" value="@Model.DistanceKm km" readonly />
-                        <input type="hidden" name="DistanceKm" value="@Model.DistanceKm" />
+                        <input type="hidden" asp-for="DistanceKm" />
                     </div>
                     <div class="checkout-info-half">
                         <strong>Thời gian đi dự kiến</strong>
                         <input type="text" class="checkout-info-input" value="@Model.EstimatedMinutes phút" readonly />
-                        <input type="hidden" name="EstimatedMinutes" value="@Model.EstimatedMinutes" />
+                        <input type="hidden" asp-for="EstimatedMinutes" />
                     </div>
                 </div>
             }
@@ -92,17 +75,18 @@
             <strong>Phương thức thanh toán *</strong>
             <div class="checkout-info-mt-2">
                 <div class="checkout-info-form-check">
-                    <input class="checkout-info-form-check-input" type="radio" name="PaymentInfo" id="paymentCOD" value="COD" checked>
+                    <input class="checkout-info-form-check-input" type="radio" asp-for="PaymentInfo" value="COD" id="paymentCOD" />
                     <label class="checkout-info-form-check-label" for="paymentCOD">
                         Thanh toán khi nhận hàng
                     </label>
                 </div>
                 <div class="checkout-info-form-check">
-                    <input class="checkout-info-form-check-input" type="radio" name="PaymentInfo" id="paymentVNPay" value="VNPay">
+                    <input class="checkout-info-form-check-input" type="radio" asp-for="PaymentInfo" value="VNPay" id="paymentVNPay" />
                     <label class="checkout-info-form-check-label" for="paymentVNPay">
                         Thanh toán qua VNPay
                     </label>
                 </div>
+                <span asp-validation-for="PaymentInfo" class="text-danger"></span>
             </div>
         </div>
     </div>

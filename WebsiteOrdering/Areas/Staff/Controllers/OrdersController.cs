@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebsiteOrdering.Areas.Services;
 using WebsiteOrdering.Areas.ViewModelAdmin;
+using WebsiteOrdering.Enums;
 
 namespace WebsiteOrdering.Areas.Staff.Controllers
 {
@@ -16,7 +17,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         }
         [HttpGet("")]
         public async Task<IActionResult> Index(
-            string status,
+            TrangThai? status,
             string keyword,
             string dateFilter,
             DateTime? fromDate,
@@ -55,7 +56,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             return View(orders);
         }
 
-        private void SetViewBagData(OrderFilterModel filter, Dictionary<string, List<string>> statusMap, int totalCount)
+        private void SetViewBagData(OrderFilterModel filter, Dictionary<string, List<TrangThai>> statusMap, int totalCount)
         {
             ViewBag.StatusFilter = filter.Status;
             ViewBag.Keyword = filter.Keyword;

@@ -219,6 +219,8 @@ const ctx = canvas.getContext("2d");
 const backgroundImg = new Image();  // Ảnh nền canvas (theo khu vực)
 const chairImg = new Image();       // Ảnh ghế
 chairImg.src = "/css/img/ghe1.png";
+const chairWithPersonImg = new Image();
+chairWithPersonImg.src = "/css/img/connguoixanh.png";
 let soNguoiDatGlobal = 1;
 let banListGlobal = [];
 let selectedBanId = null;
@@ -291,7 +293,12 @@ function drawBan(ban, hoveredBan = null) {
         const gx = x + radius * Math.cos(angle);
         const gy = y + radius * Math.sin(angle);
         const deg = angle + Math.PI / 2;
-        drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);
+        //drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);
+        if (isDisabled) {
+            drawRotatedImage(ctx, chairWithPersonImg, gx, gy, deg, 40, 40);
+        } else {
+            drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);
+        }
     }
 
     // Tooltip khi hover
@@ -555,9 +562,15 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
 
 
     if (backgroundImg.complete) {
-        drawCanvas(banListGlobal, selectedBanId);
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        drawCanvas(banListGlobal);
     } else {
-        backgroundImg.onload = () => drawCanvas(banListGlobal, selectedBanId);
+        backgroundImg.onload = () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawCanvas(banListGlobal)
+        };
     }
 }
 
@@ -755,6 +768,9 @@ function reloadBanList() {
                 .then(banDaDatList => {
                     banList.forEach(b => b.songuoi = parseInt(b.songuoi));
                     initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    drawCanvas(banListGlobal);
                 });
         });
 }

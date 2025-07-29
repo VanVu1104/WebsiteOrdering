@@ -191,6 +191,7 @@ namespace WebsiteOrdering.Controllers
                 UserInfo = new UserCheckoutInfoViewModel()
 
             };
+            model.UserInfo.PaymentInfo = "COD";
             await _accountRepository.FillUserInfoIfAuthenticated(model.UserInfo, User);
             // Lấy địa chỉ từ session
             if (HttpContext.Session.TryGetValue("UserAddress", out var addrBytes))

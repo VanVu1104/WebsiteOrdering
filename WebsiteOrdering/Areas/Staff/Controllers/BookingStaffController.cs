@@ -9,6 +9,7 @@ using WebsiteOrdering.Helper;
 using WebsiteOrdering.Models;
 using WebsiteOrdering.Repositories;
 using WebsiteOrdering.Services;
+using WebsiteOrdering.Enums;
 
 namespace WebsiteOrdering.Areas.Staff.Controllers
 {
@@ -37,7 +38,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
        
 
-        public async Task<IActionResult> Index(string trangThai = "", string idChiNhanh = "", string tuNgay = "")
+        public async Task<IActionResult> Index(TrangThai? trangThai, string idChiNhanh = "", string tuNgay = "")
         {
             var staffChiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
 
@@ -52,7 +53,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 .Include(d => d.IdchinhanhNavigation)
                 .Where(d => d.Idchinhanh == staffChiNhanhId);
 
-            if (!string.IsNullOrEmpty(trangThai))
+            if (!string.IsNullOrEmpty(trangThai.ToString()))
             {
                 query = query.Where(d => d.Trangthaidatban == trangThai);
             }
@@ -82,9 +83,10 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 .Where(d => d.Idchinhanh == staffChiNhanhId)
                 .ToListAsync();
 
-            ViewBag.CountChoXacNhan = allDatbans.Count(d => d.Trangthaidatban == "Chờ xác nhận");
-            ViewBag.CountDaXacNhan = allDatbans.Count(d => d.Trangthaidatban == "Đã xác nhận");
-            ViewBag.CountDaHuy = allDatbans.Count(d => d.Trangthaidatban == "Đã hủy");
+            ViewBag.CountChoXacNhan = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Pending);
+            ViewBag.CountDaXacNhan = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Confirmed);
+            ViewBag.CountDaHuy = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Cancelled);
+            ViewBag.CountHoanThanh = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Completed);
 
             ViewBag.SelectedTrangThai = trangThai;
             ViewBag.SelectedChiNhanh = idChiNhanh;
@@ -130,7 +132,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
             if (datban == null) return NotFound();
 
-            datban.Trangthaidatban = "Đã xác nhận";
+            datban.Trangthaidatban = TrangThai.Confirmed;
             await _appDbContext.SaveChangesAsync();
 
             var email = datban.Nguoidung?.Email;
@@ -166,7 +168,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             .FirstOrDefaultAsync(d => d.Iddatban == id);
             if (datban == null) return NotFound();
 
-            datban.Trangthaidatban = "Đã hủy";
+            datban.Trangthaidatban = TrangThai.Cancelled;
             // Nếu chọn "Khác" thì lưu lý do chi tiết
             if (lyDo == "Khác" && !string.IsNullOrWhiteSpace(lyDoChiTiet))
             {
@@ -221,7 +223,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             }
 
             // Cập nhật trạng thái
-            datban.Trangthaidatban = "Khách đã đến";
+            datban.Trangthaidatban = TrangThai.Came;
 
             // Giờ vào (lấy giờ hiện tại)
             var gioVao = TimeOnly.FromDateTime(DateTime.Now);
@@ -243,7 +245,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
             var list = await _appDbContext.Datbans
                 .Where(d =>
-                    (d.Trangthaidatban == "Khách đã đến" || d.Trangthaidatban == "Đang dùng bữa" || d.Trangthaidatban == "Đã đặt món")
+                    (d.Trangthaidatban == TrangThai.Came || d.Trangthaidatban == TrangThai.Eating || d.Trangthaidatban == TrangThai.Ordered)
                     && d.Ngaydat == today)
                 
                 .Include(d => d.Nguoidung)
@@ -271,7 +273,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                     return RedirectToAction("Index");
                 }
 
-                var idChiNhanh = HttpContext.Session.GetString("ChiNhanhId");
+                var idChiNhanh = User.FindFirst("ChiNhanhId")?.Value;
                 if (datban.Idchinhanh != idChiNhanh)
                 {
                     TempData["Error"] = "Bạn không có quyền sửa đơn đặt bàn này.";
@@ -357,7 +359,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
             if (datban == null) return NotFound();
 
-            var idChiNhanh = HttpContext.Session.GetString("ChiNhanhId");
+            var idChiNhanh = User.FindFirst("ChiNhanhId")?.Value;
             if (datban.Idchinhanh != idChiNhanh)
             {
                 return Forbid();
@@ -555,7 +557,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                 .Include(c => c.IddatbanNavigation)
                 .AnyAsync(c => c.Idban == selectedIdban
                     && c.IddatbanNavigation.Ngaydat == datban.Ngaydat
-                    && c.IddatbanNavigation.Trangthaidatban != "Đã hủy"
+                    && c.IddatbanNavigation.Trangthaidatban != TrangThai.Cancelled
                     && (
                         (datban.Giobatdau >= c.Giovao && datban.Giobatdau < c.Giora)
                         || (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora)
@@ -616,11 +618,11 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             TempData["Success"] = "Tạo đơn đặt bàn thành công!";
 
             // Điều hướng dựa trên trạng thái
-            if (datban.Trangthaidatban == "Đã xác nhận")
+            if (datban.Trangthaidatban == TrangThai.Confirmed)
             {
                 return RedirectToAction("Index");
             }
-            else if (datban.Trangthaidatban == "Khách đã đến")
+            else if (datban.Trangthaidatban == TrangThai.Came)
             {
                 return RedirectToAction("DanhSachKhachDaDen");
             }
@@ -642,7 +644,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
                     c.IddatbanNavigation.Ngaydat == DateOnly.Parse(ngay) &&
                     c.IddatbanNavigation.Idchinhanh == idChinhanh &&
                     c.IdbanNavigation.Khuvuc == idKhuvuc &&
-                    c.IddatbanNavigation.Trangthaidatban != "Đã hủy" &&
+                    c.IddatbanNavigation.Trangthaidatban != TrangThai.Cancelled &&
                     (
                         (gioBatDau >= c.Giovao && gioBatDau < c.Giora) ||
                         (gioKetThuc > c.Giovao && gioKetThuc <= c.Giora) ||

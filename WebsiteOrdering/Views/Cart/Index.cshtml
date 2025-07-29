@@ -10,11 +10,6 @@
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
 }
-
-@section Scripts {
-    <script src="~/js/site.js"></script>
-}
-
 @if (Model.CartItems == null || !Model.CartItems.Any())
 {
     <p>Giỏ hàng trống.</p>
@@ -63,8 +58,12 @@ else
                                     @if (!string.IsNullOrEmpty(item.TENSANPHAM2))
                                     {
                                         <div class="pizza-split-image">
-                                            <img class="pizza-half left" src="~/css/img/@item.ANHSANPHAM" alt="Ảnh vị 1" />
-                                            <img class="pizza-half right" src="~/css/img/@item.ANHSANPHAM2" alt="Ảnh vị 2" />
+                                            <div class="pizza-half left">
+                                                <img src="~/css/img/@item.ANHSANPHAM" alt="Ảnh vị 1" />
+                                            </div>
+                                            <div class="pizza-half right">
+                                                <img src="~/css/img/@item.ANHSANPHAM2" alt="Ảnh vị 2" />
+                                            </div>
                                         </div>
                                     }
                                     else
@@ -108,8 +107,8 @@ else
                                                         }
                                                     }
                                                 </div>
-;
-                                            }
+                                             ;
+                                         }
                                         }
                                         @if (!string.IsNullOrEmpty(item.GhiChu))
                                         {
@@ -167,7 +166,7 @@ else
             </div>
 
             <div class="checkout-info">
-                @await Html.PartialAsync("_UserInfo", Model.UserInfo)
+                <partial name="_UserInfo" for="UserInfo" />
                 <div class="checkout-info-total">
                     <span>Tổng cộng:</span>
                     <span id="totalAmount">0 VNĐ</span>
@@ -213,7 +212,7 @@ else
 
                         <div class="mb-3">
                             <label for="edit-size" class="form-label">Size</label>
-                            <select class="form-select" id="edit-size" name="selectedSizeId" >
+                            <select class="form-select" id="edit-size" name="selectedSizeId">
                                 @if (ViewBag.AllSizes != null)
                                 {
                                     @foreach (var size in ViewBag.AllSizes as List<WebsiteOrdering.Models.Size>)
@@ -226,7 +225,7 @@ else
 
                         <div class="mb-3">
                             <label for="edit-debanh" class="form-label">Đế bánh</label>
-                            <select class="form-select" id="edit-debanh" name="selectedDeBanhId" >
+                            <select class="form-select" id="edit-debanh" name="selectedDeBanhId">
                                 @if (ViewBag.AllDeBanh != null)
                                 {
                                     @foreach (var debanh in ViewBag.AllDeBanh as List<WebsiteOrdering.Models.Debanh>)
@@ -266,22 +265,23 @@ else
                             </div>
                         </div>
                     </div>
-                   
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     </div>
-                 
+
                 </form>
             </div>
         </div>
     </div>
-
+}
+@section Scripts {
+    <script src="~/js/site.js"></script>
+    <partial name="_ValidationScriptsPartial" />
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const left = document.querySelector('.checkout-left');
             const info = document.querySelector('.checkout-info');
-
             if (left && info) {
                 const infoHeight = info.offsetHeight;
                 left.style.maxHeight = infoHeight + 'px';

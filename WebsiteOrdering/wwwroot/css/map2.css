@@ -17,7 +17,6 @@
     font-family: '1FTV VIP Mestika';
 }
 
-/* Sidebar Styles */
 .sidebar {
     width: 400px; /* tăng nhẹ để khớp ảnh */
     background: #FFFFF7;
@@ -31,7 +30,6 @@
     letter-spacing: 1.3px;
 }
 
-    /* Delivery Options in Sidebar */
     .sidebar .delivery-options {
         display: flex;
         margin: 30px 0 10px 0;
@@ -146,7 +144,6 @@
     .suggestions.show::-webkit-scrollbar {
         width: 5px; /* Độ rộng của thanh cuộn dọc */
     }
-
     .store-list-sidebar::-webkit-scrollbar-track,
     .store-list-container::-webkit-scrollbar-track,
     .suggestions.show::-webkit-scrollbar-track {
@@ -240,6 +237,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    height: 570px;
 }
 
     .map-mode.active {
@@ -268,6 +266,12 @@
 }
 
 .control-btn {
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    font-size: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -283,6 +287,7 @@
 }
 
     .control-btn:hover {
+
         transform: translateY(-2px);
         background: var(--dark-green);
     }
@@ -312,6 +317,11 @@
         background: #7D0A0A;
     }
 
+#btnSaveSessionLocation,
+#btnClearRoute {
+    width: 45%;
+}
+
 .location-counter {
     background-color: #FFFFF7;
     color: var(--green-color);
@@ -327,7 +337,8 @@
     width: 100%;
     position: relative;
     z-index: 1;
-    min-height: 400px;
+    min-height: 100%;
+    border: none;
 }
 
 .map-legend {
@@ -351,7 +362,6 @@
 .legend-marker {
     font-size: 1.1rem;
 }
-
 .map-actions-left {
     padding: 15px 20px;
     background-color: #fffff7;
@@ -381,7 +391,32 @@
     display: flex;
     gap: 15px;
     justify-content: center;
-    flex-wrap: wrap;
+}
+
+.always-visible-cart {
+    padding: 15px 20px 10px 20px;
+    background: #fffff7;
+    border-top: 1px solid var(--green-color, #28a745);
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.search-wrapper-delivery {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+#storeList {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    height: 100vh;
 }
 
 /* Hidden Store Mode */
@@ -421,10 +456,41 @@
     border-top: 3px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.popup-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    width: 90%;
+}
+
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 @keyframes spin {
@@ -447,6 +513,8 @@
 @media (max-width: 768px) {
     .location-container {
         padding: 15px;
+        margin-left: 0;
+        width: 100vw;
     }
 
     .page-title {
@@ -456,25 +524,20 @@
     }
 
     .map-wrapper {
-        position: relative;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        border: 1px solid #e1e5e9;
-        display: flex;
-        height: 80vh;
+        flex-direction: column;
+        height: auto;
         min-height: 600px;
     }
 
     .sidebar {
         width: 100%;
         max-height: 300px;
-        height: auto; /* Thay đổi để phù hợp với mobile */
+        height: auto;
     }
 
         .sidebar .delivery-options {
-            border-bottom: 1px solid #e9ecef;
+            width: 90%;
+            margin: 20px auto;
         }
 
     .map-mode {
@@ -500,7 +563,6 @@
     .sidebar {
         max-height: 250px;
     }
-
     .page-title {
         font-size: 1.8rem;
     }
@@ -518,7 +580,7 @@
     }
 
     .store-item {
-        padding: 12px 0;
+        padding: 12px;
     }
 
     .store-name {
