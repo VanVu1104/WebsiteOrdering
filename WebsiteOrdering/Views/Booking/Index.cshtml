@@ -1,12 +1,15 @@
-﻿@using WebsiteOrdering.Models
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using WebsiteOrdering.Models
 @model WebsiteOrdering.Models.Datban
+
 @{
     ViewData["Title"] = "Đặt bàn";
     var chiNhanhs = ViewBag.ChiNhanh as List<Chinhanh>;
     var banss = ViewBag.Ban as List<Ban>;
-    // Layout = null;
-    // ViewBag.HideHeaderFooter = true;
     <link rel="stylesheet" href="~/css/datban.css" />
+
 }
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -17,19 +20,9 @@
 @* <form asp-action="SearchDonDatBan" asp-controller="Booking"  method="get">
     <button type="submit" class="btn btn-primary">Tra cứu đơn đặt bàn</button>
 </form> *@
-@* <a asp-action="SearchDonDatBan" asp-controller="Booking" class="btn btn-primary">Tra cứu đơn đặt bàn</a>
 
-<h2 class="text-center">Đặt bàn</h2> *@
-
-
-<h2 class="text-center">
-    @(Model != null && !string.IsNullOrEmpty(Model.Iddatban)
-        ? $"Cập nhật đơn đặt bàn - {Model.Iddatban}"
-        : "Đặt bàn")
-</h2>
-
-
-
+@* TRA CỨU ĐƠN ĐĂT BÀN CHƯA XỬ LÝ NÊN ĐÓNG LẠI *@
+<a asp-action="SearchDonDatBan" asp-controller="Booking" class="btn btn-primary">Tra cứu đơn đặt bàn</a> 
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
@@ -39,19 +32,16 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
-@* <div class="video-clip">
-    <video id="video" autoplay muted loop playsinline>
-        <source src="~/css/video/banner_db.mp4" type="video/mp4">
-    </video>
-    <div class="overlay-text">ĐẶT BÀN</div>
-
-</div> *@
 @section FullWidthContent {
     <div class="dat-ban-video-clip">
         <video id="video" autoplay muted loop playsinline>
             <source src="@Url.Content("~/css/videos/banner_db.mp4")" type="video/mp4" />
         </video>
-        <div class="dat-ban-overlay-text">ĐẶT BÀN</div>
+        <div class="dat-ban-overlay-text">
+                @(Model != null && !string.IsNullOrEmpty(Model.Iddatban)
+                    ? $"Cập nhật đơn đặt bàn - {Model.Iddatban}"
+                    : "Đặt bàn")
+        </div>
     </div>
 }
 
@@ -64,24 +54,33 @@
     </div>
 </div>
 
+@* <form asp-action="DatBan" asp-controller="Booking" method="post"> *@
+<form asp-action="@(Model != null && !string.IsNullOrEmpty(Model.Iddatban) ? "CapNhatDatBan" : "DatBan")" asp-controller="Booking" method="post" class="dat-ban-form">
+    @Html.AntiForgeryToken()
+    @if (Model != null && !string.IsNullOrEmpty(Model.Iddatban))
+    {
+        <input type="hidden" asp-for="Iddatban" id="iddatbanCurrent" />
 
-<form asp-action="DatBan" asp-controller="Booking" method="post" class="dat-ban-form">
+    }
     @*  <input name="trangThaiHopLe" value="@(ViewBag.Trangthaidatban)"/> *@
 
     <div class="dat-ban-div-mot">
         <div class="dat-ban-form-group">
             <label>Họ tên</label>
-            <input type="text" name="Tenngdat" class="dat-ban-form-chung" value="@((ViewBag.UserInfo as ApplicationUser)?.UserName)" required />
+            <input type="text" name="Tenngdat" class="dat-ban-form-chung"
+                   value="@(Model?.Tenngdat ?? (ViewBag.UserInfo as ApplicationUser)?.UserName ?? "")" required />
         </div>
 
         <div class="dat-ban-form-group">
             <label>Email</label>
-            <input type="email" name="user.Email" class="dat-ban-form-chung" value="@((ViewBag.UserInfo as ApplicationUser)?.Email)" required />
+            <input type="email" name="user.Email" class="dat-ban-form-chung"
+                   value="@(Model?.Nguoidung?.Email ?? (ViewBag.UserInfo as ApplicationUser)?.Email ?? "")" required />
         </div>
 
         <div class="dat-ban-form-group">
             <label>Số điện thoại</label>
-            <input type="tel" name="Sđtngdat" class="dat-ban-form-chung" value="@((ViewBag.UserInfo as ApplicationUser)?.PhoneNumber)" required />
+            <input type="tel" name="Sđtngdat" class="dat-ban-form-chung"
+                   value="@(Model?.Sđtngdat ?? (ViewBag.UserInfo as ApplicationUser)?.PhoneNumber ?? "")" required />
         </div>
     </div>
 
@@ -89,7 +88,7 @@
         <div class="dat-ban-form-group">
             <label>Số khách</label>
             <input asp-for="Songuoidat" class="dat-ban-form-chung" type="number" min="1" max="10" required />
-            <small id="warning" class="form-text text-danger" style="display:none;">
+            <small id="warning" class="dat-ban-form-text dat-ban-text-danger" style="display:none;">
                 Với số lượng > 10 người, vui lòng liên hệ nhà hàng qua số điện thoại: 0123-456-789
             </small>
         </div>
@@ -97,7 +96,6 @@
         <div class="dat-ban-form-group">
             <label>Ngày đặt</label>
             <input asp-for="Ngaydat" type="date" class="dat-ban-form-chung" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
-
         </div>
 
         <div class="dat-ban-form-group">
@@ -110,11 +108,13 @@
 
         <div class="dat-ban-form-group">
             <label>Chi nhánh</label>
-            <select id="selectChinhanh" name="Idchinhanh" class="dat-ban-form-chung" style="width:95%" required>
-                <option value="">-- Chi nhánh --</option>
+            <select id="selectChinhanh" name="Idchinhanh" class="dat-ban-form-chung" required>
+                <option value="">-- Chọn chi nhánh --</option>
                 @foreach (var cn in chiNhanhs)
                 {
-                    <option value="@cn.Idchinhanh">@cn.Tencnhanh</option>
+                    <option value="@cn.Idchinhanh" selected="@(Model != null && !string.IsNullOrEmpty(Model.Iddatban) && cn.Idchinhanh == Model.Idchinhanh ? "selected" : null)">
+                        @cn.Tencnhanh
+                    </option>
                 }
             </select>
         </div>
@@ -125,23 +125,46 @@
         </div>
     </div>
 
+
+
     <div class="dat-ban-div-bon">
         <!-- Khu vực -->
         <div>
             <div class="dat-ban-form-group">
                 <label>Khu vực</label>
                 <select id="selectKhuvuc" class="dat-ban-form-chung" required>
-                    <option value="">-- Vị trí ngồi --</option>
-                    @foreach (var kv in banss)
-                    {
-                        <option value="@kv.Idban">@kv.Khuvuc</option>
+                    <option value="">-- Chọn khu vực --</option>
+                    @{
+                        string khuVucDaChon = null;
+                        if (Model != null && Model.Chitietdatbans != null && Model.Chitietdatbans.Any())
+                        {
+                            khuVucDaChon = Model.Chitietdatbans.FirstOrDefault()?.IdbanNavigation?.Khuvuc;
+                        }
+
+                        var distinctKhuvuc = banss.Select(b => b.Khuvuc).Distinct();
+
+                        foreach (var kv in distinctKhuvuc)
+                        {
+                            <option value="@kv" selected="@(kv == khuVucDaChon ? "selected" : null)">
+                                @kv
+                            </option>
+                        }
                     }
                 </select>
             </div>
             <div class="button-wrapper">
-                <button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">
-                    Đặt bàn <span class="timer">(05:00s)</span>
-                </button>
+
+
+                @if (Model != null && !string.IsNullOrEmpty(Model.Iddatban))
+                {
+                    <button type="submit" class="dat-ban-btn-datban">Cập nhật đơn</button>
+                }
+                else
+                {
+                    <button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">
+                        Đặt bàn <span class="timer">(05:00s)</span>
+                    </button>
+                }
             </div>
 
             @*             <button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">Đặt bàn <span style="color:#B22222; font-family: '1FTV VIP Mestika', serif;">(05:00s)</span></button>
@@ -152,7 +175,8 @@
         <div class="dat-ban-form-group">
             @* <label>Bàn</label> *@
             <div id="banInfo">Chưa chọn bàn</div>
-            <input type="hidden" id="selectedIdban" name="selectedIdban" required />
+            <input type="hidden" id="selectedIdban" name="selectedIdban" value="@ViewBag.IdBanHienTai" required />
+
             <canvas id="canvas"></canvas>
         </div>
     </div>
@@ -178,7 +202,7 @@
         </ul>
         <p>Vui lòng kiểm tra kỹ thông tin trước khi xác nhận.</p>
         <label class="dat-ban-agree">
-            <input type="checkbox" id="agreeCheckbox" style="display: inline !important;"> Tôi đã đọc và đồng ý với điều khoản
+            <input type="checkbox" id="agreeCheckbox" style="display: inline !important"> Tôi đã đọc và đồng ý với điều khoản
         </label>
 
         <div class="dat-ban-modal-footer">

@@ -59,6 +59,13 @@
     <div class="total_login">
         <div class="anh_login">
             <img src="~/css/img/abc.jpg" alt="Background Image" />
+
+            <div class="login-text">
+                <p>Khám phá và trải nghiệm dịch vụ nhanh chóng mà không cần đăng nhập</p>
+                <button type="button" onclick="window.location.href='@Url.Action("Index", "Home")'" class="btn-tieptuc-trangchu">
+                    Tiếp tục
+                </button>
+            </div>
         </div>
 
         <div class="chung">
@@ -74,9 +81,17 @@
                 <a style="background:#203F25;color:white" id="tabStaff" class="nav-tab tab-right" asp-area="Admin" asp-controller="Admin" asp-action="LoginStaff" onclick="switchTab('staff')"> NHÂN VIÊN</a>
             </div>
             <div class="form_login">
+            <h2 style="color: #203F25;">ĐĂNG NHẬP</h2>
 
-                <h2 style="color: #203F25;">ĐĂNG NHẬP</h2>
+                @* <div class="div_back_home">
+                    <a href="/Home" class="back-home">
+                        <svg viewBox="0 0 512 512" width="40" height="40" fill="none">
+                            <path d="M256 64L192 128L256 192" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M192 128H352C405.019 128 448 170.981 448 224C448 277.019 405.019 320 352 320H160" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
 
+                </div> *@
                 <form  asp-action="Login" method="post">
                     @Html.AntiForgeryToken()
                     @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
@@ -108,24 +123,22 @@
                     </div>
 
                     <button type="submit" class="btn_login">ĐĂNG NHẬP</button>
-
-
-                   
                 </form>
+                <div class="div_gg">
+                    <div class="signup_login">
+                        Bạn chưa có tài khoản?
+                        <a asp-action="Register" class="register_link">Đăng ký ngay</a>
+                    </div>
 
-                <div class="signup_login">
-                    Bạn chưa có tài khoản?
-                    <a asp-action="Register" class="register_link">Đăng ký ngay</a>
+                    <div class="line">
+                        <span>Hoặc</span>
+                    </div>
+
+                    <button type="button" class="google-btn" onclick="location.href='@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })'">
+                        <div class="google-icon"></div>
+                        Đăng nhập bằng Google
+                    </button>
                 </div>
-
-                <div class="line">
-                    <span>Hoặc</span>
-                </div>
-                <button type="button" class="google-btn" onclick="location.href='@Url.Action("LoginWithGoogle", "Account", new { returnUrl = ViewBag.ReturnUrl })'">
-                    <div class="google-icon"></div>
-                    Đăng nhập bằng Google
-                </button>
-
             </div>
         </div>
     </div>

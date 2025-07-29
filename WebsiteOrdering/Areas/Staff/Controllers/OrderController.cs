@@ -653,15 +653,16 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
         public async Task<IActionResult> DanhSachHoaDon()
         {
-            var staffChiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
-            if (string.IsNullOrEmpty(staffChiNhanhId))
+            var chiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
+            if (string.IsNullOrEmpty(chiNhanhId))
             {
-                return RedirectToAction("LoginStaff", "Admin");
+                TempData["Error"] = "Không xác định được chi nhánh nhân viên.";
+                return RedirectToAction("LoginStaff", "Admin", new { area = "Admin" });
             }
 
             var danhSach = await _appDbContext.dhang
                 .Include(d => d.IdchinhanhNavigation)
-                .Where(d => d.Trangthai == "Hoàn thành" && d.Idchinhanh == staffChiNhanhId)
+                .Where(d => d.Trangthai == "Hoàn thành" && d.Idchinhanh == chiNhanhId)
                 .OrderByDescending(d => d.Ngaydat)
                 .ToListAsync();
 

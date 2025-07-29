@@ -487,10 +487,11 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateDatBanTaiCho()
         {
-            var idChiNhanh = HttpContext.Session.GetString("ChiNhanhId");
+            var idChiNhanh = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(idChiNhanh))
             {
-                return RedirectToAction("Login", "Account");
+                TempData["Error"] = "Không xác định được chi nhánh nhân viên.";
+                return RedirectToAction("LoginStaff", "Admin", new { area = "Admin" });
             }
 
             var banList = await _appDbContext.bans

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalLabel = document.getElementById("totalAmount");
 
     function formatCurrency(amount) {
-        return amount.toLocaleString("vi-VN") + "₫";
+        return amount.toLocaleString("vi-VN") + " VNĐ";
     }
 
     function calculateTotal() {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const cb = row.querySelector(".cart-select");
                         cb.dataset.tongtien = data.tongTienMoi; // cập nhật giá trị data-tongtien
                         const tongTienCell = row.querySelector("td:nth-last-child(2)");
-                        tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + "₫";
+                        tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + " VNĐ";
                         calculateTotal();
 
                     } else {
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 0);
             const soLuong = parseInt(this.dataset.soluong || 1);
             const tongTien = (giaCoBan + giaSize + giaDeBanh + giaTopping) * soLuong;
-            document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + "₫";
+            document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + " VNĐ";
 
             // Mở modal
             const editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <input class="form-check-input edit-topping-checkbox" type="checkbox"
                                                        name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
                                                 <label class="form-check-label" for="edit_top_${t.idtopping}">
-                                                    ${t.ten} (+${t.gia}₫)
+                                                    ${t.ten} (+${t.gia} VNĐ)
                                                 </label>
                                             </div>`;
                     });
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <input class="form-check-input edit-topping-checkbox" type="checkbox"
                                                name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
                                         <label class="form-check-label" for="edit_top_${t.idtopping}">
-                                            ${t.ten} (+${t.gia}₫)
+                                            ${t.ten} (+${t.gia} VNĐ)
                                         </label>`;
                         toppingList.appendChild(div);
                     });

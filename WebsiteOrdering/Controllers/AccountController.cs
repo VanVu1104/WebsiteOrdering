@@ -82,7 +82,7 @@ namespace WebsiteOrdering.Controllers
             await _accountRepository.LogoutAsync();
             return Redirect("/");
         }
-      
+
         [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {

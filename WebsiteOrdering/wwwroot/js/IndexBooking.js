@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         soNguoiInput.value = 1;
     }
 
-    
+
 
     //Hiển thị khu vực theo chi nhánh
     document.getElementById("selectChinhanh").addEventListener("change", function () {
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     khuVucSelect.innerHTML += `<option value="${kv}">${kv}</option>`;
                 });
 
-             
+
                 // reset bàn
                 document.getElementById("selectBan").innerHTML = `<option value="">-- Chọn bàn --</option>`;
             });
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
             khuVucSelect.dispatchEvent(new Event("change"));
         }, 100);
     }
-    
+
 
     //Hiển thị số người đặt
     document.getElementById("Songuoidat").addEventListener("input", function () {
@@ -155,7 +155,6 @@ function setupKhuvucChangeEvent() {
             backgroundImg.onload = () => {
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
-
                 drawCanvas(banListGlobal); // vẽ nền mới
             };
         }
@@ -272,28 +271,27 @@ function drawBan(ban, hoveredBan = null) {
 
     // Vẽ bàn tròn
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, Math.PI * 2);//30
+    ctx.arc(x, y, 30, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = "#333";
-    ctx.lineWidth = 1;//ban dau la 2
+    ctx.lineWidth = 1;
     ctx.stroke();
 
     // Tên bàn
     ctx.fillStyle = "#000";
-    ctx.font = "14px Arial";//14
+    ctx.font = "14px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(tenban, x, y);
 
     // Vẽ ghế
-    const radius = 50; //ban đầu là 52
+    const radius = 50;
     for (let i = 0; i < songuoi; i++) {
         const angle = (2 * Math.PI / songuoi) * i;
         const gx = x + radius * Math.cos(angle);
         const gy = y + radius * Math.sin(angle);
-        //const deg = angle + Math.PI;
         const deg = angle + Math.PI / 2;
-        drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);//40,40
+        drawRotatedImage(ctx, chairImg, gx, gy, deg, 40, 40);
     }
 
     // Tooltip khi hover
@@ -306,16 +304,8 @@ function drawBan(ban, hoveredBan = null) {
 //Hàm click chọn bàn đó
 canvas.addEventListener("click", function (evt) {
     const rect = canvas.getBoundingClientRect();
-
     //const clickX = evt.clientX - rect.left;
     //const clickY = evt.clientY - rect.top;
-
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
-    const clickX = (evt.clientX - rect.left) * scaleX;
-    const clickY = (evt.clientY - rect.top) * scaleY;
-
 
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -357,15 +347,8 @@ canvas.addEventListener("click", function (evt) {
 });
 canvas.addEventListener("mousemove", function (evt) {
     const rect = canvas.getBoundingClientRect();
-
     //const mouseX = evt.clientX - rect.left;
     //const mouseY = evt.clientY - rect.top;
-
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
-    const mouseX = (evt.clientX - rect.left) * scaleX;
-    const mouseY = (evt.clientY - rect.top) * scaleY;
 
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -424,7 +407,7 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
     const selectedGioStart = selectedGio;
     const selectedGioEnd = addHoursToTime(selectedGioStart, 2);
     soNguoiDatGlobal = soNguoiDat;
-   
+
 
     banListGlobal = banList.map(ban => {
         //const isDisabled = banDaDatList.some(dadat => {
@@ -510,7 +493,7 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
             isDisabled: isDisabled
         };
     });
-   // selectedBanId = document.getElementById("selectedIdban").value.trim();
+    // selectedBanId = document.getElementById("selectedIdban").value.trim();
 
     // Gán lại selectedBanId từ hidden input
     //const selectedIdInput = document.getElementById("selectedIdban");
@@ -572,15 +555,9 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
 
 
     if (backgroundImg.complete) {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        drawCanvas(banListGlobal);
+        drawCanvas(banListGlobal, selectedBanId);
     } else {
-        backgroundImg.onload = () => {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            drawCanvas(banListGlobal)
-        };
+        backgroundImg.onload = () => drawCanvas(banListGlobal, selectedBanId);
     }
 }
 
@@ -778,9 +755,6 @@ function reloadBanList() {
                 .then(banDaDatList => {
                     banList.forEach(b => b.songuoi = parseInt(b.songuoi));
                     initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
-                    drawCanvas(banListGlobal);
                 });
         });
 }

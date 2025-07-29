@@ -7,13 +7,6 @@
 <link href="~/css/map2.css" rel="stylesheet" />
 
 <div class="location-container">
-    <div class="header-section">
-        <h2 class="page-title">
-            <span class="location-icon">📍</span>
-            Danh sách địa điểm
-        </h2>
-        <p class="subtitle">Chọn cách thức nhận hàng và khám phá các địa điểm</p>
-    </div>
 
     <div class="map-wrapper">
         <!-- Left Sidebar -->
@@ -44,7 +37,7 @@
                         </div>
                     </div>
                     <div id="deliverySearchBlock" class="hidden">
-                        <div class="search-wrapper">
+                        <div class="search-wrapper-delivery">
                             <input class="searchInput" type="text" id="searchInput" placeholder="Nhập địa chỉ của bạn..." autocomplete="off">
                             <span class="search-icon">🔍</span>
                             <div class="loading-spinner" id="loadingSpinner"></div>
@@ -56,16 +49,17 @@
                 </div>
                 <!-- Store List Container - Chỉ hiển thị khi pickup -->
                 <div id="storeList" class="store-list-container">
-                    <!-- Danh sách cửa hàng sẽ được JS render vào đây -->
                 </div>
 
                 <!-- Pickup Actions - Chỉ hiển thị khi pickup -->
-                <div id="pickupActions" class="map-actions">
+                @* <div id="pickupActions" class="map-actions">
                     <button id="btnSelectStore" class="control-btn highlight-btn">
                         ✓ Chọn cửa hàng này
                     </button>
-                    <button id="btnViewOnMap" class="control-btn">
-                        🗺️ Xem trên bản đồ
+                </div> *@
+                <div class="map-actions-left always-visible-cart">
+                    <button id="btnCart" class="cart-map-btn">
+                        Giỏ hàng
                     </button>
                 </div>
             </div>
@@ -74,7 +68,6 @@
         <!-- Map Mode (Default) -->
         <div id="map-mode" class="map-mode active">
             <div class="sidebar-search-container">
-               
             </div>
             <div class="map-controls">
                 <button id="resetView" class="control-btn">
@@ -90,11 +83,16 @@
                     <span>Chọn vị trí của tôi</span>
                 </button>
                 <div class="location-counter">
-                    <span id="locationCount">@Model.Count()</span> địa điểm
+                    <span id="locationCount">4</span> địa điểm
                 </div>
             </div>
 
-            <div id="map" class="interactive-map"></div>
+            <div id="map" class="interactive-map">
+                <!-- Map sẽ được render ở đây -->
+                <div style="height: 100%; background: #f0f8ff; display: flex; align-items: center; justify-content: center; color: #666;">
+                    Bản đồ sẽ được tải ở đây
+                </div>
+            </div>
 
             <div class="map-legend">
                 <div class="legend-item">
@@ -110,11 +108,15 @@
                     <span>Đường đi</span>
                 </div>
             </div>
-
+            <div id="pickupActions" class="map-actions">
+                <button id="btnSelectStore" class="control-btn highlight-btn">
+                    ✓ Chọn cửa hàng này
+                </button>
+            </div>
             <!-- Delivery Actions - Chỉ hiển thị khi delivery -->
             <div id="deliveryActions" class="map-actions hidden">
                 <button id="btnSaveSessionLocation" class="control-btn highlight-btn">
-                    💾 Lưu vị trí của tôi
+                    💾 Lưu vị trí đã chọn
                 </button>
                 <button id="btnClearRoute" class="control-btn danger-btn">
                     🗑️ Xóa đường đi
@@ -123,7 +125,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

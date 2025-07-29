@@ -42,6 +42,33 @@ body {
     justify-content: center;
 }
 
+.div_back_home {
+    display: flex;
+    width: 100%;
+    max-width: 568px;
+    margin: 30px auto 0 auto;
+    gap: 70px;
+    justify-content: flex-start;
+}
+
+.back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: '1FTV VIP Mestika', serif;
+    font-size: 20px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    color: white;
+}
+
+    .back-home:hover {
+        color: #E0B37F;
+    }
+
 /*.nav-tabs {
     display: flex;
     border-radius: 12px;
@@ -279,10 +306,9 @@ body {
 
     .form_loginnv h2 {
         text-align: center;
-        font-size: 40px;
+        font-size: 35px;
         color: white;
         margin-bottom: 10px;
-        font-weight: bold;
     }
 
 form {

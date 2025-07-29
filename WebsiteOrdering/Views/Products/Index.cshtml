@@ -10,6 +10,7 @@
     Layout = "_Layout";
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="~/css/style.css" rel="stylesheet" />
+    <script src="~/js/site.js"></script>
 }
 <body>
     <section class="banner-tdon-online">
@@ -301,6 +302,22 @@
                                                     @string.Format(new System.Globalization.CultureInfo("vi-VN"), "{0:N0}", item.TongTien) VNĐ
                                                 </div>
 
+                                                <!-- Nút chỉnh sửa -->
+                                                <form method="post" asp-controller="Products" asp-action="PrepareEdit" class="edit-form">
+                                                    <input type="hidden" name="id" value="@item.IDMONAN" />
+                                                    <input type="hidden" name="idmonan2" value="@item.IDMMONAN2" />
+                                                    <input type="hidden" name="size" value="@item.Size" />
+                                                    <input type="hidden" name="debanh" value="@item.DeBanh" />
+                                                    <input type="hidden" name="ghichu" value="@item.GhiChu" />
+                                                    <input type="hidden" name="soluong" value="@item.SoLuong" />
+                                                    <input type="hidden" name="edit" value="true" />
+                                                    @foreach (var top in item.Topping ?? new List<WebsiteOrdering.Models.Topping>())
+                                                    {
+                                                        <input type="hidden" name="toppings" value="@top.Idtopping" />
+                                                    }
+                                                    <button type="submit" class="edit-button">[Chỉnh Sửa]</button>
+                                                </form>
+                                                
                                                 @* PHẦN CHỈNH SỬA SỐ LƯỢNG *@
                                                 <form asp-action="UpdateCart" asp-controller="Cart" method="post" class="update-cart-form">
                                                     <input type="hidden" name="idmonan" value="@item.IDMONAN" />
@@ -330,6 +347,7 @@
                                                             <img src="~/css/svg/icon_plus.svg" alt="Tăng" />
                                                         </button>
                                                     </div>
+
                                                 </form>
                                             </div>
                                         </div>
@@ -383,7 +401,6 @@
             </div>
         </div>
     </section>
-
     @section Scripts {
         <script>
             function formatMoney(number) {
@@ -464,5 +481,4 @@
             }
         </script>
     }
-
 </body>

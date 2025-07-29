@@ -44,11 +44,6 @@ namespace WebsiteOrdering.Controllers
             return View();
         }
 
-        public IActionResult NhanVien()
-        {
-            return View("nhanvien"); // => Tìm View tại: Views/Home/NhanVien.cshtml
-        }
-
         public IActionResult MenuBook()
         {
             return View();

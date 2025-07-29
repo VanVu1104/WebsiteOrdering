@@ -12,8 +12,8 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717073521_UpdateDeliveryMethod")]
-    partial class UpdateDeliveryMethod
+    [Migration("20250721074034_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
