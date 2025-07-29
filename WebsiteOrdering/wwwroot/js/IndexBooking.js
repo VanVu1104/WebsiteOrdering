@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         soNguoiInput.value = 1;
     }
 
-    
+
 
     //Hiển thị khu vực theo chi nhánh
     document.getElementById("selectChinhanh").addEventListener("change", function () {
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     khuVucSelect.innerHTML += `<option value="${kv}">${kv}</option>`;
                 });
 
-             
+
                 // reset bàn
                 document.getElementById("selectBan").innerHTML = `<option value="">-- Chọn bàn --</option>`;
             });
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
             khuVucSelect.dispatchEvent(new Event("change"));
         }, 100);
     }
-    
+
 
     //Hiển thị số người đặt
     document.getElementById("Songuoidat").addEventListener("input", function () {
@@ -414,7 +414,7 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
     const selectedGioStart = selectedGio;
     const selectedGioEnd = addHoursToTime(selectedGioStart, 2);
     soNguoiDatGlobal = soNguoiDat;
-   
+
 
     banListGlobal = banList.map(ban => {
         //const isDisabled = banDaDatList.some(dadat => {
@@ -500,7 +500,7 @@ function initBanList(banList, selectedNgay, selectedGio, selectedChinhanh, selec
             isDisabled: isDisabled
         };
     });
-   // selectedBanId = document.getElementById("selectedIdban").value.trim();
+    // selectedBanId = document.getElementById("selectedIdban").value.trim();
 
     // Gán lại selectedBanId từ hidden input
     //const selectedIdInput = document.getElementById("selectedIdban");

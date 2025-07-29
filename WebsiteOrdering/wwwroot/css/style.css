@@ -1,4 +1,4 @@
-@import url("../css/site.css");
+﻿@import url("../css/site.css");
 
 #searchSuggestions {
     position: absolute;
@@ -5904,137 +5904,455 @@ input[type="checkbox"] {
 
 .pizza-split-image {
     position: relative;
-    width: 180px;
-    height: 180px;
-    overflow: hidden;
-    display: flex;
-}
-
-.pizza-half {
-    width: 50%;
-    height: 100%;
+    width: 100%; /* Hoặc 100% nếu responsive */
+    height: 130px; /* Hoặc auto + aspect-ratio */
+    aspect-ratio: 1/1; /* Giữ hình vuông khi responsive */
     overflow: hidden;
 }
 
-    .pizza-half.left img {
-        width: 200%;
+    .pizza-split-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         height: 100%;
         object-fit: cover;
-        transform: translateX(0); /* hiển thị nửa trái */
     }
 
-    .pizza-half.right img {
-        width: 200%;
-        height: 100%;
-        object-fit: cover;
-        transform: translateX(-50%); /* hiển thị nửa phải */
+    .pizza-split-image .left {
+        clip-path: inset(0 50% 0 0);
+    }
+
+    .pizza-split-image .right {
+        clip-path: inset(0 0 0 50%);
     }
 
 /*=====================================================
                     TRANG CÁ NHÂN
 =====================================================*/
-
 .personal-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    margin: 40px 0;
 }
 
 .personal-title {
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+    font-family: "Cakelan", serif;
+    color: #fff;
 }
 
 .personal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 20px;
     height: 600px;
-    position: relative;
 }
 
-/* CÁC Ô NỘI DUNG - ẩn mặc định */
-.content {
-    display: none;
-    grid-column: span 1;
-    grid-row: span 2;
-    background: #f9f9f9;
-    border-radius: 12px;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-    .content.active {
-        display: block;
-    }
-
-/* TABS BÊN TRÁI (2 tab dọc) */
-.left-side {
+.grid-item {
+    background: #fffff7;
+    color: #203f25;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-    .left-side .tab-btn {
-        padding: 20px;
-        height: 48%;
-        font-size: 16px;
-        border: none;
-        background-color: #dceeff;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-        .left-side .tab-btn:hover {
-            background-color: #b3e0ff;
-        }
-
-/* TABS BÊN PHẢI (1 tab) */
-.right-side {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }
 
-    .right-side .tab-btn {
-        padding: 20px;
-        height: 100%;
-        font-size: 16px;
-        border: none;
-        background-color: #ffe0dc;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: 0.3s;
+/* Hiệu ứng chung cho tab */
+.tab {
+    background-color: transparent;
+    color: #E0B37F;
+    cursor: pointer;
+    border: solid 1px #E0B37F;
+    transition: all 0.3s ease; /* Thêm chuyển động */
+
+    font-family: "Cakelan", serif; /* hoặc một font riêng */
+    font-size: 24px;
+    letter-spacing: 2px;
+    font-weight: 300;
+}
+
+    .tab:hover {
+        background-color: #E0B37F;
+        color: #203F25;
+        font-weight: 600;
     }
 
-        .right-side .tab-btn:hover {
-            background-color: #ffc2bc;
-        }
+.tab {
+    /* Thêm transform để smooth khi đổi vị trí grid */
+    transition: all 0.4s ease;
+}
 
-/* VỊ TRÍ HIỂN THỊ NỘI DUNG: chiếm 2 hàng bên trái hoặc phải */
-.personal-grid.show-info.at-left .info-content,
-.personal-grid.show-orders.at-left .orders-content {
+.content {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    cursor: auto;
+}
+
+    .content.showing {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+.arrow-icon {
+    display: inline-block;
+    opacity: 0;
+    margin-left: 8px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(4px);
+}
+
+.tab:hover .arrow-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tab .arrow-icon svg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+/* Mặc định Thông tin */
+.info-content {
     grid-column: 1;
     grid-row: 1 / span 2;
+    opacity: 1; /* Mặc định hiện */
 }
 
-.personal-grid.show-booking.at-right .booking-content {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-}
-
-/* ẨN các tab đối diện khi nội dung hiển thị */
-.personal-grid.show-info .right-side,
-.personal-grid.show-orders .right-side,
-.personal-grid.show-booking .left-side {
+.orders-content,
+.booking-content {
     display: none;
 }
 
-/* Giữ khoảng trắng cân bằng */
-.personal-grid > div {
-    min-height: 100px;
+/*==============THÔNG TIN TÀI KHOẢN===============*/
+
+.personal-info-wrapper {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    text-align: left;
+    box-sizing: border-box;
+    font-family: 'Mestika', serif;
 }
+
+.personal-info-title {
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: #203F25;
+    margin-bottom: 40px;
+    text-align: center;
+    font-family: 'Cakelan', serif;
+}
+
+.personal-info-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.personal-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.personal-info-label {
+    font-size: 20px;
+    color: #203F25;
+    font-weight: bold;
+    font-family: 'Mestika', serif;
+}
+
+.personal-info-input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #203F25;
+    font-size: 20px;
+    padding: 4px 0;
+    color: #203F25;
+    font-family: 'Mestika', serif;
+    border-radius: 0;
+    appearance: none;
+}
+
+    .personal-info-input:focus {
+        outline: none;
+        border-bottom: 1.5px solid #E0B37F;
+    }
+
+.personal-info-error {
+    font-size: 18px;
+    color: red;
+    margin-top: 2px;
+}
+
+.personal-info-submit {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.personal-info-button {
+    background: none;
+    border: none;
+    padding: 0;
+    position: relative;
+    width: 412px;
+    height: 45px;
+    cursor: pointer;
+}
+
+    .personal-info-button svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Đổi màu fill mặc định và thêm hiệu ứng transition */
+    .personal-info-button path {
+        fill: #fff;
+        stroke: #203F25;
+        transition: fill 0.3s ease;
+    }
+
+.personal-info-button-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #203F25;
+    font-size: 20px;
+    font-family: 'Mestika', serif;
+    transition: color 0.3s ease;
+}
+
+/* Hover: đổi màu nền nút (fill), và chữ */
+.personal-info-button:hover path {
+    fill: #203F25;
+}
+
+.personal-info-button:hover .personal-info-button-text {
+    color: white;
+}
+
+.personal-info-form-row {
+    display: flex;
+    gap: 20px;
+}
+
+    .personal-info-form-row .personal-info-group {
+        flex: 1;
+    }
+
+/*===============LỊCH SỬ ĐẶT HÀNG===============*/
+.personal-orders-title {
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: #203F25;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Cakelan', serif;
+}
+
+.personal-orders-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.personal-orders-scroll {
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+.personal-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Mestika', serif;
+    font-size: 20px;
+    color: #203f25;
+    display: block;
+    text-align: center; /* 👈 Căn giữa toàn bộ nội dung */
+}
+
+    .personal-orders-table thead,
+    .personal-orders-table tbody,
+    .personal-orders-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .personal-orders-table thead {
+        background-color: #203f25;
+        color: #E0B37F;
+    }
+
+    .personal-orders-table th,
+    .personal-orders-table td {
+        padding: 15px 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .personal-orders-table tbody {
+        display: block;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+        .personal-orders-table tbody::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .personal-orders-table tbody::-webkit-scrollbar-thumb {
+            background-color: #EEDFAD;
+            border-radius: 4px;
+        }
+
+        .personal-orders-table tbody::-webkit-scrollbar-track {
+            background-color: #f0f0f0;
+        }
+
+        .personal-orders-table tbody tr {
+            border-bottom: 1px solid #ccc;
+        }
+
+            .personal-orders-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+.personal-orders-detail-link {
+    margin-left: 10px;
+    color: #1e3b26;
+    text-decoration: none;
+}
+
+    .personal-orders-detail-link:hover {
+        text-decoration: underline;
+    }
+
+.personal-orders-message {
+    text-align: center;
+    font-family: 'Mestika', serif;
+    color: #444;
+    font-size: 18px;
+}
+
+/*=============LỊCH SỬ ĐẶT BÀN===============*/
+
+/* Tiêu đề */
+.personal-booking-title {
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: #203F25;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Cakelan', serif;
+}
+
+/* Bọc bảng để cuộn tbody mà không cuộn thead */
+.personal-booking-wrapper {
+    max-height: 450px;
+    overflow-y: auto;
+    margin: 0 auto;
+    width: max-content;
+}
+
+/* Bảng tổng thể */
+.personal-booking-table {
+    border-collapse: collapse;
+    font-family: 'Mestika', sans-serif;
+    table-layout: auto; /* Fit theo nội dung */
+}
+
+/* Header bảng */
+.personal-booking-thead th {
+    background-color: #203F25;
+    color: #E0B37F;
+    padding: 16px 12px;
+    font-weight: 500;
+    font-size: 18px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Dòng dữ liệu */
+.personal-booking-row td {
+    padding: 16px 12px;
+    vertical-align: top;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 18px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Mã đơn */
+.personal-booking-code {
+    color: #203F25;
+    font-weight: 500;
+}
+
+/* Thông tin đặt */
+.personal-booking-info p {
+    margin: 0;
+    color: #444;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+}
+
+/* Trạng thái */
+.personal-booking-status {
+    color: #000;
+    font-weight: 400;
+}
+
+/* Nút cập nhật */
+.personal-booking-btn-update {
+    background-color: #203f25;
+    color: #E0B37F !important;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    font-size: 18px;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Mestika', sans-serif;
+}
+
+/* Nút hủy */
+.personal-booking-btn-cancel {
+    background-color: #203f25;
+    color: #E0B37F !important;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    font-size: 18px;
+    font-family: 'Mestika', sans-serif;
+}
+
+    .personal-booking-btn-update:hover,
+    .personal-booking-btn-cancel:hover {
+        background-color: #E0B37F;
+        color: #203f25 !important;
+    }
+
+/* Link chi tiết */
+.personal-booking-detail a {
+    color: #203f25;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+    .personal-booking-detail a:hover {
+        text-decoration: underline;
+    }

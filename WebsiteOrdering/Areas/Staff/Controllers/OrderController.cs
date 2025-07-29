@@ -23,11 +23,12 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
         private const string SESSION_KEY = "AllOrderSessions";
         private readonly IEmailService _emailService;
         private readonly IProductRepository _productRepository;
-        public OrderController(IMediator mediator, AppDbContext context, IEmailService emailService)
+        public OrderController(IMediator mediator, AppDbContext context, IEmailService emailService, IProductRepository productRepository)
         {
             _emailService = emailService;
             _mediator = mediator;
             _appDbContext = context;
+            _productRepository = productRepository;
         }
 
         private static string GenerateRandomId(int length = 5)
@@ -713,7 +714,6 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
 
         public async Task<IActionResult> DanhSachHoaDon()
         {
-
             var chiNhanhId = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(chiNhanhId))
             {

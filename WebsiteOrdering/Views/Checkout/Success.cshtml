@@ -4,7 +4,6 @@
 }
 @{
     ViewData["Title"] = "Đơn hàng";
- 
     <link rel="stylesheet" href="~/css/hoadon.css" />
 }
 <div class="hoa-don-container-tong">
@@ -86,6 +85,7 @@
                             @if (!string.IsNullOrEmpty(item.IdsizeNavigation?.Tensize))
                             {
                                 <span>Size: @item.IdsizeNavigation.Tensize</span>
+
                                 <br />
                             }
                             @if (!string.IsNullOrEmpty(item.IddebanhNavigation?.Tendebanh))
@@ -102,12 +102,11 @@
                                 </span>
                             }
                         </td>
-                        <td>@item.Tongtiendh.ToString("N0") đ</td>
+                        <td>@item.Dongia.ToString("N0") đ</td>
                         <td>@item.Soluong</td>
-                        <td>@((item.Tongtiendh * item.Soluong).ToString("N0") + " đ")</td>
+                        <td>@item.Tongtiendh.ToString("N0") đ</td>
                     </tr>
                 }
-
             </tbody>
         </table>
 
@@ -117,8 +116,6 @@
         @if (Model.Tienship != null)
         {
         <p>PHÍ GIAO HÀNG: @Model.Tienship?.ToString("N0") đ</p>
-
-              
         }
         <p>PHƯƠNG THỨC THANH TOÁN: @Model.Ptttoan</p>
 

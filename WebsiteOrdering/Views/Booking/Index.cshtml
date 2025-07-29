@@ -1,4 +1,4 @@
-﻿﻿@*
+﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using WebsiteOrdering.Models
@@ -22,12 +22,7 @@
 </form> *@
 
 @* TRA CỨU ĐƠN ĐĂT BÀN CHƯA XỬ LÝ NÊN ĐÓNG LẠI *@
-@* <a asp-action="SearchDonDatBan" asp-controller="Booking" class="btn btn-primary">Tra cứu đơn đặt bàn</a> *@
-
-
-
-
-
+<a asp-action="SearchDonDatBan" asp-controller="Booking" class="btn btn-primary">Tra cứu đơn đặt bàn</a> 
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
@@ -43,7 +38,6 @@
             <source src="@Url.Content("~/css/videos/banner_db.mp4")" type="video/mp4" />
         </video>
         <div class="dat-ban-overlay-text">
-
                 <h1>ĐẶT BÀN</h1>
 
                 <button class="btn-search-ban" onclick="location.href='@Url.Action("SearchDonDatBan", "Booking")'">
@@ -183,7 +177,7 @@
             </div>
 
             @*             <button type="button" class="dat-ban-btn-datban" onclick="openConfirmation()">Đặt bàn <span style="color:#B22222; font-family: '1FTV VIP Mestika', serif;">(05:00s)</span></button>
-                *@
+            *@
         </div>
 
         <!-- Bàn -->

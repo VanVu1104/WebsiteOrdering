@@ -166,7 +166,7 @@ namespace WebsiteOrdering.Controllers
 
 
         //Hiển thị giỏ hàng
-        public async Task< IActionResult >Index()
+        public async Task<IActionResult> Index()
         {
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
             foreach (var item in cart)
@@ -234,6 +234,7 @@ namespace WebsiteOrdering.Controllers
         [HttpPost]
         public IActionResult UpdateCart(string idmonan, string idmonan2, string? size, string? debanh, List<string>? toppings, int soluong)
         {
+
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
 
             var item = cart.FirstOrDefault(c =>
@@ -309,12 +310,13 @@ namespace WebsiteOrdering.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UpdateCartItem(
-     string originalIdmonan, string originalIdmonan2, string originalSizeId, string originalDeBanhId, string originalToppings,
-     string idmonan, string idmonan2, string selectedSizeId, string selectedDeBanhId,
-     List<string> selectedToppingIds, string ghichu, int soluong)
+         string originalIdmonan, string originalIdmonan2, string originalSizeId, string originalDeBanhId, string originalToppings,
+         string idmonan,  string SelectedPizzaGhepId, string selectedSizeId, string selectedDeBanhId,
+         List<string> selectedToppingIds, string ghichu, int soluong, IFormCollection form)
         {
+            var idmonan2 = form["SelectedPizzaGhepId"];
             var cart = HttpContext.Session.Get<List<CartItem>>("Cart") ?? new List<CartItem>();
-
+           
             // Parse topping cũ
             var originalToppingIds = !string.IsNullOrEmpty(originalToppings)
                 ? originalToppings.Split(',').ToList()
@@ -442,7 +444,8 @@ namespace WebsiteOrdering.Controllers
             }
             // Lưu lại session
             HttpContext.Session.Set("Cart", cart);
-            return Json(new { success = true});
+            //return Json(new { success = true});
+            return RedirectToAction("Index", "Products");
         }
         //Hàm để lấy thuộc tính theo loại
         [HttpGet]

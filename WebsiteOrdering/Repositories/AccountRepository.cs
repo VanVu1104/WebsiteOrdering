@@ -108,7 +108,7 @@ namespace WebsiteOrdering.Repositories
         }
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
-          //  var normalizedEmail = model.Email.Trim().ToLowerInvariant();
+            //  var normalizedEmail = model.Email.Trim().ToLowerInvariant();
 
             return await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
         }

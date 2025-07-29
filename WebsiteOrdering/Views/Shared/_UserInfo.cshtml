@@ -1,7 +1,5 @@
 ﻿@model WebsiteOrdering.ViewModels.UserCheckoutInfoViewModel
-
 <link rel="stylesheet" href="~/css/style.css" />
-
 <div class="checkout-info-card">
     <div class="checkout-info-card-body">
         <h5 class="checkout-info-card-title">Thông tin đặt hàng</h5>
@@ -16,17 +14,16 @@
             <strong>Số điện thoại *</strong>
             <input asp-for="PhoneNumber" class="checkout-info-input checkout-info-input-sm" placeholder="Nhập số điện thoại" />
             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+
         </div>
 
         <div class="checkout-info-mb-2">
             @if (Model.DeliveryMethod == "delivery")
             {
                 <input type="hidden" asp-for="DeliveryMethod" />
-
                 <strong>Địa chỉ giao hàng *</strong>
                 <input asp-for="Address" class="checkout-info-input" readonly />
                 <span asp-validation-for="Address" class="text-danger"></span>
-
                 <div class="checkout-info-row">
                     <div class="checkout-info-half">
                         <strong>Giao hàng từ</strong>
@@ -54,7 +51,6 @@
                 <input asp-for="BranchName" class="checkout-info-input" readonly />
                 <input type="hidden" asp-for="BranchName" />
                 <input type="hidden" asp-for="BranchId" />
-
                 <div class="checkout-info-row">
                     <div class="checkout-info-half">
                         <strong>Khoảng cách</strong>

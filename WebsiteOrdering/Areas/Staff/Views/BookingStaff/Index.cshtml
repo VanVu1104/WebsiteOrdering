@@ -10,8 +10,6 @@
     Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
     var now = TimeOnly.FromDateTime(DateTime.Now);
     var today = DateOnly.FromDateTime(DateTime.Now);
-
-
 }
 
 <script>
@@ -84,24 +82,33 @@
 <h2>Danh sách đơn đặt bàn</h2>
 <div class="mb-3">
     @{
-        var idChiNhanh = ViewBag.SelectedChiNhanh;
+        string idChiNhanh = ViewBag.SelectedChiNhanh as string ?? "";
         string buildUrl(string status) => Url.Action("Index", new { idChiNhanh = idChiNhanh, trangThai = status });
+        var selectedTrangThai = ViewBag.SelectedTrangThai as TrangThai?;
+
     }
     <a href="@Url.Action("Index", "BookingStaff", new { area = "Staff" })"
-       class="btn @(string.IsNullOrEmpty(ViewBag.SelectedTrangThai) ? "btn-dark" : "btn-outline-dark")">
+       class="btn @(selectedTrangThai == null ? "btn-dark" : "btn-outline-dark")">
         Tất cả đơn hàng
     </a>
 
-    <a href="@buildUrl("Chờ xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Chờ xác nhận" ? "btn-warning" : "btn-outline-warning")">
+    <a href="@buildUrl("Pending")"
+       class="btn @(selectedTrangThai == TrangThai.Pending ? "btn-warning" : "btn-outline-warning")">
         Chờ xác nhận (@ViewBag.CountChoXacNhan)
     </a>
-    <a href="@buildUrl("Đã xác nhận")" class="btn @(ViewBag.SelectedTrangThai == "Đã xác nhận" ? "btn-primary" : "btn-outline-primary")">
+
+    <a href="@buildUrl("Confirmed")"
+       class="btn @(selectedTrangThai == TrangThai.Confirmed ? "btn-primary" : "btn-outline-primary")">
         Đã xác nhận (@ViewBag.CountDaXacNhan)
     </a>
-    <a href="@buildUrl("Đã hủy")" class="btn @(ViewBag.SelectedTrangThai == "Đã hủy" ? "btn-danger" : "btn-outline-danger")">
+
+    <a href="@buildUrl("Cancelled")"
+       class="btn @(selectedTrangThai == TrangThai.Cancelled ? "btn-danger" : "btn-outline-danger")">
         Đã hủy (@ViewBag.CountDaHuy)
     </a>
-    <a href="@buildUrl("Hoàn thành")" class="btn @(ViewBag.SelectedTrangThai == "Hoàn thành" ? "btn-success" : "btn-outline-success")">
+
+    <a href="@buildUrl("Completed")"
+       class="btn @(selectedTrangThai == TrangThai.Completed ? "btn-success" : "btn-outline-success")">
         Hoàn thành (@ViewBag.CountHoanThanh)
     </a>
 </div>

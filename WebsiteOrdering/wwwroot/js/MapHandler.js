@@ -221,7 +221,7 @@
                 //this.searchService.hideSuggestions();
                 //Clear search
                 //this.searchService.clearSearch();
-                
+
             }
         } catch (error) {
             console.error('❌ Error handling place selection:', error);
@@ -243,7 +243,7 @@
                 item.className = "store-item";
                 item.dataset.storeId = store.idchinhanh;
                 item.dataset.lat = store.latitude;
-                item.dataset.lng = store.longitude; 
+                item.dataset.lng = store.longitude;
                 item.dataset.distanceKm = store.distanceKm;
                 item.dataset.estimatedMinutes = store.estimatedMinutes;
                 item.innerHTML = `
@@ -415,7 +415,7 @@
             this.showNotification('❌ Có lỗi xảy ra khi lưu vị trí!', 'error');
         }
     }
-    
+
     // Tìm cửa hàng gần nhất
     async findNearestStore() {
         try {

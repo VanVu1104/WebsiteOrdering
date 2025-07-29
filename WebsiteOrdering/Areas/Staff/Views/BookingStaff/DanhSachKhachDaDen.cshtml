@@ -79,11 +79,11 @@
                     }
                     else if (item.Trangthaidatban == TrangThai.Ordered)
                     {
-                        <form asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" method="get" style="display:inline;">
-                            <button type="submit" class="btn btn-info btn-sm">
-                                Xem hóa đơn
-                            </button>
-                        </form>
+                        @* <form asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" method="get" style="display:inline;"> *@
+                        @*     <button type="submit" class="btn btn-info btn-sm"> *@
+                        @*         Xem hóa đơn *@
+                        @*     </button> *@
+                        @* </form> *@
                         <a asp-area="Staff" asp-controller="Order" asp-action="Index" asp-route-idDatBan="@item.Iddatban" class="btn btn-info">Xem hóa đơn</a>
 
                         <form asp-area="Staff" asp-controller="Order" asp-action="ChuanBiThanhToan" method="post" style="display:inline;">

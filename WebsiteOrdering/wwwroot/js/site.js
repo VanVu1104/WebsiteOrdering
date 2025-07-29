@@ -3,29 +3,29 @@
 
 // Write your JavaScript code.
 
-    document.addEventListener("DOMContentLoaded", function () {
-            const checkboxes = document.querySelectorAll(".cart-select");
+document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".cart-select");
     const totalLabel = document.getElementById("totalAmount");
 
     function formatCurrency(amount) {
-                return amount.toLocaleString("vi-VN") + "₫";
-            }
+        return amount.toLocaleString("vi-VN") + " VNĐ";
+    }
 
     function calculateTotal() {
         let total = 0;
-    checkboxes.forEach(function (cb) {
-                    if (cb.checked) {
-        total += parseInt(cb.dataset.tongtien);
-                    }
-                });
-    totalLabel.innerText = formatCurrency(total);
+        checkboxes.forEach(function (cb) {
+            if (cb.checked) {
+                total += parseInt(cb.dataset.tongtien);
             }
+        });
+        totalLabel.innerText = formatCurrency(total);
+    }
 
-            checkboxes.forEach(cb => {
+    checkboxes.forEach(cb => {
         cb.addEventListener("change", calculateTotal);
-            });
-            //Xử lý nút tăng giảm
-            document.querySelectorAll(".btn-increase, .btn-decrease").forEach(btn => {
+    });
+    //Xử lý nút tăng giảm
+    document.querySelectorAll(".btn-increase, .btn-decrease").forEach(btn => {
         btn.addEventListener("click", function (e) {
             e.preventDefault();
 
@@ -60,7 +60,7 @@
                         const cb = row.querySelector(".cart-select");
                         cb.dataset.tongtien = data.tongTienMoi; // cập nhật giá trị data-tongtien
                         const tongTienCell = row.querySelector("td:nth-last-child(2)");
-                        tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + "₫";
+                        tongTienCell.innerText = data.tongTienMoi.toLocaleString("vi-VN") + " VNĐ";
                         calculateTotal();
 
                     } else {
@@ -69,7 +69,7 @@
                 });
 
         });
-            });
+    });
     calculateTotal();
 
 
@@ -77,36 +77,36 @@
     document.getElementById("edit-cart-form").addEventListener("submit", function (e) {
         e.preventDefault();
 
-    const form = this;
-    const formData = new FormData(form);
+        const form = this;
+        const formData = new FormData(form);
 
-    fetch("/Cart/UpdateCartItem", {
-        method: "POST",
-    body: formData
-                })
-                    .then(res => {
-                        if (!res.ok) throw new Error("Lỗi HTTP: " + res.status);
-    return res.json();
-                    })
-                    .then(data => {
-        console.log("✅ Phản hồi từ server:", data);
-    if (data.success) {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-    modal.hide();
-    alert("Cập nhật thành công!");
-    location.reload();
-                        } else {
-                            const message = data.message || "Không rõ nguyên nhân";
-    console.error("❌ Lỗi từ server:", message);
-    alert("Cập nhật thất bại: " + message);
-                        }
-                    })
-                    .catch(err => {
-        console.error("❗Lỗi fetch:", err);
-    alert("Có lỗi khi gửi dữ liệu lên server: " + err.message);
-                    });
-               
+        fetch("/Cart/UpdateCartItem", {
+            method: "POST",
+            body: formData
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Lỗi HTTP: " + res.status);
+                return res.json();
+            })
+            .then(data => {
+                console.log("✅ Phản hồi từ server:", data);
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                    modal.hide();
+                    alert("Cập nhật thành công!");
+                    location.reload();
+                } else {
+                    const message = data.message || "Không rõ nguyên nhân";
+                    console.error("❌ Lỗi từ server:", message);
+                    alert("Cập nhật thất bại: " + message);
+                }
+            })
+            .catch(err => {
+                console.error("❗Lỗi fetch:", err);
+                alert("Có lỗi khi gửi dữ liệu lên server: " + err.message);
             });
+
+    });
 
 
     // Xử lý nút sửa giỏ hàng
@@ -170,13 +170,13 @@
             }, 0);
             const soLuong = parseInt(this.dataset.soluong || 1);
             const tongTien = (giaCoBan + giaSize + giaDeBanh + giaTopping) * soLuong;
-            document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + "₫";
+            document.getElementById("edit-total-price").innerText = tongTien.toLocaleString('vi-VN') + " VNĐ";
 
             // Mở modal
             const editModal = new bootstrap.Modal(document.getElementById('editModal'));
             editModal.show();
         });
-            });
+    });
     function loadOptionsForEditModal(idmonan) {
         fetch(`/Cart/GetOptionsByMonAnId?idmonan=${idmonan}`)
             .then(res => res.json())
@@ -216,7 +216,7 @@
                                                 <input class="form-check-input edit-topping-checkbox" type="checkbox"
                                                        name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
                                                 <label class="form-check-label" for="edit_top_${t.idtopping}">
-                                                    ${t.ten} (+${t.gia}₫)
+                                                    ${t.ten} (+${t.gia} VNĐ)
                                                 </label>
                                             </div>`;
                     });
@@ -224,7 +224,7 @@
                     toppingList.closest('.mb-3').style.display = 'none';
                 }
             });
-            }
+    }
 
     function showEditModal(cartItem) {
         fetch(`/Cart/GetOptionsByMonAnId?idmonan=${cartItem.idmonan}`)
@@ -275,7 +275,7 @@
                                         <input class="form-check-input edit-topping-checkbox" type="checkbox"
                                                name="selectedToppingIds" value="${t.idtopping}" id="edit_top_${t.idtopping}">
                                         <label class="form-check-label" for="edit_top_${t.idtopping}">
-                                            ${t.ten} (+${t.gia}₫)
+                                            ${t.ten} (+${t.gia} VNĐ)
                                         </label>`;
                         toppingList.appendChild(div);
                     });
@@ -287,9 +287,8 @@
                 const modal = new bootstrap.Modal(document.getElementById('editModal'));
                 modal.show();
             });
-            }
-    });
-
+    }
+});
 // =======================
 // HIỆU ỨNG CHO INTRO
 // =======================

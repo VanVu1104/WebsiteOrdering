@@ -10,6 +10,7 @@ namespace WebsiteOrdering.ViewModels
         public string ANHSANPHAM { get; set; }
         public string? IDMMONAN2 { get; set; }
         public string? TENSANPHAM2 { get; set; }
+
         public string? ANHSANPHAM2 { get; set; }
         public string? Size { get; set; }
         public string? DeBanh { get; set; }
@@ -33,6 +34,14 @@ namespace WebsiteOrdering.ViewModels
                 return (GiaCoBan + size + de + tongTopping) * SoLuong;
             }
         }
+        public decimal DonGia
+        {
+            get
+            {
+                decimal tongTopping = Topping?.Sum(t => t.Giatopping) ?? 0;
+                return GiaCoBan + (GiaSize ?? 0) + (GiaDeBanh ?? 0) + tongTopping;
+            }
+        }
         public List<SanPhamViewModel> SanPham { get; set; }
 
         public CartItem()
@@ -52,11 +61,13 @@ namespace WebsiteOrdering.ViewModels
             {
                 IDMMONAN2 = sanphamGhep.Idmonan;
                 TENSANPHAM2 = sanphamGhep.Tenmonan;
+                ANHSANPHAM2 = sanphamGhep.Anhmonan ?? "default.jpg";
                 GiaCoBan = (sanpham.Giamonan + sanphamGhep.Giamonan) / 2;
             }
             else
             {
                 GiaCoBan = sanpham.Giamonan;
+                ANHSANPHAM2 = "";
             }
 
             // Gán size và giá size từ listGiaSizes
@@ -87,14 +98,7 @@ namespace WebsiteOrdering.ViewModels
             }
 
         }
-        public decimal DonGia
-        {
-            get
-            {
-                decimal tongTopping = Topping?.Sum(t => t.Giatopping) ?? 0;
-                return GiaCoBan + (GiaSize ?? 0) + (GiaDeBanh ?? 0) + tongTopping;
-            }
-        }
+
 
     }
 

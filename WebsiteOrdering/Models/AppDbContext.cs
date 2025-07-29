@@ -29,7 +29,7 @@ namespace WebsiteOrdering.Models
         public DbSet<MonAnGhepStats> MonAnGhepStats { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

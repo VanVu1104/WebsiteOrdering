@@ -1,4 +1,5 @@
-﻿@model WebsiteOrdering.Models.Datban
+﻿@using WebsiteOrdering.Enums
+@model WebsiteOrdering.Models.Datban
 @{
     ViewData["Title"] = "Tạo đơn đặt bàn tại chỗ";
     var chiNhanhTen = ViewBag.ChiNhanhTen as string ?? "Không rõ";
@@ -83,10 +84,8 @@
     </div>
     <div>
         <label>Trạng thái</label>
-        <select name="Trangthaidatban" class="form-select" required>
+        <select asp-for="Trangthaidatban" class="form-select" asp-items="Html.GetEnumSelectList<TrangThai>()">
             <option value="">-- Chọn trạng thái --</option>
-            <option value="Đã xác nhận">Đã xác nhận</option>
-            <option value="Khách đã đến">Khách đã đến</option>
         </select>
     </div>
 

@@ -86,6 +86,7 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             ViewBag.CountChoXacNhan = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Pending);
             ViewBag.CountDaXacNhan = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Confirmed);
             ViewBag.CountDaHuy = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Cancelled);
+            ViewBag.CountHoanThanh = allDatbans.Count(d => d.Trangthaidatban == TrangThai.Completed);
 
             ViewBag.SelectedTrangThai = trangThai;
             ViewBag.SelectedChiNhanh = idChiNhanh;
@@ -491,7 +492,8 @@ namespace WebsiteOrdering.Areas.Staff.Controllers
             var idChiNhanh = User.FindFirst("ChiNhanhId")?.Value;
             if (string.IsNullOrEmpty(idChiNhanh))
             {
-                return RedirectToAction("LoginStaff", "Admin",new {area ="Admin"});
+                TempData["Error"] = "Không xác định được chi nhánh nhân viên.";
+                return RedirectToAction("LoginStaff", "Admin", new { area = "Admin" });
             }
 
             var banList = await _appDbContext.bans
