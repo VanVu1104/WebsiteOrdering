@@ -74,10 +74,13 @@
                 }).data('col', otherCol);
             }
 
-            // Mặc định kích hoạt tab 'info'
-            activateTab('info', 1);
+            // 👇 Lấy tab từ ViewBag (truyền từ controller về)
+            var selectedTab = "@ViewBag.SelectedTab" || "info";
+            var defaultCol = 1;
 
-            // Sự kiện khi click các tab
+            activateTab(selectedTab, defaultCol);
+
+            // Click các tab
             $('.tab').click(function () {
                 var tab = $(this).data('tab');
                 var col = $(this).data('col');

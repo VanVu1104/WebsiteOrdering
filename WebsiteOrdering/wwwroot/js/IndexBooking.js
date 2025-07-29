@@ -121,9 +121,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('select[name="Giobatdau"]').addEventListener("change", reloadBanList);
 
     [
-        'input[name="Tenngdat"]',
-        'input[name="user.Email"]',
-        'input[name="Sđtngdat"]',
+        'input[name="HoTenNguoiDung"]',
+        'input[name="EmailNguoiDung"]',
+        'input[name="SdtNguoiDung"]',
         'input[name="Songuoidat"]',
         'input[name="Ngaydat"]',
         'select[name="Giobatdau"]',
@@ -141,6 +141,71 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //Hàm setup bàn theo khu vực và lấy thông tin bàn đã đặt
+//function setupKhuvucChangeEvent() {
+//    document.getElementById("selectKhuvuc").addEventListener("change", function () {
+//        var khuvuc = this.value;
+//        var chinhanhId = document.getElementById("selectChinhanh").value;
+//        var soNguoiDat = parseInt(document.getElementById("Songuoidat").value) || 1;
+//        var selectedNgay = document.querySelector('input[name="Ngaydat"]').value;
+//        var selectedGio = document.querySelector('select[name="Giobatdau"]').value;
+
+//        const bgSrc = backgroundImages[khuvuc];
+//        if (bgSrc) {
+//            backgroundImg.src = bgSrc;
+//            backgroundImg.onload = () => {
+//                canvas.width = canvas.offsetWidth;
+//                canvas.height = canvas.offsetHeight;
+//                drawCanvas(banListGlobal); // vẽ nền mới
+//            };
+//        }
+//        // Khi ảnh load xong sẽ vẽ canvas     
+//        fetch(`/Booking/GetBanByKhuvuc?idChinhanh=${chinhanhId}&khuvuc=${khuvuc}`)
+//            .then(response => response.json())
+//            .then(banList => {
+//                fetch(`/Booking/GetBanDaDat?ngay=${selectedNgay}&gio=${selectedGio}&idChinhanh=${chinhanhId}&idKhuvuc=${khuvuc}`)
+//                    .then(res => res.json())
+//                    .then(banDaDatList => {
+//                        banList.forEach(b => b.songuoi = parseInt(b.songuoi));
+//                        console.log("Dữ liệu bàn:", banList);
+//                        console.log("Danh sách bàn đã đặt:", banDaDatList);
+//                        console.log("Danh sách bàn đã đặt1:", banDaDatList.map(b => b.idban));
+//                        console.log("Danh sách bàn hiện tại:", banList.map(b => b.idban));
+
+//                        console.log("🎯 Gửi truy vấn GetBanDaDat với:", {
+//                            ngay: selectedNgay,
+//                            gio: selectedGio,
+//                            chinhanh: chinhanhId,
+//                            khuvuc: khuvuc
+//                        });
+
+//                        initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
+//                        // Gán lại selectedBanId từ hidden input
+//                        const selectedIdInput = document.getElementById("selectedIdban");
+//                        if (selectedIdInput && selectedIdInput.value) {
+//                            selectedBanId = selectedIdInput.value.trim();
+//                            console.log("⭐ Gán lại selectedBanId sau fetch:", selectedBanId);
+
+//                            // 👉 Tìm bàn tương ứng và cập nhật text
+//                            const selectedBan = banList.find(b => b.idban === selectedBanId);
+//                            if (selectedBan) {
+//                                document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+//                            }
+//                        }
+
+//                        // ✅ Vẽ canvas lại
+//                        if (backgroundImg.complete) {
+//                            drawCanvas(banListGlobal, selectedBanId);
+//                        } else {
+//                            backgroundImg.onload = () => drawCanvas(banListGlobal, selectedBanId);
+//                        }
+//                        document.getElementById("canvas").style.display = "block";
+
+
+//                    });
+//            });
+
+//    });
+//}
 function setupKhuvucChangeEvent() {
     document.getElementById("selectKhuvuc").addEventListener("change", function () {
         var khuvuc = this.value;
@@ -155,55 +220,54 @@ function setupKhuvucChangeEvent() {
             backgroundImg.onload = () => {
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
-                drawCanvas(banListGlobal); // vẽ nền mới
+                drawCanvas(banListGlobal);
             };
         }
-        // Khi ảnh load xong sẽ vẽ canvas     
-        fetch(`/Booking/GetBanByKhuvuc?idChinhanh=${chinhanhId}&khuvuc=${khuvuc}`)
-            .then(response => response.json())
-            .then(banList => {
-                fetch(`/Booking/GetBanDaDat?ngay=${selectedNgay}&gio=${selectedGio}&idChinhanh=${chinhanhId}&idKhuvuc=${khuvuc}`)
-                    .then(res => res.json())
-                    .then(banDaDatList => {
-                        banList.forEach(b => b.songuoi = parseInt(b.songuoi));
-                        console.log("Dữ liệu bàn:", banList);
-                        console.log("Danh sách bàn đã đặt:", banDaDatList);
-                        console.log("Danh sách bàn đã đặt1:", banDaDatList.map(b => b.idban));
-                        console.log("Danh sách bàn hiện tại:", banList.map(b => b.idban));
 
-                        console.log("🎯 Gửi truy vấn GetBanDaDat với:", {
-                            ngay: selectedNgay,
-                            gio: selectedGio,
-                            chinhanh: chinhanhId,
-                            khuvuc: khuvuc
-                        });
+        const urlGetBan = `/Booking/GetBanByKhuvuc?idChinhanh=${chinhanhId}&khuvuc=${khuvuc}`;
+        const urlDaDat = `/Booking/GetBanDaDat?ngay=${selectedNgay}&gio=${selectedGio}&idChinhanh=${chinhanhId}&idKhuvuc=${khuvuc}`;
+        const urlLock = `/Booking/GetBanLockTrongKhoang?idChinhanh=${chinhanhId}&idKhuvuc=${khuvuc}&ngay=${selectedNgay}&gio=${selectedGio}`;
 
-                        initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
-                        // Gán lại selectedBanId từ hidden input
-                        const selectedIdInput = document.getElementById("selectedIdban");
-                        if (selectedIdInput && selectedIdInput.value) {
-                            selectedBanId = selectedIdInput.value.trim();
-                            console.log("⭐ Gán lại selectedBanId sau fetch:", selectedBanId);
+        Promise.all([
+            fetch(urlGetBan).then(res => res.json()),
+            fetch(urlDaDat).then(res => res.json()),
+            fetch(urlLock).then(res => res.json())
+        ])
+            .then(([banList, banDaDatList, banLockList]) => {
+                banList.forEach(b => {
+                    b.songuoi = parseInt(b.songuoi) || 1;
 
-                            // 👉 Tìm bàn tương ứng và cập nhật text
-                            const selectedBan = banList.find(b => b.idban === selectedBanId);
-                            if (selectedBan) {
-                                document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
-                            }
-                        }
+                    // đánh dấu nếu bàn đã đặt
+                    if (banDaDatList.some(d => d.idban === b.idban)) {
+                        b.isDisabled = true;
+                    }
 
-                        // ✅ Vẽ canvas lại
-                        if (backgroundImg.complete) {
-                            drawCanvas(banListGlobal, selectedBanId);
-                        } else {
-                            backgroundImg.onload = () => drawCanvas(banListGlobal, selectedBanId);
-                        }
-                        document.getElementById("canvas").style.display = "block";
+                    // đánh dấu nếu bàn bị lock
+                    if (banLockList.includes(b.idban)) {
+                        b.isLocked = true;
+                        //  b.isDisabled = true;
+                    }
+                });
 
+                initBanList(banList, selectedNgay, selectedGio, chinhanhId, khuvuc, soNguoiDat, banDaDatList);
 
-                    });
+                const selectedIdInput = document.getElementById("selectedIdban");
+                if (selectedIdInput && selectedIdInput.value) {
+                    selectedBanId = selectedIdInput.value.trim();
+                    const selectedBan = banList.find(b => b.idban === selectedBanId);
+                    if (selectedBan) {
+                        document.getElementById("banInfo").innerText = "Đã chọn: " + selectedBan.tenban;
+                    }
+                }
+
+                if (backgroundImg.complete) {
+                    drawCanvas(banListGlobal = banList, selectedBanId);
+                } else {
+                    backgroundImg.onload = () => drawCanvas(banListGlobal = banList, selectedBanId);
+                }
+
+                document.getElementById("canvas").style.display = "block";
             });
-
     });
 }
 
@@ -250,6 +314,7 @@ function drawCanvas(banList, hoveredBan = null) {
 function drawBan(ban, hoveredBan = null) {
     const { x = 0, y = 0, idban, tenban } = ban;
     const songuoi = parseInt(ban.songuoi);
+    const isLocked = ban.isLocked || false;
     const isDisabled = ban.isDisabled || false;
 
 
@@ -262,14 +327,33 @@ function drawBan(ban, hoveredBan = null) {
     //} else {
     //    ctx.fillStyle = "#ffffff"; // Trắng
     //}
-    if (String(selectedBanId) === String(ban.idban)) {
-        ctx.fillStyle = "#ffff99"; // Vàng nhạt
-    } else if (isDisabled) {
-        ctx.fillStyle = "#a9a9a9"; // Xám
-    } else {
-        ctx.fillStyle = "#ffffff"; // Trắng
+    //if (String(selectedBanId) === String(ban.idban)) {
+    //    ctx.fillStyle = "#ffff99"; // Vàng nhạt
+    //} else if (isDisabled) {
+    //    ctx.fillStyle = "#a9a9a9"; // Xám
+    //} else {
+    //    ctx.fillStyle = "#ffffff"; // Trắng
+    //}
+    const isSelected = String(selectedBanId) === String(ban.idban);
+
+    let color = "#ffffff";
+
+    switch (true) {
+        case isLocked:
+            color = "#dc3545"; // 🔴 Đỏ nếu bị lock
+            break;
+        case isSelected:
+            color = "#ffff99"; // 💛 vàng nếu đang chọn
+            break;
+        case isDisabled:
+            color = "#a9a9a9"; // ❌ xám nếu đã đặt
+            break;
+        default:
+            color = "#ffffff"; // trắng
+            break;
     }
 
+    ctx.fillStyle = color;
 
     // Vẽ bàn tròn
     ctx.beginPath();
@@ -604,9 +688,9 @@ function openConfirmation() {
     console.log("Hàm openConfirmation được gọi");
 
     // Lấy phần tử input
-    const tenNguoiDatInput = document.querySelector('input[name="Tenngdat"]');
-    const emailInput = document.querySelector('input[name="user.Email"]');
-    const sdtInput = document.querySelector('input[name="Sđtngdat"]');
+    const tenNguoiDatInput = document.querySelector('input[name="HoTenNguoiDung"]');
+    const emailInput = document.querySelector('input[name="EmailNguoiDung"]');
+    const sdtInput = document.querySelector('input[name="SdtNguoiDung"]');
     const soNguoiInput = document.querySelector('input[name="Songuoidat"]');
     const ngayDatInput = document.querySelector('input[name="Ngaydat"]');
     const gioBatDauSelect = document.querySelector('select[name="Giobatdau"]');
@@ -682,9 +766,9 @@ function checkFormAndStartCountdown() {
     const datbanBtn = document.querySelector('button[onclick="openConfirmation()"]');
     if (!datbanBtn) return; // Nếu không tồn tại nút đặt bàn (tức đang ở chế độ cập nhật) thì không chạy
 
-    const ten = document.querySelector('input[name="Tenngdat"]');
-    const email = document.querySelector('input[name="user.Email"]');
-    const sdt = document.querySelector('input[name="Sđtngdat"]');
+    const ten = document.querySelector('input[name="HoTenNguoiDung"]');
+    const email = document.querySelector('input[name="EmailNguoiDung"]');
+    const sdt = document.querySelector('input[name="SdtNguoiDung"]');
     const songuoi = document.querySelector('input[name="Songuoidat"]');
     const ngay = document.querySelector('input[name="Ngaydat"]');
     const gio = document.querySelector('select[name="Giobatdau"]');
@@ -740,14 +824,23 @@ function closeModal() {
 
 //Hàm nhấn nút đồng ý đặt bàn và đóng modal
 function submitBooking() {
-    if (!document.getElementById("agreeCheckbox").checked) {
+    const checkbox = document.getElementById("agreeCheckbox");
+    if (!checkbox || !checkbox.checked) {
         alert("Bạn phải đồng ý với điều khoản trước.");
         return;
     }
 
-    clearInterval(countdownInterval); // ⛔ STOP đếm giờ
+    // Ngưng đếm giờ và đóng modal
+    clearInterval(countdownInterval);
     closeModal();
-    document.querySelector('form').submit();
+
+    // Gọi đúng form bằng ID
+    const form = document.getElementById("bookingForm");
+    if (form) {
+        form.submit();
+    } else {
+        console.error("Không tìm thấy form bookingForm để submit.");
+    }
 }
 
 //Hàm để k phải loading mới nhập dữ liệu mới , hàm này giúp để thay đổi dữ liệu liên tục k cần loading

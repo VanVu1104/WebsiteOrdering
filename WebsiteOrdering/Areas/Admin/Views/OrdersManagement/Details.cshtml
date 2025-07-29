@@ -10,7 +10,7 @@
 <p><strong>Khách hàng:</strong> @Model.Tenkh</p>
 <p><strong>Địa chỉ:</strong> @Model.Diachidh</p>
 <p><strong>Ngày đặt:</strong> @Model.Ngaydat.ToString("dd/MM/yyyy HH:mm")</p>
-<p><strong>Trạng thái:</strong> @Model.Trangthai.ToString()</p>
+<p><strong>Trạng thái:</strong> @Model.Trangthai.ToFriendly()</p>
 
 <h3>Danh sách món ăn</h3>
 <table class="table table-bordered">
@@ -67,7 +67,7 @@
             @foreach (var option in (List<TrangThai>)ViewBag.AvailableStatuses)
             {
                 <option value="@option" selected="@(option == Model.Trangthai ? "selected" : null)">
-                    @option.ToString()
+                    @option.ToFriendly()
                 </option>
             }
         </select>

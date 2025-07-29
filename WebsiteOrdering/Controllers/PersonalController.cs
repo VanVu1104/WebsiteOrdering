@@ -20,8 +20,8 @@ namespace WebsiteOrdering.Controllers
             _accountRepository = accountRepository;
             _orderRepository = orderRepository;
         }
-
-        public async Task<IActionResult> Personal()
+        
+        public async Task<IActionResult> Personal(string? tab)
         {
             var user = await _accountRepository.GetCurrentUserAsync(User);
             if (user == null)
@@ -54,6 +54,8 @@ namespace WebsiteOrdering.Controllers
                 ListDatBan = bookings,
                 ListDonHang = orders
             };
+
+            ViewBag.SelectedTab = tab ?? "info";
 
             return View("Personal", model);
         }

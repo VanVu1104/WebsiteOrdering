@@ -12,8 +12,8 @@ using WebsiteOrdering.Models;
 namespace WebsiteOrdering.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250728054110_UpdateQuantitySold")]
-    partial class UpdateQuantitySold
+    [Migration("20250729214545_AddBanLockTable")]
+    partial class AddBanLockTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -298,6 +298,41 @@ namespace WebsiteOrdering.Migrations
                     b.HasIndex("Idchinhanh");
 
                     b.ToTable("BAN", (string)null);
+                });
+
+            modelBuilder.Entity("WebsiteOrdering.Models.Banlock", b =>
+                {
+                    b.Property<string>("IdBanLock")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDBANLOCK")
+                        .IsFixedLength();
+
+                    b.Property<TimeOnly>("BatDau")
+                        .HasColumnType("time")
+                        .HasColumnName("BATDAU");
+
+                    b.Property<string>("IdBan")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDBAN");
+
+                    b.Property<TimeOnly>("KetThuc")
+                        .HasColumnType("time")
+                        .HasColumnName("KETTHUC");
+
+                    b.Property<DateOnly>("Ngay")
+                        .HasColumnType("date")
+                        .HasColumnName("NGAY");
+
+                    b.HasKey("IdBanLock")
+                        .HasName("PK__IDBANLOCK__5F20FC40654C6C03");
+
+                    b.HasIndex("IdBan");
+
+                    b.ToTable("BANLOCK", (string)null);
                 });
 
             modelBuilder.Entity("WebsiteOrdering.Models.Chinhanh", b =>
@@ -754,6 +789,24 @@ namespace WebsiteOrdering.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.MonAnGhepStats", b =>
+                {
+                    b.Property<string>("Idmonan")
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("char(5)")
+                        .HasColumnName("IDMONAN")
+                        .IsFixedLength();
+
+                    b.Property<int>("SoLanDuocGhep")
+                        .HasColumnType("int")
+                        .HasColumnName("SOLANDUOCGHEP");
+
+                    b.HasKey("Idmonan");
+
+                    b.ToTable("MONANGHEPSTATS", (string)null);
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
                     b.Property<string>("Idmonan")
@@ -944,6 +997,18 @@ namespace WebsiteOrdering.Migrations
                     b.Navigation("IdchinhanhNavigation");
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.Banlock", b =>
+                {
+                    b.HasOne("WebsiteOrdering.Models.Ban", "Ban")
+                        .WithMany("Banlock")
+                        .HasForeignKey("IdBan")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK__BANLOCK__IDBAN__267ABA7A");
+
+                    b.Navigation("Ban");
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Chitietdatban", b =>
                 {
                     b.HasOne("WebsiteOrdering.Models.Ban", "IdbanNavigation")
@@ -1097,6 +1162,18 @@ namespace WebsiteOrdering.Migrations
                     b.Navigation("IdsizeNavigation");
                 });
 
+            modelBuilder.Entity("WebsiteOrdering.Models.MonAnGhepStats", b =>
+                {
+                    b.HasOne("WebsiteOrdering.Models.Monan", "MonAn")
+                        .WithMany()
+                        .HasForeignKey("Idmonan")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_MONANGHEPSTATS_MONAN");
+
+                    b.Navigation("MonAn");
+                });
+
             modelBuilder.Entity("WebsiteOrdering.Models.Monan", b =>
                 {
                     b.HasOne("WebsiteOrdering.Models.Loaimonan", "IdloaimonanNavigation")
@@ -1134,6 +1211,8 @@ namespace WebsiteOrdering.Migrations
 
             modelBuilder.Entity("WebsiteOrdering.Models.Ban", b =>
                 {
+                    b.Navigation("Banlock");
+
                     b.Navigation("Chitietdatbans");
                 });
 

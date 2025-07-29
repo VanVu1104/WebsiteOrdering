@@ -424,3 +424,22 @@ form {
         text-decoration: none;
         color: #F0BB7D;
     }
+.login-text {
+    height: 175px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #203F25;
+    color: white;
+    text-align: center;
+    padding: 20px 16px;
+    box-sizing: border-box;
+}
+
+    .login-text p {
+        line-height: 30px;
+        margin: auto 80px 20px 80px;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 3px;
+    }

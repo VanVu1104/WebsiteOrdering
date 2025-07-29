@@ -20,7 +20,7 @@
 			@foreach (var s in statusOptions)
 			{
 				bool isSelected = selectedStatus?.ToString() == s.ToString();
-				<option value="@s" selected="@(isSelected ? "selected" : null)">@s.ToString()</option>
+				<option value="@s" selected="@(isSelected ? "selected" : null)">@s.ToFriendly()</option>
 			}
     </select>
 </div>
@@ -100,7 +100,7 @@
 					<td>@don.Tenkh</td>
 					<td>@don.Ngaydat.ToString("dd/MM/yyyy HH:mm")</td>
 					<td>@don.Tongtien.ToString("N0") đ</td>
-					<td>@don.Trangthai.ToString()</td>
+					<td>@don.Trangthai.ToFriendly()</td>
 					<td>
 						@if (don.Trangthai == TrangThai.Cancelled || don.Trangthai == TrangThai.Completed)
 						{
@@ -116,8 +116,8 @@
 								<select name="newStatus" class="form-select form-select-sm me-2">
 									@foreach (var option in availableStatuses)
 									{
-										<option value="@option" selected="@(option == don.Trangthai.ToString() ? "selected" : null)">
-											@option.ToString()
+										<option value="@option" selected="@(option == don.Trangthai.ToFriendly() ? "selected" : null)">
+											@((Enum.Parse<TrangThai>(option)).ToFriendly())
 										</option>
 									}
 								</select>

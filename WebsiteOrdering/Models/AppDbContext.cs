@@ -25,10 +25,11 @@ namespace WebsiteOrdering.Models
         public DbSet<Datban> Datbans { get; set; }
         public DbSet<Chitietdatban> chitietdatbans { get; set; }
         public DbSet<Ban> bans { get; set; }
+        public DbSet<Banlock> Banlock { get; set; }
         public virtual DbSet<Location> Locations { get; set; }
         public DbSet<MonAnGhepStats> MonAnGhepStats { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=pizza2;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,35 @@ namespace WebsiteOrdering.Models
                     .HasForeignKey(d => d.Idchinhanh)
                     .OnDelete(DeleteBehavior.NoAction)
                     .HasConstraintName("FK__BAN__IDCHINHANH__267ABA7A");
+            });
+            modelBuilder.Entity<Banlock>(entity =>
+            {
+                entity.HasKey(e => e.IdBanLock).HasName("PK__IDBANLOCK__5F20FC40654C6C03");
+
+                entity.ToTable("BANLOCK");
+
+                entity.Property(e => e.IdBanLock)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .IsFixedLength()
+                    .HasColumnName("IDBANLOCK");
+
+                entity.Property(e => e.IdBan)
+                    .HasMaxLength(5)
+                    .HasColumnName("IDBAN");
+
+                entity.Property(e => e.Ngay)
+                    .HasColumnName("NGAY");
+
+                entity.Property(e => e.BatDau)
+                    .HasColumnName("BATDAU");
+
+                entity.Property(e => e.KetThuc)
+                    .HasColumnName("KETTHUC");
+                entity.HasOne(d => d.Ban).WithMany(p => p.Banlock)
+                   .HasForeignKey(d => d.IdBan)
+                   .OnDelete(DeleteBehavior.NoAction)
+                   .HasConstraintName("FK__BANLOCK__IDBAN__267ABA7A");
             });
             modelBuilder.Entity<MonAnGhepStats>(entity =>
             {

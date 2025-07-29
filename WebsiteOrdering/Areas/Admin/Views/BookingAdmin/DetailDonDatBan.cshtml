@@ -32,7 +32,7 @@
                                 <th>Trạng thái</th>
                                 <td>
                                     <span class="badge @(Model.Trangthaidatban == TrangThai.Confirmed ? "badge-success" : "badge-warning")">
-                                        @Model.Trangthaidatban
+                                        @Model.Trangthaidatban.ToFriendly()
                                     </span>
                                 </td>
                             </tr>

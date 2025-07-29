@@ -70,7 +70,7 @@ namespace WebsiteOrdering.Controllers
 
         //Hàm đặt bàn 
         [HttpPost]
-        public async Task<IActionResult> DatBan(Datban datban, ApplicationUser user, string selectedIdban)
+        public async Task<IActionResult> DatBan(Datban datban, string EmailNguoiDung, string SdtNguoiDung, string FullNameNguoiDung, string selectedIdban)
         {
 
             string? idNguoiDung = null;
@@ -84,7 +84,7 @@ namespace WebsiteOrdering.Controllers
                 var currentUser = await _accountRepository.GetUserByIdAsync(idNguoiDung);
 
                 // Nếu người dùng không sửa thông tin  gán mặc định từ user
-                if (string.IsNullOrWhiteSpace(tenNguoiDat))
+                if (string.IsNullOrWhiteSpace(FullNameNguoiDung))
                 {
                     tenNguoiDat = currentUser?.FullName ?? currentUser?.UserName ?? currentUser?.Email ?? "";
                 }
@@ -97,7 +97,7 @@ namespace WebsiteOrdering.Controllers
             else
             {
                 // Chưa đăng nhập kiểm tra user theo email
-                var existingUser = await _accountRepository.GetUserByEmailAsync(user.Email);
+                var existingUser = await _accountRepository.GetUserByEmailAsync(EmailNguoiDung);
 
                 if (existingUser != null)
                 {
@@ -109,10 +109,10 @@ namespace WebsiteOrdering.Controllers
                     var newUser = new ApplicationUser
                     {
                         Id = Guid.NewGuid().ToString(),
-                        UserName = user.Email,
-                        Email = user.Email,
-                        PhoneNumber = user.PhoneNumber,
-                        FullName = user.FullName,
+                        UserName = EmailNguoiDung,
+                        Email = EmailNguoiDung,
+                        PhoneNumber = SdtNguoiDung,
+                        FullName = FullNameNguoiDung,
                         EmailConfirmed = false
                     };
 
@@ -125,12 +125,12 @@ namespace WebsiteOrdering.Controllers
                 // Gán tên và SĐT từ form (user.FullName & PhoneNumber)
                 if (string.IsNullOrWhiteSpace(tenNguoiDat))
                 {
-                    tenNguoiDat = user.FullName ?? "";
+                    tenNguoiDat = FullNameNguoiDung ?? "";
                 }
 
-                if (string.IsNullOrWhiteSpace(sdtNguoiDat) && !string.IsNullOrEmpty(user.PhoneNumber))
+                if (string.IsNullOrWhiteSpace(sdtNguoiDat) && !string.IsNullOrEmpty(sdtNguoiDat))
                 {
-                    sdtNguoiDat = user.PhoneNumber;
+                    sdtNguoiDat = sdtNguoiDat;
                 }
 
             }
@@ -601,6 +601,35 @@ namespace WebsiteOrdering.Controllers
             return RedirectToAction("LichSuDatBan");
         }
 
+        //Hiển thị bàn lock 
+        [HttpGet]
+        public IActionResult GetBanLockTrongKhoang(string idChinhanh, string idKhuvuc, DateOnly ngay, TimeOnly gio)
+        {
+            try
+            {
+                // Lấy danh sách bàn trong khu vực và chi nhánh
+                var banIdsTrongKhuVuc = _appDbContext.bans
+                    .Where(b => b.Idchinhanh == idChinhanh && b.Khuvuc == idKhuvuc)
+                    .Select(b => b.Idban)
+                    .ToList();
+
+                // Tìm các bàn bị lock trong khung giờ đó
+                var lockedBans = _appDbContext.Banlock
+                    .Where(bl =>
+                        banIdsTrongKhuVuc.Contains(bl.IdBan) &&
+                        bl.Ngay == ngay &&
+                        gio >= bl.BatDau && gio < bl.KetThuc)
+                    .Select(bl => bl.IdBan)
+                    .Distinct()
+                    .ToList();
+
+                return Json(lockedBans);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi khi xử lý: {ex.Message}" });
+            }
+        }
 
     }
 }
