@@ -5904,27 +5904,30 @@ input[type="checkbox"] {
 
 .pizza-split-image {
     position: relative;
-    width: 100%; /* Hoặc 100% nếu responsive */
-    height: 130px; /* Hoặc auto + aspect-ratio */
-    aspect-ratio: 1/1; /* Giữ hình vuông khi responsive */
+    width: 180px;
+    height: 180px;
+    overflow: hidden;
+    display: flex;
+}
+
+.pizza-half {
+    width: 50%;
+    height: 100%;
     overflow: hidden;
 }
 
-    .pizza-split-image img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
+    .pizza-half.left img {
+        width: 200%;
         height: 100%;
         object-fit: cover;
+        transform: translateX(0); /* hiển thị nửa trái */
     }
 
-    .pizza-split-image .left {
-        clip-path: inset(0 50% 0 0);
-    }
-
-    .pizza-split-image .right {
-        clip-path: inset(0 0 0 50%);
+    .pizza-half.right img {
+        width: 200%;
+        height: 100%;
+        object-fit: cover;
+        transform: translateX(-50%); /* hiển thị nửa phải */
     }
 
 /*=====================================================
@@ -5937,7 +5940,7 @@ input[type="checkbox"] {
 .personal-title {
     text-align: center;
     font-size: 30px;
-    margin-bottom: 40px;
+    margin: 40px 0;
     letter-spacing: 2px;
     font-family: "Cakelan", serif;
     color: #fff;
@@ -6244,7 +6247,6 @@ input[type="checkbox"] {
 }
 
 /*=============LỊCH SỬ ĐẶT BÀN===============*/
-
 /* Tiêu đề */
 .personal-booking-title {
     font-size: 26px;
