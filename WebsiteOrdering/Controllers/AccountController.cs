@@ -259,15 +259,18 @@ namespace WebsiteOrdering.Controllers
 
         [HttpPost]
         [Route("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> ForgotPassword(string email)
         {
-            if (!ModelState.IsValid) return View(model);
-
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["Message"] = "Vui lòng nhập email.";
+                return View("Login");
+            }
             var templateUrl = $"{Request.Scheme}://{Request.Host}/Account/ResetPassword?userId={{0}}&token={{1}}";
-            var result = await _accountRepository.SendForgotPasswordEmailAsync(model.Email, templateUrl);
+            var result = await _accountRepository.SendForgotPasswordEmailAsync(email, templateUrl);
 
-            ViewBag.Message = result.Message;
-            return View();
+            TempData["Message"] = result.Message;
+            return View("Login");
         }
         [HttpGet]
         [Route("ResetPassword")]

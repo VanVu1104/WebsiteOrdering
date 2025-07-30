@@ -7,9 +7,9 @@
     var listBan = ViewBag.Ban as List<WebsiteOrdering.Models.Ban>;
     Layout = "~/Areas/Staff/Views/Shared/_LayoutStaff.cshtml";
 }
-
-<h2 class="text-2xl font-bold mb-4">Tạo đơn đặt bàn tại chỗ</h2>
-
+<div class="content-title-for-here">
+    <h2>Tạo đơn đặt bàn tại chỗ</h2>
+</div>
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>

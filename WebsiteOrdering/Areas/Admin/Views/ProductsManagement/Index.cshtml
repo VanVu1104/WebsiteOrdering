@@ -5,8 +5,9 @@
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-<h2>Quản lý sản phẩm</h2>
-<!-- Phần filter và search -->
+<div class="content-title-for-here">
+    <h2>Quản lý sản phẩm</h2>
+</div><!-- Phần filter và search -->
 <div class="card mb-4">
     <div class="card-header">
         <h5 class="card-title mb-0">Bộ lọc và tìm kiếm</h5>
@@ -189,7 +190,7 @@
 
 <!-- Bảng danh sách sản phẩm -->
 <div class="table-responsive">
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-order">
         <thead class="table-dark">
             <tr>
                 <th>Mã SP</th>
@@ -198,7 +199,7 @@
                 <th>Ảnh</th>
                 <th>Giá</th>
                 <th>Trạng thái</th>
-                <th width="150">Thao tác</th>
+                <th style ="width:fit-content">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -215,7 +216,7 @@
                                  class="rounded object-fit-cover" />
                         </td>
                         <td>@item.Giamonan.ToString("N0") đ</td>
-                        <td>
+                        <td style="text-align:center">
                             <span>
                                 @item.Trangthaiman
                             </span>

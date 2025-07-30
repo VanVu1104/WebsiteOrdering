@@ -35,7 +35,7 @@ else
                             <p>@item.Songuoidat Khách</p>
                             <p>@item.IdchinhanhNavigation?.Tencnhanh</p>
                         </td>
-                        <td class="personal-booking-status">@item.Trangthaidatban</td>
+                        <td class="personal-booking-status">@item.Trangthaidatban.ToFriendly()</td>
                         <td class="personal-booking-action">
                             @if (item.Trangthaidatban == TrangThai.Pending)
                             {

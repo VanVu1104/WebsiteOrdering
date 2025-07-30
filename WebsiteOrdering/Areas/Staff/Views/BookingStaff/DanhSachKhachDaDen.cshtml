@@ -9,8 +9,9 @@
 
 
 }
-
-<h2>Danh sách khách đã đến</h2>
+<div class="content-title-for-here">
+    <h2>Danh sách khách đã đến</h2>
+</div>
 
 @if (TempData["Error"] != null)
 {
@@ -19,7 +20,7 @@
     </div>
 }
 
-<table class="table table-bordered">
+<table class="table table-bordered table-order">
     <thead>
         <tr>
             <th>Mã đơn </th>
