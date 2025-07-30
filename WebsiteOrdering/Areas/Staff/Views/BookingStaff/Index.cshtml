@@ -78,8 +78,9 @@
         }
     }
 </script>
-
-<h2>Danh sách đơn đặt bàn</h2>
+<div class="content-title">
+    <h2>Danh sách đơn đặt bàn</h2>
+</div>
 <div class="mb-3">
     @{
         string idChiNhanh = ViewBag.SelectedChiNhanh as string ?? "";
@@ -88,7 +89,7 @@
 
     }
     <a href="@Url.Action("Index", "BookingStaff", new { area = "Staff" })"
-       class="btn @(selectedTrangThai == null ? "btn-dark" : "btn-outline-dark")">
+       class="btn @(selectedTrangThai == null ? "btn-all-items" : "btn-outline-dark")">
         Tất cả đơn hàng
     </a>
 
@@ -135,7 +136,7 @@
     </select>
 </form>
  *@
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-order table-hover">
     <thead class="thead-dark">
         <tr>
             <th>Mã</th>
@@ -148,7 +149,7 @@
             <th>Khu vực</th>
             <th>Tên bàn</th>
             <th>Trạng thái</th>
-            <th>Thao tác</th>
+            <th style="width:100px;">Thao tác</th>
             <th>Lý do</th>
         </tr>
     </thead>
@@ -160,9 +161,9 @@
                 <td>@d.Iddatban</td>
                 <td>@d.Tenngdat</td>
                 <td>@d.Ngaydat.ToString("dd/MM/yyyy")</td>
-                <td>@d.Giobatdau</td>
-                <td>@d.Gioketthuc</td>
-                <td>@d.Songuoidat</td>
+                <td style="text-align:center">@d.Giobatdau</td>
+                <td style="text-align:center">@d.Gioketthuc</td>
+                <td style="text-align:center">@d.Songuoidat</td>
                 <td>@d.IdchinhanhNavigation.Tencnhanh</td>
                 <td>@ct?.IdbanNavigation?.Khuvuc</td>
                 <td>@ct?.IdbanNavigation?.Tenban</td>
@@ -174,7 +175,7 @@
                         @d.Trangthaidatban.ToFriendly()
                     </span>
                 </td>
-                <td style="white-space: nowrap;">
+                <td style ="display:flex; flex-direction:column; gap:5px">
                     @if (d.Trangthaidatban == TrangThai.Pending)
                     {
                         <form method="post" asp-action="XacNhanDatBan" asp-route-id="@d.Iddatban" style="display:inline;"
@@ -221,7 +222,7 @@
                     }
                     <form asp-action="DetailDonDatBan" asp-area="Staff" asp-controller="BookingStaff">
                         <input type="hidden" name="id" value="@d.Iddatban" />
-                        <button type="submit" class="btn btn-info text-white rounded-pill">
+                        <button type="submit" class="btn btn-primary" style="font-size:14px;">
                             <i class="bi bi-search"></i> Chi tiết
                         </button>
                     </form>

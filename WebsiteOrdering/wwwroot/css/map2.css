@@ -2,7 +2,7 @@
 .location-container {
     display: flex;
     height: 100dvh;
-    width: 100vw;
+    width: 99.5vw;
     margin-left: calc(-50vw + 50%);
     overflow: hidden;
     font-family: 'Mestika', serif;
@@ -308,6 +308,12 @@
     width: fit-content;
 }
 
+#btnSelectStore {
+    border: var(--green-color) solid 1px;
+    background-color: transparent;
+    color: var(--green-color);
+}
+
 .location-counter {
     background-color: #FFFFF7;
     color: var(--green-color);
@@ -388,13 +394,14 @@
     display: flex;
     gap: 15px;
     justify-content: center;
+    position: sticky;
 }
 
 .search-wrapper-delivery {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 615px;
+    max-height: 570px;
     overflow: hidden;
 }
 
@@ -418,7 +425,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 615px; /* Giới hạn chiều cao tổng thể */
+    max-height: 570px; /* Giới hạn chiều cao tổng thể */
     overflow: hidden;
 }
 /* Other existing styles */
